@@ -67,26 +67,26 @@ namespace ApprienSDK {
 		protected static string REST_POST_RECEIPT_URL = "https://game.apprien.com/products/{0}"; // productName
 
 		/// <summary>
-		/// Initialize the specified reciever, appid, token and products.
+		/// Initialize the specified receiver, appid, token and products.
 		/// </summary>
-		/// <param name="reciever">Reciever.</param>
+		/// <param name="receiver">Receiver.</param>
 		/// <param name="appid">Appid.</param>
 		/// <param name="token">Token.</param>
 		/// <param name="products">Products.</param>
-		public static void Initialize(MonoBehaviour reciever, string appid, string token, List<Product> products) {
+		public static void Initialize(MonoBehaviour receiver, string appid, string token, List<Product> products) {
 			Apprien.appid = appid;
 			Apprien.token = token;
 
-			reciever.StartCoroutine (FetchApprienProducts(reciever, products));
+			receiver.StartCoroutine (FetchApprienProducts(receiver, products));
 		}
 
 		/// <summary>
 		/// Fetchs the apprien products.
 		/// </summary>
 		/// <returns>The apprien products.</returns>
-		/// <param name="reciever">Reciever.</param>
+		/// <param name="receiver">receiver.</param>
 		/// <param name="products">Products.</param>
-		protected static IEnumerator FetchApprienProducts(MonoBehaviour reciever, List<Product> products) {
+		protected static IEnumerator FetchApprienProducts(MonoBehaviour receiver, List<Product> products) {
 			for(int i = 0; i < products.Count; i++) {
 				Product product = products [i];
 				string productname = product.name;
@@ -104,7 +104,7 @@ namespace ApprienSDK {
 				}
 				products [i] = product;
 			}
-			reciever.SendMessage ("OnApprienInitialized", products, SendMessageOptions.RequireReceiver);
+			receiver.SendMessage ("OnApprienInitialized", products, SendMessageOptions.RequireReceiver);
 		}
 
 
@@ -148,19 +148,19 @@ namespace ApprienSDK {
 		/// <summary>
 		/// Raises the process purchase event.
 		/// </summary>
-		/// <param name="reciever">Reciever.</param>
+		/// <param name="receiver">receiver.</param>
 		/// <param name="e">E.</param>
-		public static void OnProcessPurchase(MonoBehaviour reciever, PurchaseEventArgs e) {
-			reciever.StartCoroutine (PostReceipt(reciever, e));
+		public static void OnProcessPurchase(MonoBehaviour receiver, PurchaseEventArgs e) {
+			receiver.StartCoroutine (PostReceipt(receiver, e));
 		}
 
 		/// <summary>
 		/// Posts the receipt.
 		/// </summary>
 		/// <returns>The receipt.</returns>
-		/// <param name="reciever">Reciever.</param>
+		/// <param name="receiver">receiver.</param>
 		/// <param name="e">E.</param>
-		protected static IEnumerator PostReceipt(MonoBehaviour reciever, PurchaseEventArgs e) {
+		protected static IEnumerator PostReceipt(MonoBehaviour receiver, PurchaseEventArgs e) {
 			List<IMultipartFormSection> formData = new List<IMultipartFormSection>();
 			formData.Add(new MultipartFormDataSection("deal=receipt", e.purchasedProduct.receipt) );
 
@@ -170,10 +170,10 @@ namespace ApprienSDK {
 
 			if(www.isNetworkError) {
 				Debug.Log(www.error);
-				reciever.SendMessage ("OnApprienPostReceiptFailed", www.error, SendMessageOptions.DontRequireReceiver);
+				receiver.SendMessage ("OnApprienPostReceiptFailed", www.error, SendMessageOptions.DontRequireReceiver);
 			}
 			else {
-				reciever.SendMessage ("OnApprienPostReceiptSuccess", www.downloadHandler.text, SendMessageOptions.DontRequireReceiver);
+				receiver.SendMessage ("OnApprienPostReceiptSuccess", www.downloadHandler.text, SendMessageOptions.DontRequireReceiver);
 			}
 			yield return null;
 		}
