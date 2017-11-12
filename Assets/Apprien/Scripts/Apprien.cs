@@ -93,7 +93,7 @@ namespace ApprienSDK {
 				UnityWebRequest www = UnityWebRequest.Get(string.Format(REST_GET_PRODUCT_URL, productname));
 				www.SetRequestHeader ("token", token);
 				yield return www.Send();
-				if (www.isError) {
+				if (www.isNetworkError) {
 					Debug.Log(www.error);
 				} else {
 					Debug.Log (www.downloadHandler.text);
@@ -168,7 +168,7 @@ namespace ApprienSDK {
 			www.SetRequestHeader ("token", token);
 			yield return www.Send();
 
-			if(www.isError) {
+			if(www.isNetworkError) {
 				Debug.Log(www.error);
 				reciever.SendMessage ("OnApprienPostReceiptFailed", www.error, SendMessageOptions.DontRequireReceiver);
 			}
