@@ -8,3 +8,10 @@ Apprien.cs is a standalone Unity Monobehavior "library" to use Apprien Game API.
 There is also UnityStoreManager integration, but if you use some other StoreManager, you can just use Apprien.cs.
 
 See https://www.apprien.com for more information
+
+#Contributions by
+Special thanks for
+
+Daniel Liljeqvist @ Nitro Games
+Kristian Lauttamus @ Apprien
+Jaakko Holopainen @ PHZ Game Studios

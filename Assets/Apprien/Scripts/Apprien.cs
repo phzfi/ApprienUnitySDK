@@ -30,38 +30,12 @@ namespace Apprien.Unity.SDK {
 		public struct Product {
 			public string name;
 			public string apprien;
-			public ProductMetadata metadata;
-			public ProductMetadata metadataReference;
-			public ProductType type;
-			public string GetLocalizedPrice() {
-				if (metadata == null) {
-					Debug.LogWarning ("GetLocalizedPrice called before Apprien fully initialized");
-					return "";
-				}
-				return metadata.localizedPrice + metadata.isoCurrencyCode;
-			}
-			public string GetReferencePrice() {
-				if (metadataReference == null) {
-					Debug.LogWarning ("GetReferencePrice called before Apprien fully initialized");
-					return "";
-				}
-				return metadataReference.localizedPrice + metadataReference.isoCurrencyCode;
-			}
-			public Product(string name) {
+
+            public Product(string name) {
 				this.name = name;
 				this.apprien = name;
-				this.metadata = null;
-				this.metadataReference = null;
-				this.type = ProductType.Consumable;
 			}
-			public Product(string name, ProductType type) {
-				this.name = name;
-				this.apprien = name;
-				this.metadata = null;
-				this.metadataReference = null;
-				this.type = type;
-			}
-		}
+        }
 
 		/// <summary>
 		/// Product response.
@@ -75,8 +49,9 @@ namespace Apprien.Unity.SDK {
 		protected static string appid;
 		protected static string token;
 
-		protected static string REST_GET_PRODUCT_URL = "https://game.apprien.com/products/{0}"; // productName
-		protected static string REST_POST_RECEIPT_URL = "https://game.apprien.com/products/{0}"; // productName
+		protected static string REST_GET_PRODUCT_URL = "https://game.apprien.com/products/{0}"; // productName sku i.e. pack_gold2
+        protected static string REST_GET_PRICE_URL = "https://game.apprien.com/stores/google/products/{0}/prices"; // productName i.e. pack_gold2
+		protected static string REST_POST_RECEIPT_URL = "https://game.apprien.com/receipts";
 
 		/// <summary>
 		/// Initialize the specified receiver, appid, token and products.
@@ -103,7 +78,7 @@ namespace Apprien.Unity.SDK {
 				Product product = products [i];
 				string productname = product.name;
 				UnityWebRequest www = UnityWebRequest.Get(string.Format(REST_GET_PRODUCT_URL, productname));
-				www.SetRequestHeader ("token", token);
+				www.SetRequestHeader ("Authorization", "Bearer " + token);
 				yield return www.Send();
 				if (www.isNetworkError) {
 					Debug.Log(www.error);
@@ -119,7 +94,34 @@ namespace Apprien.Unity.SDK {
 			receiver.SendMessage ("OnApprienInitialized", products, SendMessageOptions.RequireReceiver);
 		}
 
-		/// <summary>
+        /// <summary>
+        /// Fetchs the apprien prices.
+        /// </summary>
+        /// <returns>The apprien product variants (with different prices).</returns>
+        /// <param name="receiver">receiver.</param>
+        /// <param name="products">Products.</param>
+        public static IEnumerator FetchApprienPrice(MonoBehaviour reciever, string product, System.Action<string> callback) {
+            UnityWebRequest www = UnityWebRequest.Get(string.Format(REST_GET_PRICE_URL, product));
+            www.SetRequestHeader ("Authorization", "Bearer " + token);
+            yield return www.Send();
+            if (www.isNetworkError)
+            {
+                Debug.Log(www.error);
+                callback(product);
+            }
+            else
+            {
+                Debug.Log(www.downloadHandler.text);
+                if (www.responseCode == 200)
+                {
+                    JSONObject j = new JSONObject(www.downloadHandler.text);
+                    string productId = j[0].str;
+                    callback(productId);
+                }
+            }
+        }
+
+        /// <summary>
 		/// Posts the receipt.
 		/// </summary>
 		/// <returns>The receipt.</returns>
@@ -130,7 +132,7 @@ namespace Apprien.Unity.SDK {
 			formData.Add(new MultipartFormDataSection("deal=receipt", e.purchasedProduct.receipt) );
 
 			UnityWebRequest www = UnityWebRequest.Post(string.Format(REST_POST_RECEIPT_URL), formData);
-			www.SetRequestHeader ("token", token);
+            www.SetRequestHeader ("Authorization", "Bearer " + token);
 			yield return www.Send();
 
 			if(www.isNetworkError) {
