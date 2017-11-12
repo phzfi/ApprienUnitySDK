@@ -10,7 +10,7 @@ namespace Apprien.Unity.SDK {
     /// 
     /// If you use other IAP manager, you don't need this.
 	/// </summary>
-	public class ApprienStoreManager : MonoBehaviour, IStoreListener {
+	public class ApprienUnityStoreManager : MonoBehaviour, IStoreListener {
 
 		#if UNITY_EDITOR
 		public bool editorToggle;

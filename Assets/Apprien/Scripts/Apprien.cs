@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Purchasing;
 using UnityEngine.Networking;
 
 namespace Apprien.Unity.SDK {
@@ -25,7 +24,7 @@ namespace Apprien.Unity.SDK {
 	public class Apprien {
 
 		/// <summary>
-		/// Product.
+		/// The IAP Product.
 		/// </summary>
 		[System.Serializable]
 		public struct Product {
@@ -118,53 +117,6 @@ namespace Apprien.Unity.SDK {
 				products [i] = product;
 			}
 			receiver.SendMessage ("OnApprienInitialized", products, SendMessageOptions.RequireReceiver);
-		}
-
-
-
-		/// <summary>
-		/// Adds the products.
-		/// </summary>
-		/// <param name="builder">Builder.</param>
-		/// <param name="products">Products.</param>
-		public static void AddProducts(ConfigurationBuilder builder, List<Apprien.Product> products) {
-			foreach (Apprien.Product product in products) {
-				builder.AddProduct (product.apprien, product.type);
-
-				//builder.AddProduct(product.name, product.type);
-				//if (product.name != product.apprien) {
-				//	builder.AddProduct (product.apprien, product.type);
-				//}
-			}
-		}
-
-		/// <summary>
-		/// Raises the store initialized event.
-		/// </summary>
-		/// <param name="controller">Controller.</param>
-		/// <param name="products">Products.</param>
-		public static void OnStoreInitialized (IStoreController controller, List<Product> products) {
-			for(int i = 0; i < products.Count; i++) {
-				Apprien.Product product = products [i];
-				product.metadata = controller.products.WithID (product.apprien).metadata;
-				if (product.name != product.apprien) {
-					if (controller.products.WithID (product.name) == null) {
-						Debug.LogWarning ("Could not find product " + product.name);
-					} else {
-						product.metadataReference = controller.products.WithID (product.name).metadata;
-					}
-				}
-				products [i] = product;
-			}
-		}
-
-		/// <summary>
-		/// Raises the process purchase event.
-		/// </summary>
-		/// <param name="receiver">receiver.</param>
-		/// <param name="e">E.</param>
-		public static void OnProcessPurchase(MonoBehaviour receiver, PurchaseEventArgs e) {
-			receiver.StartCoroutine (PostReceipt(receiver, e));
 		}
 
 		/// <summary>

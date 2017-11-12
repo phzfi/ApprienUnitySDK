@@ -1,11 +1,11 @@
 ﻿<Properties StartupConfiguration="{2274CD60-FF40-FB2E-53FC-379401E41048}|Unit Tests">
   <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Apprien/Scripts/Editor/ApprienStoreManagerEditor.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Apprien/Scripts/Editor/ApprienUnityStoreManagerEditor.cs">
     <Files>
       <File FileName="Assets/Apprien/README.txt" Line="4" Column="1" />
       <File FileName="Assets/Apprien/Scripts/Apprien.cs" Line="13" Column="1" />
-      <File FileName="Assets/Apprien/Scripts/ApprienStoreManager.cs" Line="11" Column="1" />
-      <File FileName="Assets/Apprien/Scripts/Editor/ApprienStoreManagerEditor.cs" Line="9" Column="5" />
+      <File FileName="Assets/Apprien/Scripts/ApprienUnityStoreManager.cs" Line="11" Column="1" />
+      <File FileName="Assets/Apprien/Scripts/Editor/ApprienUnityStoreManagerEditor.cs" Line="9" Column="5" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />

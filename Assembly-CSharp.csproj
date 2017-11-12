@@ -52,7 +52,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Apprien\Scripts\Apprien.cs" />
-     <Compile Include="Assets\Apprien\Scripts\ApprienStoreManager.cs" />
+     <Compile Include="Assets\Apprien\Scripts\ApprienUnityStoreManager.cs" />
      <None Include="Assets\Apprien\README.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

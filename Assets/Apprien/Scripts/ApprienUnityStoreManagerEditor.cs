@@ -11,17 +11,17 @@ namespace Apprien.Unity.SDK {
     /// 
     /// If you are using some other IAP manager, you don't need this file.
     /// </summary>
-    [CustomEditor(typeof(ApprienStoreManager))]
-	public class ApprienStoreManagerEditor : Editor {
+    [CustomEditor(typeof(ApprienUnityStoreManager))]
+	public class ApprienUnityStoreManagerEditor : Editor {
 
 		protected static GUIStyle styleRichText = new GUIStyle ();
 
 		public override void OnInspectorGUI() {
-			ApprienStoreManager apprien = (ApprienStoreManager)target;
+			ApprienUnityStoreManager apprien = (ApprienUnityStoreManager)target;
 			DrawInspectorGUI (apprien);
 		}
 
-		public static void DrawInspectorGUI(ApprienStoreManager apprien) {
+		public static void DrawInspectorGUI(ApprienUnityStoreManager apprien) {
 			styleRichText.richText = true;
 			EditorGUI.BeginChangeCheck ();
 
