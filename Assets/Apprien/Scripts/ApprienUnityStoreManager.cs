@@ -23,10 +23,14 @@ namespace Apprien.Unity.SDK {
         /// The IAP Product.
         /// </summary>
         [System.Serializable]
-        public struct Product : Apprien.Product {
+        public struct ApprienProduct {
+            public string name;
+            public string apprien;
+
             public ProductMetadata metadata;
             public ProductMetadata metadataReference;
             public ProductType type;
+
             public string GetLocalizedPrice() {
                 if (metadata == null) {
                     Debug.LogWarning ("GetLocalizedPrice called before Apprien fully initialized");
@@ -34,6 +38,7 @@ namespace Apprien.Unity.SDK {
                 }
                 return metadata.localizedPrice + metadata.isoCurrencyCode;
             }
+
             public string GetReferencePrice() {
                 if (metadataReference == null) {
                     Debug.LogWarning ("GetReferencePrice called before Apprien fully initialized");
@@ -41,14 +46,16 @@ namespace Apprien.Unity.SDK {
                 }
                 return metadataReference.localizedPrice + metadataReference.isoCurrencyCode;
             }
-            public Product(string name) {
+
+            public ApprienProduct(string name) {
                 this.name = name;
                 this.apprien = name;
                 this.metadata = null;
                 this.metadataReference = null;
                 this.type = ProductType.Consumable;
             }
-            public Product(string name, ProductType type) {
+ 
+            public ApprienProduct(string name, ProductType type) {
                 this.name = name;
                 this.apprien = name;
                 this.metadata = null;
@@ -60,7 +67,7 @@ namespace Apprien.Unity.SDK {
 		/// <summary>
 		/// The products.
 		/// </summary>
-		public List<Product> products = new List<Product>();
+        public List<Apprien.Product> products = new List<Apprien.Product>();
 
 		/// <summary>
 		/// The appid.
@@ -86,8 +93,8 @@ namespace Apprien.Unity.SDK {
         /// </summary>
         /// <param name="builder">Builder.</param>
         /// <param name="products">Products.</param>
-        public void AddProducts(ConfigurationBuilder builder, List<Product> products) {
-            foreach (Product product in products) {
+        public void AddProducts(ConfigurationBuilder builder, List<ApprienProduct> products) {
+            foreach (ApprienProduct product in products) {
                 builder.AddProduct (product.apprien, product.type);
 
                 //builder.AddProduct(product.name, product.type);
@@ -102,15 +109,15 @@ namespace Apprien.Unity.SDK {
         /// </summary>
         /// <param name="controller">Controller.</param>
         /// <param name="products">Products.</param>
-        public static void OnStoreInitialized (IStoreController controller, List<Product> products) {
+        public static void OnStoreInitialized (IStoreController controller, List<Apprien.Product> products) {
             for(int i = 0; i < products.Count; i++) {
-                Product product = products [i];
-                product.metadata = controller.products.WithID (product.apprien).metadata;
+                Apprien.Product product = products [i];
+//                product.metadata = controller.products.WithID (product.apprien).metadata;
                 if (product.name != product.apprien) {
                     if (controller.products.WithID (product.name) == null) {
                         Debug.LogWarning ("Could not find product " + product.name);
                     } else {
-                        product.metadataReference = controller.products.WithID (product.name).metadata;
+//                        product.metadataReference = controller.products.WithID (product.name).metadata;
                     }
                 }
                 products [i] = product;
@@ -123,15 +130,15 @@ namespace Apprien.Unity.SDK {
         /// <param name="receiver">receiver.</param>
         /// <param name="e">E.</param>
         public void OnProcessPurchase(MonoBehaviour receiver, PurchaseEventArgs e) {
-            receiver.StartCoroutine (PostReceipt(receiver, e));
+            //TODO fix args
+//            receiver.StartCoroutine (Apprien.PostReceipt(receiver, e));
         }
-
 
 		/// <summary>
 		/// Raises the apprien initialized event.
 		/// </summary>
 		/// <param name="products">Products.</param>
-		public void OnApprienInitialized(List<Product> products) {
+        public void OnApprienInitialized(List<ApprienProduct> products) {
 			ConfigurationBuilder builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
 			this.AddProducts (builder, products);
 			UnityPurchasing.Initialize (this, builder);
@@ -143,8 +150,8 @@ namespace Apprien.Unity.SDK {
 		public void OnInitialized (IStoreController controller, IExtensionProvider extensions) {
 			this.controller = controller;
 			this.extensions = extensions;
-
-			Apprien.OnStoreInitialized (controller, products);
+            //TODO fix products
+//            this.OnStoreInitialized (controller, products);
 		}
 
 		/// <summary>
@@ -157,7 +164,7 @@ namespace Apprien.Unity.SDK {
 			Debug.Log ("Initialize failed");
 		}
 
-		/// <summary>
+        /// <summary>
 		/// Called when a purchase completes.
 		///
 		/// May be called at any time after OnInitialized().

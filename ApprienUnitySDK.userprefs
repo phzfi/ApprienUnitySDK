@@ -1,11 +1,19 @@
 ﻿<Properties StartupConfiguration="{D4486734-18BC-EF61-5445-9F6C10BA353E}|Unit Tests">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Apprien/README.txt">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Plugins/UnityPurchasing/Editor/IAPButtonEditor.cs">
     <Files>
-      <File FileName="Assets/Apprien/README.txt" Line="4" Column="1" />
-      <File FileName="Assets/Apprien/Scripts/Apprien.cs" Line="37" Column="5" />
-      <File FileName="Assets/Apprien/Scripts/ApprienUnityStoreManager.cs" Line="22" Column="22" />
+      <File FileName=":Users:phz:workspace:unity:ApprienUnitySDK:Assets:Apprien:README.txt" Line="4" Column="1" />
+      <File FileName="Assets/Apprien/Scripts/Apprien.cs" Line="117" Column="68" />
+      <File FileName="Assets/Apprien/Scripts/ApprienUnityStoreManager.cs" Line="155" Column="1" />
       <File FileName="Assets/Apprien/Scripts/Editor/ApprienUnityStoreManagerEditor.cs" Line="25" Column="32" />
+      <File FileName="Assets/Plugins/UnityPurchasing/Editor/IAPButtonEditor.cs" Line="35" Column="23" />
     </Files>
+    <Pads>
+      <Pad Id="MonoDevelop.UnitTesting.TestPad">
+        <State name="__root__">
+          <Node name="ApprienUnitySDK" expanded="True" selected="True" />
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

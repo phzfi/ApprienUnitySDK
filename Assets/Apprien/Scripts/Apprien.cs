@@ -114,8 +114,7 @@ namespace Apprien.Unity.SDK {
                 Debug.Log(www.downloadHandler.text);
                 if (www.responseCode == 200)
                 {
-                    JSONObject j = new JSONObject(www.downloadHandler.text);
-                    string productId = j[0].str;
+                    string productId = JsonUtility.FromJson<string>(www.downloadHandler.text);
                     callback(productId);
                 }
             }
@@ -127,9 +126,9 @@ namespace Apprien.Unity.SDK {
 		/// <returns>The receipt.</returns>
 		/// <param name="receiver">receiver.</param>
 		/// <param name="e">E.</param>
-		protected static IEnumerator PostReceipt(MonoBehaviour receiver, PurchaseEventArgs e) {
+        public static IEnumerator PostReceipt(MonoBehaviour receiver, string receiptJson) {
 			List<IMultipartFormSection> formData = new List<IMultipartFormSection>();
-			formData.Add(new MultipartFormDataSection("deal=receipt", e.purchasedProduct.receipt) );
+            formData.Add(new MultipartFormDataSection("deal=receipt",receiptJson) );
 
 			UnityWebRequest www = UnityWebRequest.Post(string.Format(REST_POST_RECEIPT_URL), formData);
             www.SetRequestHeader ("Authorization", "Bearer " + token);
