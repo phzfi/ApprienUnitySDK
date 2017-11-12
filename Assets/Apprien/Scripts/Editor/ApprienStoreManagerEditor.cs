@@ -4,8 +4,14 @@ using UnityEngine;
 using UnityEngine.Purchasing;
 using UnityEditor;
 
-namespace ApprienSDK {
-	[CustomEditor(typeof(ApprienStoreManager))]
+namespace Apprien.Unity.SDK {
+
+    /// <summary>
+    /// Apprien Unity Store Manager Editor
+    /// 
+    /// If you are using some other IAP manager, you don't need this file.
+    /// </summary>
+    [CustomEditor(typeof(ApprienStoreManager))]
 	public class ApprienStoreManagerEditor : Editor {
 
 		protected static GUIStyle styleRichText = new GUIStyle ();

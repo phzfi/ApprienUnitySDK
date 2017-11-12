@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Purchasing;
 
-namespace ApprienSDK {
+namespace Apprien.Unity.SDK {
 
 	/// <summary>
-	/// Apprien store manager.
+    /// Apprien store manager uses Unity Store Manager (Unity.Purchasing).
+    /// 
+    /// If you use other IAP manager, you don't need this.
 	/// </summary>
 	public class ApprienStoreManager : MonoBehaviour, IStoreListener {
 

@@ -4,10 +4,23 @@ using UnityEngine;
 using UnityEngine.Purchasing;
 using UnityEngine.Networking;
 
-namespace ApprienSDK {
+namespace Apprien.Unity.SDK {
 
 	/// <summary>
-	/// Apprien.
+	/// Apprien Unity SDK to optimize IAP prices.
+    ///
+    /// Class Apprien is Plain-old-C#-object -client to the Apprien REST API.
+    /// You can use it either with UnityStoreManager, or some other IAP plugin.
+    ///
+    /// Apprien is an automated pricing engine that calculates the optimum
+    /// prices by every 15mins in each country. We can typically increase the
+    /// revenue and Life Time Value of the game by 20-40%, which makes it easier
+    /// to
+    /// 1) acquire more users (spend the money to User Acquisition)
+    /// 2) find publishers or financiers
+    /// 3) take it easy :)
+    ///
+    /// See more from www.apprien.com
 	/// </summary>
 	public class Apprien {
 
