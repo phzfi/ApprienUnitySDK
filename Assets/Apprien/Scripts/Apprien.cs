@@ -63,8 +63,8 @@ namespace ApprienSDK {
 		protected static string appid;
 		protected static string token;
 
-		protected static string REST_GET_PRODUCT_URL = "http://api.apprien.com/products/{0}"; // productName
-		protected static string REST_POST_RECEIPT_URL = "http://api.apprien.com/products/{0}"; // productName
+		protected static string REST_GET_PRODUCT_URL = "https://game.apprien.com/products/{0}"; // productName
+		protected static string REST_POST_RECEIPT_URL = "https://game.apprien.com/products/{0}"; // productName
 
 		/// <summary>
 		/// Initialize the specified reciever, appid, token and products.
