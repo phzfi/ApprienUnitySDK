@@ -30,11 +30,11 @@ namespace Apprien.Unity.SDK {
 		public struct Product {
             /// SKU (stock keeping unit) is the store name for the product
             public string skuBaseName;
-            /// Apprien creates variants of the base sku by name 
+            /// Apprien creates variants of the base sku by name
             /// z_skuBaseName.apprien_1990_v34f
-            /// where 1990 is e.g. 1990 USD and the last 4 digits are an unique 
+            /// where 1990 is e.g. 1990 USD and the last 4 digits are an unique
             /// hash
-            /// The variants start by "z_" to sort them last and distiguish them 
+            /// The variants start by "z_" to sort them last and distiguish them
             /// easily from the base skus
 			public string skuApprienVariantName;
 
@@ -53,7 +53,7 @@ namespace Apprien.Unity.SDK {
 		}
 
 
-		protected static string appid;
+		protected static string unityComponent;
 		protected static string token;
 
 		protected static string REST_GET_PRODUCT_URL = "https://game.apprien.com/products/{0}"; // productName sku i.e. pack_gold2
@@ -61,14 +61,14 @@ namespace Apprien.Unity.SDK {
 		protected static string REST_POST_RECEIPT_URL = "https://game.apprien.com/receipts";
 
 		/// <summary>
-		/// Initialize the specified unityComponent, appid, token and products.
+		/// Initialize the specified unityComponent, appId, token and products.
 		/// </summary>
 		/// <param name="unityComponent">unityComponent.</param>
-		/// <param name="appid">Appid.</param>
+		/// <param name="appId">appId.</param>
 		/// <param name="token">Token.</param>
 		/// <param name="products">Products.</param>
-		public static void Initialize(MonoBehaviour unityComponent, string appid, string token, List<Product> products) {
-			Apprien.appid = appid;
+		public static void Initialize(MonoBehaviour unityComponent, string appId, string token, List<Product> products) {
+			Apprien.appId = appId;
 			Apprien.token = token;
 
 			unityComponent.StartCoroutine (FetchApprienProducts(unityComponent, products));
