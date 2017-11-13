@@ -53,7 +53,7 @@ namespace Apprien.Unity.SDK {
 		}
 
 
-		protected static string unityComponent;
+		protected static string appId;
 		protected static string token;
 
 		protected static string REST_GET_PRODUCT_URL = "https://game.apprien.com/products/{0}"; // productName sku i.e. pack_gold2
@@ -102,7 +102,7 @@ namespace Apprien.Unity.SDK {
 				}
 				products [i] = product;
 			}
-			unityComponent.SendMessage ("OnApprienInitialized", products, SendMessageOptions.RequireunityComponent);
+			unityComponent.SendMessage ("OnApprienInitialized", products, SendMessageOptions.RequireReceiver);
 		}
 
         /// <summary>
@@ -151,10 +151,10 @@ namespace Apprien.Unity.SDK {
 
 			if(www.isNetworkError) {
 				Debug.Log(www.error);
-				unityComponent.SendMessage ("OnApprienPostReceiptFailed", www.error, SendMessageOptions.DontRequireunityComponent);
+				unityComponent.SendMessage ("OnApprienPostReceiptFailed", www.error, SendMessageOptions.DontRequireReceiver);
 			}
 			else {
-				unityComponent.SendMessage ("OnApprienPostReceiptSuccess", www.downloadHandler.text, SendMessageOptions.DontRequireunityComponent);
+				unityComponent.SendMessage ("OnApprienPostReceiptSuccess", www.downloadHandler.text, SendMessageOptions.DontRequireReceiver);
 			}
 			yield return null;
 		}

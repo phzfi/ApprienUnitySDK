@@ -113,11 +113,11 @@ namespace Apprien.Unity.SDK {
             for(int i = 0; i < products.Count; i++) {
                 Apprien.Product product = products [i];
 //                product.metadata = controller.products.WithID (product.apprien).metadata;
-                if (product.name != product.apprien) {
-                    if (controller.products.WithID (product.name) == null) {
-                        Debug.LogWarning ("Could not find product " + product.name);
+                if (product.skuBaseName != product.skuApprienVariantName) {
+                    if (controller.products.WithID (product.skuBaseName) == null) {
+                        Debug.LogWarning ("Could not find product " + product.skuBaseName);
                     } else {
-//                        product.metadataReference = controller.products.WithID (product.name).metadata;
+//                        product.metadataReference = controller.products.WithID (product.skuBaseName).metadata;
                     }
                 }
                 products [i] = product;
