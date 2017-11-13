@@ -100,7 +100,7 @@ namespace Apprien.Unity.SDK {
         /// <returns>The apprien product variants (with different prices).</returns>
         /// <param name="receiver">receiver.</param>
         /// <param name="products">Products.</param>
-        public static IEnumerator FetchApprienPrice(MonoBehaviour reciever, string product, System.Action<string> callback) {
+        public static IEnumerator FetchApprienPrice(MonoBehaviour receiver, string product, System.Action<string> callback) {
             UnityWebRequest www = UnityWebRequest.Get(string.Format(REST_GET_PRICE_URL, product));
             www.SetRequestHeader ("Authorization", "Bearer " + token);
             yield return www.Send();
