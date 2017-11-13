@@ -29,11 +29,11 @@ namespace Apprien.Unity.SDK {
 		[System.Serializable]
 		public struct Product {
 			public string name;
-			public string apprien;
+			public string apprienProductVariantSKUName;
 
             public Product(string name) {
 				this.name = name;
-				this.apprien = name;
+                this.apprienProductVariantSKUName = name;
 			}
         }
 
@@ -90,7 +90,7 @@ namespace Apprien.Unity.SDK {
 					Debug.Log (www.downloadHandler.text);
 					if (www.responseCode == 200) {
 						ProductResponse response = JsonUtility.FromJson <ProductResponse> (www.downloadHandler.text);
-						product.apprien = response.recommended;
+                        product.apprienProductVariantSKUName = response.recommended;
 					}
 				}
 				products [i] = product;
