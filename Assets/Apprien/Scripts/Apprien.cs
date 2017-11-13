@@ -68,10 +68,14 @@ namespace Apprien.Unity.SDK {
 		}
 
 		/// <summary>
-		/// Fetchs the apprien products.
+		/// Fetches IAP products from Apprien.
+        ///
+        /// If you have a fixed list of SKUs, you can skip this and
+        /// just fetch the prices for your current product skus
+        ///
 		/// </summary>
-		/// <returns>The apprien products.</returns>
-		/// <param name="receiver">receiver.</param>
+		/// <returns>Apprien products.</returns>
+        /// <param name="receiver">receiver which is typically "this" (Unity Component).</param>
 		/// <param name="products">Products.</param>
 		protected static IEnumerator FetchApprienProducts(MonoBehaviour receiver, List<Product> products) {
 			for(int i = 0; i < products.Count; i++) {
