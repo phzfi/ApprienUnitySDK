@@ -54,17 +54,17 @@ namespace Apprien.Unity.SDK {
 		protected static string REST_POST_RECEIPT_URL = "https://game.apprien.com/receipts";
 
 		/// <summary>
-		/// Initialize the specified receiver, appid, token and products.
+		/// Initialize the specified unityComponent, appid, token and products.
 		/// </summary>
-		/// <param name="receiver">Receiver.</param>
+		/// <param name="unityComponent">unityComponent.</param>
 		/// <param name="appid">Appid.</param>
 		/// <param name="token">Token.</param>
 		/// <param name="products">Products.</param>
-		public static void Initialize(MonoBehaviour receiver, string appid, string token, List<Product> products) {
+		public static void Initialize(MonoBehaviour unityComponent, string appid, string token, List<Product> products) {
 			Apprien.appid = appid;
 			Apprien.token = token;
 
-			receiver.StartCoroutine (FetchApprienProducts(receiver, products));
+			unityComponent.StartCoroutine (FetchApprienProducts(unityComponent, products));
 		}
 
 		/// <summary>
@@ -75,9 +75,9 @@ namespace Apprien.Unity.SDK {
         ///
 		/// </summary>
 		/// <returns>Apprien products.</returns>
-        /// <param name="receiver">receiver which is typically "this" (Unity Component).</param>
+        /// <param name="unityComponent">Monobehaviour unityComponent, which is typically 'this'.</param>
 		/// <param name="products">Products.</param>
-		protected static IEnumerator FetchApprienProducts(MonoBehaviour receiver, List<Product> products) {
+		protected static IEnumerator FetchApprienProducts(MonoBehaviour unityComponent, List<Product> products) {
 			for(int i = 0; i < products.Count; i++) {
 				Product product = products [i];
 				string productname = product.name;
@@ -95,16 +95,16 @@ namespace Apprien.Unity.SDK {
 				}
 				products [i] = product;
 			}
-			receiver.SendMessage ("OnApprienInitialized", products, SendMessageOptions.RequireReceiver);
+			unityComponent.SendMessage ("OnApprienInitialized", products, SendMessageOptions.RequireunityComponent);
 		}
 
         /// <summary>
-        /// Fetchs the apprien prices.
+        /// Fetches the Apprien prices.
         /// </summary>
         /// <returns>The apprien product variants (with different prices).</returns>
-        /// <param name="receiver">receiver.</param>
+        /// <param name="unityComponent">Monobehaviour unityComponent, which is typically 'this'.</param>
         /// <param name="products">Products.</param>
-        public static IEnumerator FetchApprienPrice(MonoBehaviour receiver, string product, System.Action<string> callback) {
+        public static IEnumerator FetchApprienPrice(MonoBehaviour unityComponent, string product, System.Action<string> callback) {
             UnityWebRequest www = UnityWebRequest.Get(string.Format(REST_GET_PRICE_URL, product));
             www.SetRequestHeader ("Authorization", "Bearer " + token);
             yield return www.Send();
@@ -125,12 +125,12 @@ namespace Apprien.Unity.SDK {
         }
 
         /// <summary>
-		/// Posts the receipt.
+		/// Posts the receipt to Apprien for calculate new prices.
 		/// </summary>
 		/// <returns>The receipt.</returns>
-		/// <param name="receiver">receiver.</param>
+		/// <param name="unityComponent">Monobehaviour unityComponent, which is typically 'this'.</param>
 		/// <param name="e">E.</param>
-        public static IEnumerator PostReceipt(MonoBehaviour receiver, string receiptJson) {
+        public static IEnumerator PostReceipt(MonoBehaviour unityComponent, string receiptJson) {
 			List<IMultipartFormSection> formData = new List<IMultipartFormSection>();
             formData.Add(new MultipartFormDataSection("deal=receipt",receiptJson) );
 
@@ -140,10 +140,10 @@ namespace Apprien.Unity.SDK {
 
 			if(www.isNetworkError) {
 				Debug.Log(www.error);
-				receiver.SendMessage ("OnApprienPostReceiptFailed", www.error, SendMessageOptions.DontRequireReceiver);
+				unityComponent.SendMessage ("OnApprienPostReceiptFailed", www.error, SendMessageOptions.DontRequireunityComponent);
 			}
 			else {
-				receiver.SendMessage ("OnApprienPostReceiptSuccess", www.downloadHandler.text, SendMessageOptions.DontRequireReceiver);
+				unityComponent.SendMessage ("OnApprienPostReceiptSuccess", www.downloadHandler.text, SendMessageOptions.DontRequireunityComponent);
 			}
 			yield return null;
 		}
