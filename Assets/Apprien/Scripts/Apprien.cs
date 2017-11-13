@@ -107,26 +107,30 @@ namespace Apprien.Unity.SDK {
 
         /// <summary>
         /// Fetches the Apprien prices.
+        /// 
+        /// Prices are located in the Apprien -generated SKU variants. Typically
+        /// the actual prices are fetched from the Store (Google or Apple) by the
+        /// StoreManager by providing the sku name (or in this case the variant).
         /// </summary>
         /// <returns>The apprien product variants (with different prices).</returns>
         /// <param name="unityComponent">Monobehaviour unityComponent, which is typically 'this'.</param>
-        /// <param name="products">Products.</param>
-        public static IEnumerator FetchApprienPrice(MonoBehaviour unityComponent, string product, System.Action<string> callback) {
-            UnityWebRequest www = UnityWebRequest.Get(string.Format(REST_GET_PRICE_URL, product));
+        /// <param name="skuBaseName">Product skuBaseName i.e. my_pack_2 from Google/Apple store.</param>
+        public static IEnumerator FetchApprienPrice(MonoBehaviour unityComponent, string skuBaseName, System.Action<string> callback) {
+            UnityWebRequest www = UnityWebRequest.Get(string.Format(REST_GET_PRICE_URL, skuBaseName));
             www.SetRequestHeader ("Authorization", "Bearer " + token);
             yield return www.Send();
             if (www.isNetworkError)
             {
                 Debug.Log(www.error);
-                callback(product);
+                callback(skuBaseName);
             }
             else
             {
                 Debug.Log(www.downloadHandler.text);
                 if (www.responseCode == 200)
                 {
-                    string productId = JsonUtility.FromJson<string>(www.downloadHandler.text);
-                    callback(productId);
+                    string skuApprienVariantName = JsonUtility.FromJson<string>(www.downloadHandler.text);
+                    callback(skuApprienVariantName);
                 }
             }
         }
@@ -136,7 +140,7 @@ namespace Apprien.Unity.SDK {
 		/// </summary>
 		/// <returns>The receipt.</returns>
 		/// <param name="unityComponent">Monobehaviour unityComponent, which is typically 'this'.</param>
-		/// <param name="e">E.</param>
+        /// <param name="receiptJson">receiptJson.</param>
         public static IEnumerator PostReceipt(MonoBehaviour unityComponent, string receiptJson) {
 			List<IMultipartFormSection> formData = new List<IMultipartFormSection>();
             formData.Add(new MultipartFormDataSection("deal=receipt",receiptJson) );
