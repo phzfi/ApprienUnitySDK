@@ -24,16 +24,23 @@ namespace Apprien.Unity.SDK {
 	public class Apprien {
 
 		/// <summary>
-		/// The IAP Product.
+		/// The IAP Product for Apprien.
 		/// </summary>
 		[System.Serializable]
 		public struct Product {
-			public string name;
-			public string apprienProductVariantSKUName;
+            /// SKU (stock keeping unit) is the store name for the product
+            public string skuBaseName;
+            /// Apprien creates variants of the base sku by name 
+            /// z_skuBaseName.apprien_1990_v34f
+            /// where 1990 is e.g. 1990 USD and the last 4 digits are an unique 
+            /// hash
+            /// The variants start by "z_" to sort them last and distiguish them 
+            /// easily from the base skus
+			public string skuApprienVariantName;
 
-            public Product(string name) {
-				this.name = name;
-                this.apprienProductVariantSKUName = name;
+            public Product(string skuBaseName) {
+                this.skuBaseName = skuBaseName;
+                this.skuApprienVariantName = skuBaseName; //default to the baseSku
 			}
         }
 
@@ -79,9 +86,9 @@ namespace Apprien.Unity.SDK {
 		/// <param name="products">Products.</param>
 		protected static IEnumerator FetchApprienProducts(MonoBehaviour unityComponent, List<Product> products) {
 			for(int i = 0; i < products.Count; i++) {
-				Product product = products [i];
-				string productname = product.name;
-				UnityWebRequest www = UnityWebRequest.Get(string.Format(REST_GET_PRODUCT_URL, productname));
+				Product product = products[i];
+                string productName = product.skuBaseName;
+				UnityWebRequest www = UnityWebRequest.Get(string.Format(REST_GET_PRODUCT_URL, productName));
 				www.SetRequestHeader ("Authorization", "Bearer " + token);
 				yield return www.Send();
 				if (www.isNetworkError) {
@@ -90,7 +97,7 @@ namespace Apprien.Unity.SDK {
 					Debug.Log (www.downloadHandler.text);
 					if (www.responseCode == 200) {
 						ProductResponse response = JsonUtility.FromJson <ProductResponse> (www.downloadHandler.text);
-                        product.apprienProductVariantSKUName = response.recommended;
+                        product.skuApprienVariantName = response.recommended;
 					}
 				}
 				products [i] = product;
