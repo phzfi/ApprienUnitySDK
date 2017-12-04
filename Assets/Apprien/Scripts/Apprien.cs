@@ -159,4 +159,36 @@ namespace Apprien.Unity.SDK {
 			yield return null;
 		}
 	}
+
+	/// <summary>
+	/// Parses the base SKU name (used by the game to display the graphic assets and 
+	/// to deliver the goods to the player) based on the Apprien response (variant SKU)
+	///
+	/// Variant SKU is e.g. z_base_sku_name.apprien_500_dfa3, where 
+	/// - the prefix is z_ (2 characters) to sort the skus on store listing to then end
+	/// - followed by the base sku name that can be parsed by splitting the string by separator ".apprien_"
+	/// - followed by the price in cents
+	/// - followed by 4 character hash
+	/// </summary>
+	/// <param name="products">Products.</param>
+	public static string GetBaseSku(string storeSku)
+	{
+		//default result to (base) storeSku
+		string result = storeSku;
+		//first check if this is a variant sku or base sku
+		int apprienSeparatorPosition = result.IndexOf(".apprien_");
+		if (apprienSeparatorPosition > 0) {
+			//it's an Apprien sku variant, then check if response is JSON or text
+			int jsonPosition = result.IndexOf("[");
+			int offset = 0;
+			if (jsonPosition > 0) {
+				offset = 2;
+			}
+			//remove offset and prefix
+			result = storeSku.Substring(2 + offset, storeSku.Length - 2 - offset);
+			result = result.Substring(0, result.Length - apprienSeparatorPosition - 1);
+		}
+		return result;
+	}
+
 }
