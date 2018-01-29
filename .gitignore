@@ -1,1 +1,6 @@
 *.save
+obj/
+Library/
+Temp/
+UnityPackageManager/
+:*
