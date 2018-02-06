@@ -35,7 +35,7 @@ Please contact support@apprien.com or open a ticket on https://support.phz.fi/
 # License
 See LICENSE
 
-
 Trademark Apprien®
-Copyright Apprien Ltd 2017-2018
+ 
+Copyright© Apprien Ltd 2017-2018
 
