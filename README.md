@@ -4,9 +4,15 @@ Apprien increases your In-App Purchases revenue by 20-40% by optimizing the pric
 
 It typically takes roughly 2-4h to integrate Apprien Unity SDK to your game.
 
+The compiled footprint of ApprienUnitySDK is roughly 2KB.
+
 Apprien.cs is a standalone Unity Monobehavior "library" to use Apprien Game API.
 
 There is also UnityStoreManager integration, but if you use some other StoreManager, you can just use Apprien.cs.
+
+# Features
+
+In case of any failure, ApprienUnitySDK should revert always to the base SKU and show the fixed prices.
 
 # Pre-requisites
 
