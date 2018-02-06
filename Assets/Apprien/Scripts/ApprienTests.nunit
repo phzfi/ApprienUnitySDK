@@ -1,0 +1,17 @@
+namespace Apprien.Unity.SDK
+{
+    using System;
+    using NUnit.Framework;
+
+    [TestFixture]
+    public class ApprienTest
+    {
+        [Test]
+        public void GetBaseSku()
+        {
+            Apprien apprien = new Apprien();
+            Assert.AreEqual("base_sku_name", Apprien.GetBaseSku("z_base_sku_name.apprien_500_dfa3"));
+        }
+
+    }
+}

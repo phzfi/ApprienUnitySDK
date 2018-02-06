@@ -6,17 +6,18 @@ using System.Collections.Generic;
 
 namespace UnityEngine.Purchasing
 {
-	public static class IAPButtonMenu
-	{
-		[MenuItem ("Window/Unity IAP/Create IAP Button", false, 5)]
-		public static void CreateUnityIAPButton()
-		{
-			// Create Button
-			EditorApplication.ExecuteMenuItem("GameObject/UI/Button");
+    public static class IAPButtonMenu
+    {
+        [MenuItem("Window/Unity IAP/Create IAP Button", false, 5)]
+        public static void CreateUnityIAPButton()
+        {
+            // Create Button
+            EditorApplication.ExecuteMenuItem("GameObject/UI/Button");
 
-			// Get GameObject of Button
-			GameObject gO = Selection.activeGameObject;
+            // Get GameObject of Button
+            GameObject gO = Selection.activeGameObject;
 
+            /*
 			// Add IAP Button component to GameObject
 			IAPButton iapButton = null;
 			if (gO) {
@@ -28,10 +29,11 @@ namespace UnityEngine.Purchasing
 				UnityEditorInternal.ComponentUtility.MoveComponentUp(iapButton);
 				UnityEditorInternal.ComponentUtility.MoveComponentUp(iapButton);
 			}
-		}
-	}
+            */
+        }
+    }
 
-
+    /*
 	[CustomEditor(typeof(IAPButton))]
 	[CanEditMultipleObjects]
 	public class IAPButtonEditor : Editor 
@@ -83,5 +85,6 @@ namespace UnityEngine.Purchasing
 			serializedObject.ApplyModifiedProperties();
 		}
 	}
+	*/
 }
 #endif
