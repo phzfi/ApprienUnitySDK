@@ -1,14 +1,15 @@
 using System;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ApprienUnitySDKTests
 {
+    [TestClass]
     public class UnitTest1
     {
-        [Fact]
+        [TestMethod]
         public void Test1()
         {
-            Assert.Equal(null, null);
+            Assert.IsNull(null);
         }
     }
 }
