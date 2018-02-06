@@ -56,7 +56,6 @@
      <Compile Include="Assets\Plugins\UnityPurchasing\script\IAPButton.cs" />
      <Compile Include="Assets\Plugins\UnityPurchasing\script\IAPDemo.cs" />
      <Compile Include="Assets\Plugins\UnityPurchasing\script\PurchasingCheck.cs" />
-     <None Include="Assets\Apprien\README.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
@@ -84,14 +83,14 @@
  <Reference Include="UnityEngine.SpatialTracking">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
  </Reference>
+ <Reference Include="Security">
+ <HintPath>/Users/phz/workspace/unity/ApprienUnitySDK/Assets/Plugins/UnityPurchasing/Bin/Security.dll</HintPath>
+ </Reference>
  <Reference Include="Editor">
  <HintPath>/Users/phz/workspace/unity/ApprienUnitySDK/Assets/Plugins/UnityPurchasing/Bin/Editor.dll</HintPath>
  </Reference>
  <Reference Include="Purchasing.Common">
  <HintPath>/Users/phz/workspace/unity/ApprienUnitySDK/Assets/Plugins/UnityPurchasing/Bin/Purchasing.Common.dll</HintPath>
- </Reference>
- <Reference Include="Security">
- <HintPath>/Users/phz/workspace/unity/ApprienUnitySDK/Assets/Plugins/UnityPurchasing/Bin/Security.dll</HintPath>
  </Reference>
  <Reference Include="Stores">
  <HintPath>/Users/phz/workspace/unity/ApprienUnitySDK/Assets/Plugins/UnityPurchasing/Bin/Stores.dll</HintPath>
