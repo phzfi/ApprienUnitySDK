@@ -19,7 +19,7 @@ See https://game.apprien.com for API documentation
 
 # Contributions by
 
-Special thanks for
+Special thanks to
 
 Daniel Liljeqvist @ Nitro Games
 
