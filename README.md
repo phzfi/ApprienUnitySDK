@@ -1,15 +1,29 @@
 # ApprienUnitySDK
-Apprien Unity SDK
+Apprien Unity SDK is a lightweight client for Apprien Automatic Pricing API for mobile game companies and by using Unity3D. 
+Apprien increases your In-App Purchases revenue by 20-40% by optimizing the prices by country, time and customer segment.
 
-Apprien is an automated pricing engine for optimizing IAP prices for 
+It typically takes roughly 2-4h to integrate Apprien Unity SDK to your game.
 
 Apprien.cs is a standalone Unity Monobehavior "library" to use Apprien Game API.
 
 There is also UnityStoreManager integration, but if you use some other StoreManager, you can just use Apprien.cs.
 
+# Pre-requisites
+
+You need to obtain an OAuth2 Access Token from Apprien. Please contact sales@apprien.com to get the integration instructions.
+
+Secondly you need to setup Google and Apple integrations.
+
+Third Apprien provides your Quality Assurance -department generic Apprien Game Testing Documentation and Test Cases how to
+detect typical issues with your game and Apprien integration to ensure as smooth as possible user experience.
+
 # Coding Convention
 
 Please use Visual Studio formating rules (autoformat).
+
+# Tests
+
+Please use Microsoft.VisualStudio.TestTools.UnitTesting and run the tests on Visual Studio.
 
 # Links
 
@@ -35,7 +49,7 @@ Please contact support@apprien.com or open a ticket on https://support.phz.fi/
 # License
 See LICENSE
 
-Trademark Apprien®
+Trademark® Apprien
  
 Copyright© Apprien Ltd 2017-2018
 
