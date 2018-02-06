@@ -9,9 +9,23 @@ There is also UnityStoreManager integration, but if you use some other StoreMana
 
 See https://www.apprien.com for more information
 
+See https://game.apprien.com for API documentation
+
 #Contributions by
 Special thanks for
 
 Daniel Liljeqvist @ Nitro Games
+Jari Pauna @ Tunnelground
 Kristian Lauttamus @ Apprien
 Jaakko Holopainen @ PHZ Game Studios
+
+# Support
+Please contact support@apprien.com or open a ticket on https://support.phz.fi/
+
+# License
+See LICENSE
+
+
+Trademark Apprien®
+Copyright Apprien Ltd 2017-2018
+
