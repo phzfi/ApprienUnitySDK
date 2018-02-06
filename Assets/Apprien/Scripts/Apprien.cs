@@ -39,7 +39,7 @@ namespace Apprien.Unity.SDK
             /// hash
             /// The variants start by "z_" to sort them last and distiguish them
             /// easily from the base skus
-			public string skuApprienVariantName;
+            public string skuApprienVariantName;
 
             public Product(string skuBaseName)
             {
