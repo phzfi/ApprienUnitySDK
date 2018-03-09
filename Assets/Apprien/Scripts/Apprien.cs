@@ -149,10 +149,10 @@ namespace Apprien.Unity.SDK
         }
 
         /// <summary>
-		/// Posts the receipt to Apprien for calculate new prices.
-		/// </summary>
-		/// <returns>The receipt.</returns>
-		/// <param name="unityComponent">Monobehaviour unityComponent, which is typically 'this'.</param>
+        /// Posts the receipt to Apprien for calculate new prices.
+        /// </summary>
+        /// <returns>The receipt.</returns>
+        /// <param name="unityComponent">Monobehaviour unityComponent, which is typically 'this'.</param>
         /// <param name="receiptJson">receiptJson.</param>
         public static IEnumerator PostReceipt(MonoBehaviour unityComponent, string receiptJson)
         {
