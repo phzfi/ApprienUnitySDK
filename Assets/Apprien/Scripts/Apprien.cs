@@ -99,7 +99,7 @@ namespace Apprien.Unity.SDK
                 Debug.Log(www.downloadHandler.text);
                 if (www.responseCode == 200)
                 {
-                    string skuApprienVariantName = JsonUtility.FromJson<string>(www.downloadHandler.text);
+                    string skuApprienVariantName = www.downloadHandler.text;
                     callback(skuApprienVariantName);
                 }
             }
