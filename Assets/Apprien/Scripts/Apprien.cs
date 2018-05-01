@@ -15,16 +15,16 @@ namespace Apprien.Unity.SDK
     /// Apprien is an automated pricing engine that calculates the optimum
     /// prices by every 15mins in each country. We can typically increase the
     /// revenue and Life Time Value of the game by 20-40%, which makes it easier
-    /// to
+    /// to:
     /// 1) acquire more users (spend the money to User Acquisition)
     /// 2) find publishers or financiers
     /// 3) take it easy :)
     ///
-    /// See more from www.apprien.com
+    /// See more from https://www.apprien.com
+    /// API Documentation on https://game.apprien.com
     /// </summary>
     public class Apprien
     {
-
         /// <summary>
         /// The IAP Product for Apprien.
         /// </summary>
@@ -57,14 +57,14 @@ namespace Apprien.Unity.SDK
             public string recommended;
         }
 
-        protected static string token;
+        protected static string token = "TODO acquire token from Apprien Dashboard/support";
 
         //Apprien endpoints
         protected static string REST_GET_PRICE_URL = "https://game.apprien.com/stores/google/products/{0}/prices";
         protected static string REST_POST_RECEIPT_URL = "https://game.apprien.com/receipts";
 
         /// <summary>
-        /// Initialize the specified unityComponent, appId, token and products.
+        /// Initialize the specified unityComponent, token and products.
         /// </summary>
         /// <param name="unityComponent">unityComponent.</param>
         /// <param name="token">Token.</param>
@@ -75,13 +75,13 @@ namespace Apprien.Unity.SDK
         }
 
         /// <summary>
-        /// Fetches the Apprien prices.
+        /// Get the Apprien prices.
         /// 
         /// Prices are located in the Apprien -generated SKU variants. Typically
         /// the actual prices are fetched from the Store (Google or Apple) by the
         /// StoreManager by providing the sku name (or in this case the variant).
         /// </summary>
-        /// <returns>The apprien product variants (with different prices).</returns>
+        /// <returns>The Apprien product variant name (with different prices).</returns>
         /// <param name="unityComponent">Monobehaviour unityComponent, which is typically 'this'.</param>
         /// <param name="skuBaseName">Product skuBaseName i.e. my_pack_2 from Google/Apple store.</param>
         public static IEnumerator FetchApprienPrice(MonoBehaviour unityComponent, string skuBaseName, System.Action<string> callback)
@@ -92,6 +92,7 @@ namespace Apprien.Unity.SDK
             if (www.isNetworkError)
             {
                 Debug.Log(www.error);
+                //on error return the fixed price = base SKU name
                 callback(skuBaseName);
             }
             else
@@ -165,5 +166,4 @@ namespace Apprien.Unity.SDK
             return result;
         }
     }
-
 }
