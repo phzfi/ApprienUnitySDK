@@ -57,64 +57,21 @@ namespace Apprien.Unity.SDK
             public string recommended;
         }
 
-
-        protected static string appId;
         protected static string token;
 
-        protected static string REST_GET_PRODUCT_URL = "https://game.apprien.com/products/{0}"; // productName sku i.e. pack_gold2
-        protected static string REST_GET_PRICE_URL = "https://game.apprien.com/stores/google/products/{0}/prices"; // productName i.e. pack_gold2
+        //Apprien endpoints
+        protected static string REST_GET_PRICE_URL = "https://game.apprien.com/stores/google/products/{0}/prices";
         protected static string REST_POST_RECEIPT_URL = "https://game.apprien.com/receipts";
 
         /// <summary>
         /// Initialize the specified unityComponent, appId, token and products.
         /// </summary>
         /// <param name="unityComponent">unityComponent.</param>
-        /// <param name="appId">appId.</param>
         /// <param name="token">Token.</param>
         /// <param name="products">Products.</param>
-        public static void Initialize(MonoBehaviour unityComponent, string appId, string token, List<Product> products)
+        public static void Initialize(MonoBehaviour unityComponent, string token, List<Product> products)
         {
-            Apprien.appId = appId;
             Apprien.token = token;
-
-            unityComponent.StartCoroutine(FetchApprienProducts(unityComponent, products));
-        }
-
-        /// <summary>
-        /// Fetches IAP products from Apprien.
-        ///
-        /// If you have a fixed list of SKUs, you can skip this and
-        /// just fetch the prices for your current product skus
-        ///
-        /// </summary>
-        /// <returns>Apprien products.</returns>
-        /// <param name="unityComponent">Monobehaviour unityComponent, which is typically 'this'.</param>
-        /// <param name="products">Products.</param>
-        protected static IEnumerator FetchApprienProducts(MonoBehaviour unityComponent, List<Product> products)
-        {
-            for (int i = 0; i < products.Count; i++)
-            {
-                Product product = products[i];
-                string productName = product.skuBaseName;
-                UnityWebRequest www = UnityWebRequest.Get(string.Format(REST_GET_PRODUCT_URL, productName));
-                www.SetRequestHeader("Authorization", "Bearer " + token);
-                yield return www.Send();
-                if (www.isNetworkError)
-                {
-                    Debug.Log(www.error);
-                }
-                else
-                {
-                    Debug.Log(www.downloadHandler.text);
-                    if (www.responseCode == 200)
-                    {
-                        ProductResponse response = JsonUtility.FromJson<ProductResponse>(www.downloadHandler.text);
-                        product.skuApprienVariantName = response.recommended;
-                    }
-                }
-                products[i] = product;
-            }
-            unityComponent.SendMessage("OnApprienInitialized", products, SendMessageOptions.RequireReceiver);
         }
 
         /// <summary>
@@ -185,7 +142,7 @@ namespace Apprien.Unity.SDK
         /// - followed by the price in cents
         /// - followed by 4 character hash
         /// </summary>
-        /// <param name="products">Products.</param>
+        /// <param name="storeSku">product sku name on the Store (Google or Apple) i.e. pack2_gold.</param>
         public static string GetBaseSku(string storeSku)
         {
             //default result to (base) storeSku
