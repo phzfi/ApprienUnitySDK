@@ -60,8 +60,8 @@ namespace Apprien.Unity.SDK
         protected static string token = "TODO acquire token from Apprien Dashboard/support";
 
         //Apprien endpoints
-        protected static string REST_GET_PRICE_URL = "https://game.apprien.com/stores/google/products/{0}/prices";
-        protected static string REST_POST_RECEIPT_URL = "https://game.apprien.com/receipts";
+        protected static string REST_GET_PRICE_URL = "https://game.apprien.com/api/v1/stores/google/games/{0}/products/{1}/prices";
+        protected static string REST_POST_RECEIPT_URL = "https://game.apprien.com/api/v1/receipts";
 
         /// <summary>
         /// Initialize the specified unityComponent, token and products.
@@ -84,9 +84,9 @@ namespace Apprien.Unity.SDK
         /// <returns>The Apprien product variant name (with different prices).</returns>
         /// <param name="unityComponent">Monobehaviour unityComponent, which is typically 'this'.</param>
         /// <param name="skuBaseName">Product skuBaseName i.e. my_pack_2 from Google/Apple store.</param>
-        public static IEnumerator FetchApprienPrice(MonoBehaviour unityComponent, string skuBaseName, System.Action<string> callback)
+        public static IEnumerator FetchApprienPrice(MonoBehaviour unityComponent, string gamePackageName, string skuBaseName, System.Action<string> callback)
         {
-            UnityWebRequest www = UnityWebRequest.Get(string.Format(REST_GET_PRICE_URL, skuBaseName));
+            UnityWebRequest www = UnityWebRequest.Get(string.Format(REST_GET_PRICE_URL, gamePackageName, skuBaseName));
             www.SetRequestHeader("Authorization", "Bearer " + token);
             yield return www.Send();
             if (www.isNetworkError)
