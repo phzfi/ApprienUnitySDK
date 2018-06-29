@@ -106,6 +106,12 @@ Please use Visual Studio formating rules (autoformat).
 
 Please use Microsoft.VisualStudio.TestTools.UnitTesting and run the tests on Visual Studio.
 
+# Troubleshooting
+
+Apprien prices won't show up.
+
+See Apprien Unity SDK Test Plan to check for typical errors.
+
 # Links
 
 See https://www.apprien.com for more information
