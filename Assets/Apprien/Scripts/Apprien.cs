@@ -60,7 +60,7 @@ namespace Apprien.Unity.SDK
         protected static string token = "TODO acquire token from Apprien Dashboard/support";
 
         //Apprien endpoints
-        protected static string REST_GET_PRICE_URL = "https://game.apprien.com/api/v1/stores/google/games/{0}/products/{1}/prices";
+        protected static string REST_GET_PRICE_URL = "https://game.apprien.com/api/v1/stores/google/products/{1}/prices";
         protected static string REST_POST_RECEIPT_URL = "https://game.apprien.com/api/v1/receipts";
 
         /// <summary>
