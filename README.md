@@ -1,5 +1,5 @@
 # ApprienUnitySDK
-Apprien Unity SDK is a lightweight client for Apprien Automatic Pricing API for mobile game companies using Unity 5.x+. Apprien increases your In-App Purchases revenue by 20-40% by optimizing the prices by country, time of the day and customer segment.
+Apprien Unity SDK is a lightweight client for Apprien Automatic Pricing API for mobile game companies using Unity. Apprien increases your In-App Purchases revenue by 20-40% by optimizing the prices by country, time of the day and customer segment.
 
 It typically takes roughly 2-4h to integrate Apprien Unity SDK with your game.
 
@@ -304,7 +304,7 @@ See https://game.apprien.com for Game API documentation
 Please contact support@apprien.com or open a ticket on https://support.phz.fi/
 
 ## License
-Apprien is a SaaS service with a separate end user agreement. However, Apprien Unity SDK (this project) is open source, see LICENSE for more information and be free to contribute!
+Apprien is a SaaS service with a separate end user agreement. However, Apprien Unity SDK (this project) is open source, see LICENSE for more information and feel free to contribute!
 
 Trademark® Apprien
  
