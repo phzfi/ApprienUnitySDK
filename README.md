@@ -127,6 +127,7 @@ Main class for Apprien integration. Can be instantiated and kept in the Store Ma
 --- | ---
 Method | `ApprienManager(string gamePackageName, ApprienIntegrationType integrationType, string token)`
 Description | Constructor for the class. 
+
 Usage:
 ```csharp
 _apprienManager = new ApprienManager(
@@ -141,6 +142,7 @@ _apprienManager = new ApprienManager(
 Method | `IEnumerator FetchApprienPrice(ApprienProduct[] products, Action callback = null)`
 | | `IEnumerator FetchApprienPrice(ApprienProduct product, Action callback = null)`
 Description | Main method for fetching IAP ids with optimal prices from Apprien. The first overload fetches all Apprien products using one HTTP request, while the second overload can be used to fetch single products. The former method is recommended if you have multiple products, to keep resource usage and loading times at minimum.
+
 Usage:
 ```csharp
 StartCoroutine(
@@ -169,6 +171,7 @@ StartCoroutine(
 --- | ---
 Method | `IEnumerator TestConnection(Action<bool, bool> callback)`
 Description | Optional. Perform an availability check for the Apprien service and test the validity of the OAuth2 token. Used in `ApprienConnectionTester.cs` Editor script. Can also be performed in the game, but not required.
+
 Usage:
 ```csharp
 StartCoroutine(
@@ -231,6 +234,7 @@ Description | Constructor for the class. The second overload accepts a `UnityEng
 --- | ---
 Method | `static ApprienProduct[] FromConfigurationBuilder(ConfigurationBuilder builder)`
 Description | Create an array of ApprienProducts from the given ConfigurationBuilder that has already been filled with default products.
+
 Usage:
 ```csharp
 _builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
@@ -249,6 +253,7 @@ _apprienProducts = ApprienProduct.FromConfigurationBuilder(ConfigurationBuilder 
 --- | ---
 Method | `static ApprienProduct[] FromIAPCatalog(ProductCatalog catalog)`
 Description | Create an array of ApprienProducts from the given Unity IAP Catalog.
+
 Usage:
 ```csharp
 var catalog = ProductCatalog.LoadDefaultCatalog();
