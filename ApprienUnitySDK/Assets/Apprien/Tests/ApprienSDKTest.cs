@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Apprien;
 
-#if NET_4_6
+#if NET_4_6 && !UNITY_5
 using Mock4Net.Core;
 #endif
 
@@ -32,7 +32,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         private ProductCatalog _catalog;
         private ConfigurationBuilder _builder;
 
-#if NET_4_6
+#if NET_4_6 && !UNITY_5
         private FluentMockServer _mockServer;
 #endif
 
@@ -73,7 +73,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                 _builder.AddProduct(id, ProductType.Consumable);
             }
 
-#if NET_4_6
+#if NET_4_6 && !UNITY_5
             _mockServer = FluentMockServer.Start();
 #endif
             _apprienManager = new ApprienManager(
@@ -82,7 +82,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                 _token
             );
         }
-#if NET_4_6
+#if NET_4_6 && !UNITY_5
         private void SetupMockServer()
         {
             // Setup the mock server routes
@@ -141,7 +141,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         [TearDown]
         public void TearDown()
         {
-#if NET_4_6
+#if NET_4_6 && !UNITY_5
             _mockServer.Stop();
 #endif
         }
@@ -195,7 +195,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                 Assert.Contains(id, productIds);
             }
         }
-#if NET_4_6
+#if NET_4_6 && !UNITY_5
         [UnityTest, Timeout(2000)]
         public IEnumerator FetchingManyProductsShouldSucceed()
         {

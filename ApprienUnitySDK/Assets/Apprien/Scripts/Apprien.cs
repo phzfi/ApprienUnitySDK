@@ -101,7 +101,7 @@ namespace Apprien
             var requestSendTimestamp = DateTime.Now;
             using(var request = UnityWebRequest.Get(REST_GET_APPRIEN_STATUS))
             {
-                request.SendWebRequest();
+                request.Send();
 
                 while (!request.isDone)
                 {
@@ -118,7 +118,7 @@ namespace Apprien
                 }
 
                 // If there was an error sending the request, or the server returns an error code > 400
-                if (request.isHttpError || request.isNetworkError)
+                if (request.isError || request.responseCode >= 400)
                 {
                     yield return false;
                 }
@@ -141,7 +141,7 @@ namespace Apprien
             using(var request = UnityWebRequest.Get(url))
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
-                request.SendWebRequest();
+                request.Send();
 
                 while (!request.isDone)
                 {
@@ -156,7 +156,7 @@ namespace Apprien
                     yield return null;
                 }
                 // If there was an error sending the request, or the server returns an error code > 400
-                if (request.isHttpError || request.isNetworkError)
+                if (request.isError || request.responseCode >= 400)
                 {
                     Debug.Log(request.responseCode);
                     yield return false;
@@ -220,7 +220,7 @@ namespace Apprien
             using(var request = UnityWebRequest.Get(url))
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
-                request.SendWebRequest();
+                request.Send();
 
                 while (!request.isDone)
                 {
@@ -234,7 +234,7 @@ namespace Apprien
                     yield return null;
                 }
 
-                if (request.isNetworkError || request.isHttpError)
+                if (request.isError)
                 {
                     Debug.Log(request.responseCode + ": " + request.error);
                     // On error return the fixed price = base IAP id
@@ -285,9 +285,8 @@ namespace Apprien
             using(var request = UnityWebRequest.Post(REST_POST_RECEIPT_URL, formData))
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
-                yield return request.SendWebRequest();
-
-                if (request.isNetworkError || request.isHttpError)
+                yield return request.Send();
+                if (request.isError || request.responseCode >= 400)
                 {
                     Debug.Log(request.error);
                     unityComponent.SendMessage("OnApprienPostReceiptFailed", request.responseCode + ": " + request.error, SendMessageOptions.DontRequireReceiver);
