@@ -118,7 +118,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 0.3.0
+  bundleVersion: 1.0.1
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -155,7 +155,7 @@ PlayerSettings:
     Android: fi.phz.appriensdkdemo
     Standalone: fi.phz.appriensdkdemo
   buildNumber: {}
-  AndroidBundleVersionCode: 9
+  AndroidBundleVersionCode: 10
   AndroidMinSdkVersion: 26
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
@@ -244,7 +244,7 @@ PlayerSettings:
   AndroidTargetArchitectures: 7
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: C:/Users/phz/workspace/apprien-unity-sdk/ApprienUnitySDKExample/.keystore
+  AndroidKeystoreName: C:/Users/phz/workspace/ApprienUnitySDK/ApprienUnitySDK/.keystore
   AndroidKeyaliasName: phz
   AndroidBuildApkPerCpuArchitecture: 0
   AndroidTVCompatibility: 1

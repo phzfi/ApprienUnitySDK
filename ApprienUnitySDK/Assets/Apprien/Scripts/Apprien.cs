@@ -52,6 +52,24 @@ namespace Apprien
         }
 
         /// <summary>
+        /// Returns the first byte of MD5-hashed SystemInfo.deviceUniqueIdentifier as string (two symbols).
+        /// The identifier is sent to Apprien Game API 
+        /// </summary>
+        /// <value></value>
+        public string ApprienIdentifier
+        {
+            get
+            {
+                var id = SystemInfo.deviceUniqueIdentifier;
+                var bytes = System.Text.ASCIIEncoding.ASCII.GetBytes(id);
+                var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+                var hash = md5.ComputeHash(bytes);
+                // Take the first byte only and convert it to hex
+                return System.Convert.ToString(hash[0], 16);
+            }
+        }
+
+        /// <summary>
         /// Initialize the Apprien SDK. 
         /// </summary>
         /// <param name="gamePackageName">The package name of the game. Usually Application.identifier</param>
@@ -220,6 +238,7 @@ namespace Apprien
             using(var request = UnityWebRequest.Get(url))
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
+                request.SetRequestHeader("Session-Id", ApprienIdentifier);
                 request.SendWebRequest();
 
                 while (!request.isDone)

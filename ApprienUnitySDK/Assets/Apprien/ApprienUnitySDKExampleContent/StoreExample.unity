@@ -625,7 +625,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00cca5d65a7c2bc4b823d2141848703f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ApprienConnection: {fileID: 11400000, guid: ecd5688e543e56644afc4f05f4806fe7, type: 2}
+  ApprienConnection: {fileID: 11400000, guid: fcc5ef22cdd568441b6df45d1891240a, type: 2}
   StandardPriceTexts:
   - {fileID: 2055804738}
   - {fileID: 232699509}
