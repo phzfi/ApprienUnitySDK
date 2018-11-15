@@ -5,6 +5,7 @@
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
+ENV['VAGRANT_SERVER_URL'] = 'http://vagrancy.in.phz.fi:8099'
 Vagrant.configure("2") do |config|
   # The most common configuration options are documented and commented below.
   # For a complete reference, please see the online documentation at
@@ -12,8 +13,27 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "Microsoft/EdgeOnWindows10"
-  config.vm.box_version = "1.0"
+  config.vm.box = "ubuntu/windows"
+  config.vm.box_version = "0.1.1"
+
+  config.vm.provider "virtualbox" do |v|
+    v.gui = false
+  end
+
+  config.vm.communicator = "winrm"
+  config.vm.provision "shell", path: "provision.ps1"
+
+  config.vm.network "public_network", bridge: "enp2s0"
+
+  config.ssh.extra_args = "-tt"
+  config.ssh.forward_agent = true
+
+  config.winrm.username = "vagrant"
+  config.winrm.password = "vagrant"
+  
+  # config.winrm.transport = :plaintext
+  # config.winrm.basic_auth_only = true
+  
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -32,7 +52,7 @@ Vagrant.configure("2") do |config|
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
   # your network.
-  config.vm.network "public_network"
+  # config.vm.network "public_network"
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
