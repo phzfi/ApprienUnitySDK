@@ -302,12 +302,9 @@ namespace Apprien
                             }
 
                             var json = request.downloadHandler.text;
-                            Debug.Log(json);
                             var productList = JsonUtility.FromJson<ApprienProductList>(json);
-                            Debug.Log(productList.products.Count);
                             foreach (var product in productList.products)
                             {
-                                Debug.Log("here" + product.@base + " - " + product.variant);
                                 if (productLookup.ContainsKey(product.@base))
                                 {
                                     productLookup[product.@base].ApprienVariantIAPId = product.variant;
