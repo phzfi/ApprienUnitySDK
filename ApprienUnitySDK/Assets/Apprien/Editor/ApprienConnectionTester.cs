@@ -85,7 +85,7 @@ namespace Apprien
 
 			if (_apprienManager == null)
 			{
-				EditorGUILayout.HelpBox("Please deselect and reselect the asset.", MessageType.Error);
+				EditorGUILayout.HelpBox("The assembly containing this editor script was recompiled. Please deselect and reselect the asset.", MessageType.Error);
 				return;
 			}
 
@@ -155,7 +155,7 @@ namespace Apprien
 					else
 					{
 						_anyProducts = true;
-						_pricesFetch = _apprienManager.FetchApprienPrice(products, () =>
+						_pricesFetch = _apprienManager.FetchApprienPrices(products, () =>
 						{
 							_fetchingProducts = false;
 							_fetchedProducts = products.ToList();

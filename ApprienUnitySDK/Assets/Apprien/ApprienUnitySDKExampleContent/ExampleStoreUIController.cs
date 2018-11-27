@@ -94,7 +94,7 @@ namespace ApprienUnitySDK.ExampleProject
 		{
 			// Update the products with Apprien IAP ids
 			StartCoroutine(
-				_apprienManager.FetchApprienPrice(
+				_apprienManager.FetchApprienPrices(
 					_apprienProducts,
 					() =>
 					{
