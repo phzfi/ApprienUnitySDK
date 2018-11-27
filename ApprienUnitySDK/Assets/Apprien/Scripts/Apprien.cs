@@ -264,7 +264,7 @@ namespace Apprien
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
                 request.SetRequestHeader("Session-Id", ApprienIdentifier);
-                request.SendWebRequest();
+                request.Send();
 
                 while (!request.isDone)
                 {
@@ -278,7 +278,7 @@ namespace Apprien
                     yield return null;
                 }
 
-                if (request.isNetworkError || request.isHttpError)
+                if (request.isError)
                 {
                     Debug.Log(request.responseCode + ": " + request.error);
                     // On error return the fixed price = base IAP id

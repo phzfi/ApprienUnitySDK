@@ -289,15 +289,6 @@
  <Reference Include="Mock4Net.Core">
  <HintPath>C:/Users/phz/workspace/ApprienUnitySDK/ApprienUnitySDK/Assets/Apprien/Tests/Plugins/Mock4Net.Core.dll</HintPath>
  </Reference>
- <Reference Include="UDP">
- <HintPath>C:/Users/phz/workspace/ApprienUnitySDK/ApprienUnitySDK/Assets/Plugins/UDP/UDP.dll</HintPath>
- </Reference>
- <Reference Include="AppStoreSettings">
- <HintPath>C:/Users/phz/workspace/ApprienUnitySDK/ApprienUnitySDK/Assets/Plugins/UDP/UdpSupport/AppStoreSettings.dll</HintPath>
- </Reference>
- <Reference Include="UDPEditor">
- <HintPath>C:/Users/phz/workspace/ApprienUnitySDK/ApprienUnitySDK/Assets/Plugins/UDP/UdpSupport/Editor/UDPEditor.dll</HintPath>
- </Reference>
  <Reference Include="ChannelPurchase">
  <HintPath>C:/Users/phz/workspace/ApprienUnitySDK/ApprienUnitySDK/Assets/Plugins/UnityChannel/ChannelPurchase.dll</HintPath>
  </Reference>
@@ -318,9 +309,6 @@
  </Reference>
  <Reference Include="FacebookStore">
  <HintPath>C:/Users/phz/workspace/ApprienUnitySDK/ApprienUnitySDK/Assets/Plugins/UnityPurchasing/Bin/Facebook/FacebookStore.dll</HintPath>
- </Reference>
- <Reference Include="Security">
- <HintPath>C:/Users/phz/workspace/ApprienUnitySDK/ApprienUnitySDK/Assets/Plugins/UnityPurchasing/Bin/Security/live/Security.dll</HintPath>
  </Reference>
  <Reference Include="Tizen">
  <HintPath>C:/Users/phz/workspace/ApprienUnitySDK/ApprienUnitySDK/Assets/Plugins/UnityPurchasing/Bin/Tizen/Tizen.dll</HintPath>
