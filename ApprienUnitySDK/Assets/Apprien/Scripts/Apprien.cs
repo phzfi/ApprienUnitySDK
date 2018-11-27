@@ -263,6 +263,7 @@ namespace Apprien
             using(var request = UnityWebRequest.Get(url))
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
+                request.SetRequestHeader("Session-Id", ApprienIdentifier);
                 request.SendWebRequest();
 
                 while (!request.isDone)
