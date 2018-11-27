@@ -229,8 +229,6 @@ namespace ApprienUnitySDK.ExampleProject.Tests
 
             for (var i = 0; i < 3; i++)
             {
-                Debug.Log(_testIAPids[i] + "-variant");
-                Debug.Log(products[i].ApprienVariantIAPId);
                 Assert.AreEqual(_testIAPids[i] + "-variant", products[i].ApprienVariantIAPId);
             }
         }
