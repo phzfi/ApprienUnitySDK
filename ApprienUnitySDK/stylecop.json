@@ -1,0 +1,14 @@
+{
+  "settings": {
+    "indentation": {
+      "indentationSize": 4,
+      "useTabs": false
+    },
+    "documentationRules": {
+      "xmlHeader": false
+    },
+    "orderingRules": {
+      "usingDirectivesPlacement": "preserve"
+    }
+  }
+}

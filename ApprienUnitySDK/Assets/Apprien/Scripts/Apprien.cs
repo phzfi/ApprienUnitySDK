@@ -8,11 +8,27 @@ using UnityEngine.Purchasing;
 namespace Apprien
 {
     /// <summary>
+    /// Defines the available integrations Apprien supports.
+    /// </summary>
+    public enum ApprienIntegrationType
+    {
+        /// <summary>
+        /// Represents Google Play Store integration
+        /// </summary>
+        GooglePlayStore,
+        // Note: Apple App Store integration is not yet possible with Apprien. This feature is coming soon.
+        // AppleAppStore
+    }
+
+    /// <summary>
+    /// <para>
     /// Apprien Unity SDK to optimize IAP prices.
-    ///
+    /// </para>
+    /// <para>
     /// Class Apprien is Plain-old-C#-object -client to the Apprien REST API.
     /// You can use it either with UnityStoreManager, or some other IAP plugin.
-    ///
+    /// </para>
+    /// <para>
     /// Apprien is an automated pricing engine that calculates the optimum
     /// prices by every 15mins in each country. We can typically increase the
     /// revenue and Life Time Value of the game by 20-40%, which makes it easier
@@ -20,39 +36,96 @@ namespace Apprien
     /// 1) acquire more users (spend the money to User Acquisition)
     /// 2) find publishers or financiers
     /// 3) take it easy :)
-    ///
+    /// </para>
+    /// <para>
     /// See more from https://www.apprien.com
     /// API Documentation on https://game.apprien.com
+    /// </para>
     /// </summary>
     public class ApprienManager
     {
+        /// <summary>
+        /// The package name for the game. Usually Application.identifier.
+        /// </summary>
         public string GamePackageName;
+
+        /// <summary>
+        /// OAuth2 token received from Apprien Dashboard.
+        /// </summary>
         public string Token = "TODO acquire token from Apprien Dashboard/support";
+
+        /// <summary>
+        /// Define the store ApprienManager should integrate against, e.g. GooglePlayStore
+        /// </summary>
         public ApprienIntegrationType IntegrationType;
 
-        // Request timeout in seconds
+        /// <summary>
+        /// Request timeout in seconds
+        /// </summary>
         public const int REQUEST_TIMEOUT = 5;
 
-        // Apprien endpoints
+        /// <summary>
+        /// Apprien REST API endpoint for testing the availability of the service
+        /// </summary>
         public string REST_GET_APPRIEN_STATUS = "https://game.apprien.com/status";
-        public string REST_GET_VALIDATE_TOKEN_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/auth";
-        public string REST_GET_ALL_PRICES_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/prices";
-        public string REST_GET_PRICE_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/products/{2}/prices";
-        public string REST_POST_RECEIPT_URL = "https://game.apprien.com/api/v1/receipts";
 
-        public static readonly Dictionary<ApprienIntegrationType, string> IntegrationURI =
+        /// <summary>
+        /// Apprien REST API endpoint for testing the validity of the given token
+        /// </summary>
+        public string REST_GET_VALIDATE_TOKEN_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/auth";
+
+        /// <summary>
+        /// Apprien REST API endpoint for fetching all optimum product variants
+        /// </summary>
+        public string REST_GET_ALL_PRICES_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/prices";
+
+        /// <summary>
+        /// Apprien REST API endpoint for fetching the optimum product variant for a single product
+        /// </summary>
+        public string REST_GET_PRICE_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/products/{2}/prices";
+
+        /// <summary>
+        /// Apprien REST API endpoint for POSTing the receipt json for successful transactions
+        /// </summary>
+        public string REST_POST_RECEIPT_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/receipts";
+
+        /// <summary>
+        /// Dictionary for mapping store names (in Apprien REST API URLs) to ApprienIntegrationType
+        /// </summary>
+        private static readonly Dictionary<ApprienIntegrationType, string> _integrationURI =
             new Dictionary<ApprienIntegrationType, string>() { { ApprienIntegrationType.GooglePlayStore, "google" }, };
 
+        /// <summary>
+        /// Gets the store's string identifier for the currently set ApprienIntegrationType
+        /// </summary>
         public string StoreIdentifier
         {
             get
             {
-                return ApprienManager.IntegrationURI[IntegrationType];
+                return ApprienManager._integrationURI[IntegrationType];
             }
         }
 
         /// <summary>
-        /// Initialize the Apprien SDK. 
+        /// Returns the first byte of MD5-hashed SystemInfo.deviceUniqueIdentifier as string (two symbols).
+        /// The identifier is sent to Apprien Game API 
+        /// </summary>
+        /// <value></value>
+        public string ApprienIdentifier
+        {
+            get
+            {
+                var id = SystemInfo.deviceUniqueIdentifier;
+                var bytes = System.Text.ASCIIEncoding.ASCII.GetBytes(id);
+                var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+                var hash = md5.ComputeHash(bytes);
+                // Take the first byte only and convert it to hex
+                return System.Convert.ToString(hash[0], 16);
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ApprienManager" /> class.
         /// </summary>
         /// <param name="gamePackageName">The package name of the game. Usually Application.identifier</param>
         /// <param name="integrationType">Store integration, e.g. GooglePlayStore, AppleAppStore.</param>
@@ -72,7 +145,7 @@ namespace Apprien
         /// Perform an availability check for the Apprien service and test the validity of the OAuth2 token.
         /// </summary>
         /// <param name="callback">The first parameter is true if Apprien is reachable. The second parameter is true if the provided token is valid</param>
-        /// <returns></returns>
+        /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
         public IEnumerator TestConnection(Action<bool, bool> callback)
         {
             // Check service status and validate the token
@@ -95,7 +168,7 @@ namespace Apprien
         /// <summary>
         /// Check whether Apprien API service is online.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
         public IEnumerator<bool?> CheckServiceStatus()
         {
             var requestSendTimestamp = DateTime.Now;
@@ -133,7 +206,7 @@ namespace Apprien
         /// <summary>
         /// Validates the supplied access token with the Apprien API
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
         public IEnumerator<bool?> CheckTokenValidity()
         {
             var requestSendTimestamp = DateTime.Now;
@@ -171,47 +244,108 @@ namespace Apprien
         }
 
         /// <summary>
+        /// <para>
         /// Fetch all Apprien variant IAP ids with optimum prices.
-        /// 
+        /// </para>
+        /// <para>
         /// Prices are located in the Apprien -generated IAP id variants. Typically
         /// the actual prices are fetched from the Store (Google or Apple) by the
         /// StoreManager by providing the IAP id (or in this case the variant).
+        /// </para>
         /// </summary>
-        /// <param name="products">Array of Apprien.Product instances. After the request completes, the products will contain the Apprien IAP id variant</param>
         /// <param name="callback">Callback that is called when all product variant requests have completed.</param>
-        /// <returns></returns>
-        public IEnumerator FetchApprienPrice(ApprienProduct[] products, Action callback = null)
+        /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
+        public IEnumerator FetchApprienPrices(ApprienProduct[] apprienProducts, Action callback = null)
         {
-            var fetchCoroutines = new List<IEnumerator>();
-            // Send all Apprien requests at once, yield later
-            foreach (var product in products)
-            {
-                fetchCoroutines.Add(FetchApprienPrice(product));
-            }
+            var requestSendTimestamp = DateTime.Now;
+            var url = string.Format(REST_GET_ALL_PRICES_URL, StoreIdentifier, GamePackageName);
 
-            foreach (var coroutine in fetchCoroutines)
+            using(var request = UnityWebRequest.Get(url))
             {
-                while (coroutine.MoveNext())
+                request.SetRequestHeader("Authorization", "Bearer " + Token);
+                request.SetRequestHeader("Session-Id", ApprienIdentifier);
+                request.SendWebRequest();
+
+                while (!request.isDone)
                 {
+                    // Timeout the request and return false
+                    if ((DateTime.Now - requestSendTimestamp).TotalSeconds > REQUEST_TIMEOUT)
+                    {
+                        yield break;
+                    }
+
+                    // Specify that the request is still in progress
                     yield return null;
                 }
-            }
 
-            callback();
+                if (request.isNetworkError || request.isHttpError)
+                {
+                    Debug.Log(request.responseCode + ": " + request.error);
+                    // On error return the fixed price = base IAP id
+                    if (callback != null)
+                    {
+                        callback();
+                    }
+                }
+                else
+                {
+                    if (request.responseCode == 200)
+                    {
+                        // Parse the JSON data and update the variant IAP ids
+                        try
+                        {
+                            // Create lookup to update the products in more linear time
+                            var productLookup = new Dictionary<string, ApprienProduct>();
+                            foreach (var product in apprienProducts)
+                            {
+                                productLookup[product.BaseIAPId] = product;
+                            }
+
+                            var json = request.downloadHandler.text;
+                            var productList = JsonUtility.FromJson<ApprienProductList>(json);
+                            foreach (var product in productList.products)
+                            {
+                                if (productLookup.ContainsKey(product.@base))
+                                {
+                                    productLookup[product.@base].ApprienVariantIAPId = product.variant;
+                                }
+                            }
+                        }
+                        catch { } // If the JSON cannot be parsed, products will be using default IAP ids
+
+                        if (callback != null)
+                        {
+                            callback();
+                        }
+                    }
+                    else
+                    {
+                        // If Apprien returns a non-200 message code, return base IAP id price
+                        Debug.Log("Apprien request error: " + request.responseCode + ". " + request.downloadHandler.text);
+                        if (callback != null)
+                        {
+                            callback();
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
+        /// <para>
         /// Fetch Apprien variant IAP id for the given product.
         /// NOTE: Only use this overload for fetching single products, if required by game/store logic. 
         /// Use the other overload when fetching multiple products, to save on request volume.
-        /// 
+        /// </para>
+        /// <para>>
         /// Prices are located in the Apprien -generated IAP id variants. Typically
         /// the actual prices are fetched from the Store (Google or Apple) by the
         /// StoreManager by providing the IAP id (or in this case the variant).
+        /// </para>
         /// </summary>
-        /// <returns>The Apprien product variant name.</returns>
         /// <param name="product">Apprien.Product instance. After the request completes, will contain the Apprien IAP id variant.</param>
         /// <param name="callback">Callback that is called when the request finishes. Takes string argument, containing the resolved IAP id.</param>
+        /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine.</returns>
         public IEnumerator FetchApprienPrice(ApprienProduct product, Action callback = null)
         {
             var requestSendTimestamp = DateTime.Now;
@@ -220,6 +354,7 @@ namespace Apprien
             using(var request = UnityWebRequest.Get(url))
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
+                request.SetRequestHeader("Session-Id", ApprienIdentifier);
                 request.SendWebRequest();
 
                 while (!request.isDone)
@@ -270,19 +405,24 @@ namespace Apprien
         }
 
         /// <summary>
+        /// <para>
         /// Posts the receipt to Apprien for calculating new prices.
-        /// 
+        /// </para>
+        /// <para>
         /// Passes messages OnApprienPostReceiptSuccess or OnApprienPostReceiptFailed to the given MonoBehaviour.
+        /// </para>
         /// </summary>
-        /// <returns>The receipt.</returns>
         /// <param name="unityComponent">MonoBehaviour, typically 'this'.</param>
         /// <param name="receiptJson"></param>
+        /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine.</returns>
         public IEnumerator PostReceipt(MonoBehaviour unityComponent, string receiptJson)
         {
             var formData = new List<IMultipartFormSection>();
             formData.Add(new MultipartFormDataSection("deal=receipt", receiptJson));
 
-            using(var request = UnityWebRequest.Post(REST_POST_RECEIPT_URL, formData))
+            var url = String.Format(REST_POST_RECEIPT_URL, StoreIdentifier, GamePackageName);
+
+            using(var request = UnityWebRequest.Post(url, formData))
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
                 yield return request.SendWebRequest();
@@ -301,15 +441,19 @@ namespace Apprien
         }
 
         /// <summary>
+        /// <para>
         /// Parses the base IAP id from the Apprien response (variant IAP id)
-        ///
+        /// </para>
+        /// <para>
         /// Variant IAP id is e.g. "z_base_iap_id.apprien_500_dfa3", where 
         /// - the prefix is z_ (2 characters) to sort the IAP ids on store listing to then end
         /// - followed by the base IAP id that can be parsed by splitting the string by the separator ".apprien_"
         /// - followed by the price in cents
         /// - followed by 4 character hash
+        /// </para>
         /// </summary>
         /// <param name="storeIapId">Apprien product IAP id on the Store (Google or Apple) e.g. z_pack2_gold.apprien_399_abcd</param>
+        /// <returns>Returns the base IAP id for the given Apprien variant IAP id.</returns>
         public static string GetBaseIAPId(string storeIAPId)
         {
             // Default result to (base) storeIapId
@@ -383,7 +527,7 @@ namespace Apprien
         /// Does not add any products to the builder.
         /// </summary>
         /// <param name="builder">Reference to a builder containing products.</param>
-        /// <returns></returns>
+        /// <returns>Returns an array of Apprien Products built from the given ConfigurationBuilder object</returns>
         public static ApprienProduct[] FromConfigurationBuilder(ConfigurationBuilder builder)
         {
             var products = new ApprienProduct[builder.products.Count];
@@ -402,7 +546,7 @@ namespace Apprien
         /// Does not alter the catalog
         /// </summary>
         /// <param name="catalog"></param>
-        /// <returns></returns>
+        /// <returns>Returns an array of Apprien Products built from the given ProductCatalog object</returns>
         public static ApprienProduct[] FromIAPCatalog(ProductCatalog catalog)
         {
             var catalogProducts = catalog.allValidProducts;
@@ -427,10 +571,19 @@ namespace Apprien
         }
     }
 
-    public enum ApprienIntegrationType
+    /// <summary>
+    /// Product list class used for parsing JSON.
+    /// </summary>
+    [System.Serializable]
+    public class ApprienProductList
     {
-        GooglePlayStore,
-        // Note: Apple App Store integration is not yet possible with Apprien. This feature is coming soon.
-        // AppleAppStore
+        public List<ApprienProductListProduct> products;
+    }
+
+    [System.Serializable]
+    public class ApprienProductListProduct
+    {
+        public string @base; // @ because base is a keyword
+        public string variant;
     }
 }

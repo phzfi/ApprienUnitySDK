@@ -97,11 +97,11 @@ The provided `.unityPackage` files in Releases are exported for each major Unity
 * [ApprienSDKTest.cs](#appriensdktestcs)
 
 The SDK uses C# `IEnumerator` objects in many of it's classes and methods for asynchronous operation. There are two ways to execute the asynchronous methods correctly:
-1) Using any `MonoBehaviour`'s `StartCoroutine()` method, e.g. `this.StartCoroutine(_apprienManager.FetchApprienPrice(...));`
+1) Using any `MonoBehaviour`'s `StartCoroutine()` method, e.g. `this.StartCoroutine(_apprienManager.FetchApprienPrices(...));`
 2) Advancing the `IEnumerator` manually using `MoveNext()` once per frame:
 (ref: `ApprienConnectionTester.cs`)
 ``` csharp
-_pricesFetch = _apprienManager.FetchApprienPrice(products, () => { });
+_pricesFetch = _apprienManager.FetchApprienPrices(products, () => { });
 
 ...
 // In an update method, or from inside a recurring coroutine
@@ -139,14 +139,14 @@ _apprienManager = new ApprienManager(
 -----
 | | |
 --- | ---
-Method | `IEnumerator FetchApprienPrice(ApprienProduct[] products, Action callback = null)`
+Method | `IEnumerator FetchApprienPrices(ApprienProduct[] products, Action callback = null)`
 | | `IEnumerator FetchApprienPrice(ApprienProduct product, Action callback = null)`
 Description | Main method for fetching IAP ids with optimal prices from Apprien. The first overload fetches all Apprien products using one HTTP request, while the second overload can be used to fetch single products. The former method is recommended if you have multiple products, to keep resource usage and loading times at minimum.
 
 Usage:
 ```csharp
 StartCoroutine(
-    _apprienManager.FetchApprienPrice(
+    _apprienManager.FetchApprienPrices(
         _apprienProducts,
         () =>
         {

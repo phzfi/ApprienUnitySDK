@@ -125,6 +125,29 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                     .WithBody(_defaultIAPid)
                 );
 
+            _mockServer.Given(Requests.WithUrl(
+                    string.Format(
+                        "/api/v1/stores/{0}/games/{1}/prices",
+                        "google",
+                        _gamePackageName
+                    )
+                ).UsingGet().WithHeader("Authorization", "Bearer " + _token))
+                .RespondWith(
+                    Responses
+                    .WithStatusCode(200)
+                    .WithBody(JsonUtility.ToJson(new ApprienProductList
+                    {
+                        products = new List<ApprienProductListProduct>
+                        {
+                            new ApprienProductListProduct { @base = "test-1-id", variant = "test-1-id-variant" },
+                            new ApprienProductListProduct { @base = "test-2-id", variant = "test-2-id-variant" },
+                            new ApprienProductListProduct { @base = "test-3-id", variant = "test-3-id-variant" },
+                            new ApprienProductListProduct { @base = "test-4-id", variant = "test-4-id-variant" },
+                            new ApprienProductListProduct { @base = "test-5-id", variant = "test-5-id-variant" }
+                        }
+                    }))
+                );
+
             // No auth token
             _mockServer.Given(Requests.WithUrl("/api/v1/*").UsingGet())
                 .RespondWith(
@@ -202,7 +225,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             SetupMockServer();
 
             var products = new ApprienProduct[] { GetProduct(0), GetProduct(1), GetProduct(2) };
-            yield return _apprienManager.FetchApprienPrice(products, () => { });
+            yield return _apprienManager.FetchApprienPrices(products, () => { });
 
             for (var i = 0; i < 3; i++)
             {
