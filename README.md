@@ -3,7 +3,7 @@ Apprien Unity SDK is a lightweight client for Apprien Automatic Pricing API for 
 
 It typically takes roughly 2-4h to integrate Apprien Unity SDK with your game.
 
-The minimal compiled footprint of ApprienUnitySDK is roughly 2KB.
+The minimal compiled footprint of ApprienUnitySDK is roughly 16KB.
 
 `Apprien.cs` is a standalone C# class library that uses Apprien Game API. Other files are for Unity Editor integration and unit tests. An example store without purchasing logic is available in `ExampleStoreUIController.cs`
 
