@@ -254,7 +254,7 @@ namespace Apprien
         /// Sends error message when Apprien encounter any problems
         /// </summary>
         /// <param name="responseCode">Http responsecode</param>
-        /// <param name="errorMessage"></param>
+        /// <param name="errorMessage">errorMessage changes depending on the error</param>
         private void SendError(int responseCode, string errorMessage)
         {
             var url = string.Format(REST_POST_ERROR_URL, errorMessage, responseCode, GamePackageName);
