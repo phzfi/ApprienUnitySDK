@@ -90,9 +90,10 @@ namespace Apprien
         public string REST_POST_RECEIPT_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/receipts";
 
         /// <summary>
-        /// Apprien REST API endpoint for POSTing the receipt json for successful transactions
+        /// Apprien REST API endpoint for POSTing error if Apprien encounters a problem
         /// </summary>
         public string REST_POST_ERROR_URL = "https://game.apprien.com/error?message={0}&responseCode={1}&storeGame={2}";
+
         /// <summary>
         /// Dictionary for mapping store names (in Apprien REST API URLs) to ApprienIntegrationType
         /// </summary>
