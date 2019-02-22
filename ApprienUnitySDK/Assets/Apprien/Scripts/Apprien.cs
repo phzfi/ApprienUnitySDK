@@ -198,7 +198,7 @@ namespace Apprien
                 // If there was an error sending the request, or the server returns an error code > 400
                 if (request.isHttpError || request.isNetworkError)
                 {
-                    SendError((int)request.responseCode, "Error occure while checking service status");
+                    SendError((int)request.responseCode, "Error occured while checking service status");
                     yield return false;
                 }
                 else
@@ -237,7 +237,7 @@ namespace Apprien
                 // If there was an error sending the request, or the server returns an error code > 400
                 if (request.isHttpError || request.isNetworkError)
                 {
-                    SendError((int)request.responseCode, "Error occure while checking token validity");
+                    SendError((int)request.responseCode, "Error occured while checking token validity");
                     Debug.Log(request.responseCode);
                     yield return false;
                 }
@@ -302,7 +302,7 @@ namespace Apprien
 
                 if (request.isNetworkError || request.isHttpError)
                 {
-                    SendError((int)request.responseCode, "Error occure while fetching Apprien prices");
+                    SendError((int)request.responseCode, "Error occured while fetching Apprien prices");
                     Debug.Log(request.responseCode + ": " + request.error);
                     // On error return the fixed price = base IAP id
                     if (callback != null)
@@ -344,7 +344,7 @@ namespace Apprien
                     else
                     {
                         // If Apprien returns a non-200 message code, return base IAP id price
-                        SendError((int)request.responseCode, "Error occure while fetching Apprien prices");
+                        SendError((int)request.responseCode, "Error occured while fetching Apprien prices");
                         Debug.Log("Apprien request error: " + request.responseCode + ". " + request.downloadHandler.text);
                         if (callback != null)
                         {
@@ -395,7 +395,7 @@ namespace Apprien
 
                 if (request.isNetworkError || request.isHttpError)
                 {
-                    SendError((int)request.responseCode, "Error occure while fetching Apprien prices");
+                    SendError((int)request.responseCode, "Error occured while fetching Apprien prices");
                     Debug.Log(request.responseCode + ": " + request.error);
                     // On error return the fixed price = base IAP id
                     if (callback != null)
@@ -418,7 +418,7 @@ namespace Apprien
                     else
                     {
                         // If Apprien returns a non-200 message code, return base IAP id price
-                        SendError((int)request.responseCode, "Error occure while fetching Apprien prices");
+                        SendError((int)request.responseCode, "Error occured while fetching Apprien prices");
                         Debug.Log("Apprien request error: " + request.responseCode + ". " + request.downloadHandler.text);
                         if (callback != null)
                         {
@@ -455,7 +455,7 @@ namespace Apprien
 
                 if (request.isNetworkError || request.isHttpError)
                 {
-                    SendError((int)request.responseCode, "Error occure while posting receipt");
+                    SendError((int)request.responseCode, "Error occured while posting receipt");
                     Debug.Log(request.error);
                     unityComponent.SendMessage("OnApprienPostReceiptFailed", request.responseCode + ": " + request.error, SendMessageOptions.DontRequireReceiver);
                 }
