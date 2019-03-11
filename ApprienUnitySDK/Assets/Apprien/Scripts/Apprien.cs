@@ -90,6 +90,11 @@ namespace Apprien
         public string REST_POST_RECEIPT_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/receipts";
 
         /// <summary>
+        /// Apprien REST API endpoint for POSTing the receipt json for successful transactions
+        /// </summary>
+        public string REST_POST_ERROR_URL = "https://game.apprien.com/error?message={0}&responseCode={1}&storeGame={2}";
+
+        /// <summary>
         /// Dictionary for mapping store names (in Apprien REST API URLs) to ApprienIntegrationType
         /// </summary>
         private static readonly Dictionary<ApprienIntegrationType, string> _integrationURI =
@@ -161,7 +166,7 @@ namespace Apprien
             // Inform the calling component that Apprien is online
             if (callback != null)
             {
-                callback((bool) statusCheck.Current, (bool) tokenCheck.Current);
+                callback((bool)statusCheck.Current, (bool)tokenCheck.Current);
             }
         }
 
@@ -172,7 +177,7 @@ namespace Apprien
         public IEnumerator<bool?> CheckServiceStatus()
         {
             var requestSendTimestamp = DateTime.Now;
-            using(var request = UnityWebRequest.Get(REST_GET_APPRIEN_STATUS))
+            using (var request = UnityWebRequest.Get(REST_GET_APPRIEN_STATUS))
             {
                 request.SendWebRequest();
 
@@ -193,6 +198,7 @@ namespace Apprien
                 // If there was an error sending the request, or the server returns an error code > 400
                 if (request.isHttpError || request.isNetworkError)
                 {
+                    SendError((int)request.responseCode, "Error occured while checking service status");
                     yield return false;
                 }
                 else
@@ -211,7 +217,7 @@ namespace Apprien
         {
             var requestSendTimestamp = DateTime.Now;
             var url = string.Format(REST_GET_VALIDATE_TOKEN_URL, StoreIdentifier, GamePackageName);
-            using(var request = UnityWebRequest.Get(url))
+            using (var request = UnityWebRequest.Get(url))
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
                 request.SendWebRequest();
@@ -231,6 +237,7 @@ namespace Apprien
                 // If there was an error sending the request, or the server returns an error code > 400
                 if (request.isHttpError || request.isNetworkError)
                 {
+                    SendError((int)request.responseCode, "Error occured while checking token validity");
                     Debug.Log(request.responseCode);
                     yield return false;
                 }
@@ -240,6 +247,21 @@ namespace Apprien
                     yield return true;
                 }
 
+            }
+        }
+
+        /// <summary>
+        /// Sends error message when Apprien encounter any problems
+        /// </summary>
+        /// <param name="responseCode">Http responsecode</param>
+        /// <param name="errorMessage">errorMessage changes depending on the error</param>
+        private void SendError(int responseCode, string errorMessage)
+        {
+            var url = string.Format(REST_POST_ERROR_URL, errorMessage, responseCode, GamePackageName);
+
+            using (var post = UnityWebRequest.Post(url, ""))
+            {
+                post.SendWebRequest();
             }
         }
 
@@ -260,7 +282,7 @@ namespace Apprien
             var requestSendTimestamp = DateTime.Now;
             var url = string.Format(REST_GET_ALL_PRICES_URL, StoreIdentifier, GamePackageName);
 
-            using(var request = UnityWebRequest.Get(url))
+            using (var request = UnityWebRequest.Get(url))
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
                 request.SetRequestHeader("Session-Id", ApprienIdentifier);
@@ -280,6 +302,7 @@ namespace Apprien
 
                 if (request.isNetworkError || request.isHttpError)
                 {
+                    SendError((int)request.responseCode, "Error occured while fetching Apprien prices");
                     Debug.Log(request.responseCode + ": " + request.error);
                     // On error return the fixed price = base IAP id
                     if (callback != null)
@@ -321,6 +344,7 @@ namespace Apprien
                     else
                     {
                         // If Apprien returns a non-200 message code, return base IAP id price
+                        SendError((int)request.responseCode, "Error occured while fetching Apprien prices");
                         Debug.Log("Apprien request error: " + request.responseCode + ". " + request.downloadHandler.text);
                         if (callback != null)
                         {
@@ -351,7 +375,7 @@ namespace Apprien
             var requestSendTimestamp = DateTime.Now;
             var url = string.Format(REST_GET_PRICE_URL, StoreIdentifier, GamePackageName, product.BaseIAPId);
 
-            using(var request = UnityWebRequest.Get(url))
+            using (var request = UnityWebRequest.Get(url))
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
                 request.SetRequestHeader("Session-Id", ApprienIdentifier);
@@ -371,6 +395,7 @@ namespace Apprien
 
                 if (request.isNetworkError || request.isHttpError)
                 {
+                    SendError((int)request.responseCode, "Error occured while fetching Apprien prices");
                     Debug.Log(request.responseCode + ": " + request.error);
                     // On error return the fixed price = base IAP id
                     if (callback != null)
@@ -393,6 +418,7 @@ namespace Apprien
                     else
                     {
                         // If Apprien returns a non-200 message code, return base IAP id price
+                        SendError((int)request.responseCode, "Error occured while fetching Apprien prices");
                         Debug.Log("Apprien request error: " + request.responseCode + ". " + request.downloadHandler.text);
                         if (callback != null)
                         {
@@ -422,13 +448,14 @@ namespace Apprien
 
             var url = String.Format(REST_POST_RECEIPT_URL, StoreIdentifier, GamePackageName);
 
-            using(var request = UnityWebRequest.Post(url, formData))
+            using (var request = UnityWebRequest.Post(url, formData))
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
                 yield return request.SendWebRequest();
 
                 if (request.isNetworkError || request.isHttpError)
                 {
+                    SendError((int)request.responseCode, "Error occured while posting receipt");
                     Debug.Log(request.error);
                     unityComponent.SendMessage("OnApprienPostReceiptFailed", request.responseCode + ": " + request.error, SendMessageOptions.DontRequireReceiver);
                 }
