@@ -16,8 +16,7 @@ namespace Apprien
         /// Represents Google Play Store integration
         /// </summary>
         GooglePlayStore,
-        // Note: Apple App Store integration is not yet possible with Apprien. This feature is coming soon.
-        // AppleAppStore
+        AppleAppStore
     }
 
     /// <summary>
@@ -92,13 +91,16 @@ namespace Apprien
         /// <summary>
         /// Apprien REST API endpoint for POSTing the receipt json for successful transactions
         /// </summary>
-        public string REST_POST_ERROR_URL = "https://game.apprien.com/error?message={0}&responseCode={1}&storeGame={2}";
+        public string REST_POST_ERROR_URL = "https://game.apprien.com/error?message={0}&responseCode={1}&storeGame={2}&store={3}";
 
         /// <summary>
         /// Dictionary for mapping store names (in Apprien REST API URLs) to ApprienIntegrationType
         /// </summary>
         private static readonly Dictionary<ApprienIntegrationType, string> _integrationURI =
-            new Dictionary<ApprienIntegrationType, string>() { { ApprienIntegrationType.GooglePlayStore, "google" }, };
+            new Dictionary<ApprienIntegrationType, string>() {
+                { ApprienIntegrationType.GooglePlayStore, "google" },
+                { ApprienIntegrationType.AppleAppStore, "apple" },
+            };
 
         /// <summary>
         /// Gets the store's string identifier for the currently set ApprienIntegrationType
@@ -257,7 +259,7 @@ namespace Apprien
         /// <param name="errorMessage">errorMessage changes depending on the error</param>
         private void SendError(int responseCode, string errorMessage)
         {
-            var url = string.Format(REST_POST_ERROR_URL, errorMessage, responseCode, GamePackageName);
+            var url = string.Format(REST_POST_ERROR_URL, errorMessage, responseCode, GamePackageName, StoreIdentifier);
 
             using (var post = UnityWebRequest.Post(url, ""))
             {
