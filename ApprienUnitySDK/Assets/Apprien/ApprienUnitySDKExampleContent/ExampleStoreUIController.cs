@@ -53,7 +53,7 @@ namespace ApprienUnitySDK.ExampleProject
 
 #if UNITY_IOS
 			// TODO: Replace with Apple App Store when the integration is supported.
-			integrationType = ApprienIntegrationType.GooglePlayStore;
+			integrationType = ApprienIntegrationType.AppleAppStore;
 #else
 			integrationType = ApprienIntegrationType.GooglePlayStore;
 #endif
