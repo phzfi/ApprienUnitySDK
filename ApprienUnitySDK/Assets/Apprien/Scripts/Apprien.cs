@@ -97,7 +97,11 @@ namespace Apprien
         /// Dictionary for mapping store names (in Apprien REST API URLs) to ApprienIntegrationType
         /// </summary>
         private static readonly Dictionary<ApprienIntegrationType, string> _integrationURI =
-            new Dictionary<ApprienIntegrationType, string>() { { ApprienIntegrationType.GooglePlayStore, "google" }, };
+            new Dictionary<ApprienIntegrationType, string>()
+            {
+                { ApprienIntegrationType.GooglePlayStore, "google" },
+                { ApprienIntegrationType.AppleAppStore, "apple" },
+            };
 
         /// <summary>
         /// Gets the store's string identifier for the currently set ApprienIntegrationType
