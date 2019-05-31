@@ -181,7 +181,7 @@ namespace Apprien
             var requestSendTimestamp = DateTime.Now;
             using (var request = UnityWebRequest.Get(REST_GET_APPRIEN_STATUS))
             {
-                request.SendWebRequest();
+                SendWebRequest(request);
 
                 while (!request.isDone)
                 {
@@ -198,9 +198,14 @@ namespace Apprien
                 }
 
                 // If there was an error sending the request, or the server returns an error code > 400
-                if (request.isHttpError || request.isNetworkError)
+                if (IsHttpError(request))
                 {
-                    SendError((int)request.responseCode, "Error occured while checking service status");
+                    SendError((int)request.responseCode, "Error occured while checking service status: HTTP error: " + request.downloadHandler.text);
+                    yield return false;
+                }
+                else if (IsNetworkError(request))
+                {
+                    SendError((int)request.responseCode, "Error occured while checking service status: Network error");
                     yield return false;
                 }
                 else
@@ -222,7 +227,7 @@ namespace Apprien
             using (var request = UnityWebRequest.Get(url))
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
-                request.SendWebRequest();
+                SendWebRequest(request);
 
                 while (!request.isDone)
                 {
@@ -237,10 +242,14 @@ namespace Apprien
                     yield return null;
                 }
                 // If there was an error sending the request, or the server returns an error code > 400
-                if (request.isHttpError || request.isNetworkError)
+                if (IsHttpError(request))
                 {
-                    SendError((int)request.responseCode, "Error occured while checking token validity");
-                    Debug.Log(request.responseCode);
+                    SendError((int)request.responseCode, "Error occured while checking token validity: HTTP error: " + request.downloadHandler.text);
+                    yield return false;
+                }
+                else if (IsNetworkError(request))
+                {
+                    SendError((int)request.responseCode, "Error occured while checking token validity: Network error");
                     yield return false;
                 }
                 else
@@ -263,7 +272,7 @@ namespace Apprien
 
             using (var post = UnityWebRequest.Post(url, ""))
             {
-                post.SendWebRequest();
+                SendWebRequest(post);
             }
         }
 
@@ -288,7 +297,7 @@ namespace Apprien
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
                 request.SetRequestHeader("Session-Id", ApprienIdentifier);
-                request.SendWebRequest();
+                SendWebRequest(request);
 
                 while (!request.isDone)
                 {
@@ -302,10 +311,18 @@ namespace Apprien
                     yield return null;
                 }
 
-                if (request.isNetworkError || request.isHttpError)
+                if (IsHttpError(request))
                 {
-                    SendError((int)request.responseCode, "Error occured while fetching Apprien prices");
-                    Debug.Log(request.responseCode + ": " + request.error);
+                    SendError((int)request.responseCode, "Error occured while fetching Apprien prices: HTTP error: " + request.downloadHandler.text);
+                    // On error return the fixed price = base IAP id
+                    if (callback != null)
+                    {
+                        callback();
+                    }
+                }
+                else if (IsNetworkError(request))
+                {
+                    SendError((int)request.responseCode, "Error occured while fetching Apprien prices: Network error");
                     // On error return the fixed price = base IAP id
                     if (callback != null)
                     {
@@ -346,8 +363,7 @@ namespace Apprien
                     else
                     {
                         // If Apprien returns a non-200 message code, return base IAP id price
-                        SendError((int)request.responseCode, "Error occured while fetching Apprien prices");
-                        Debug.Log("Apprien request error: " + request.responseCode + ". " + request.downloadHandler.text);
+                        SendError((int)request.responseCode, "Error occured while fetching Apprien prices. Error: " + request.downloadHandler.text);
                         if (callback != null)
                         {
                             callback();
@@ -381,7 +397,7 @@ namespace Apprien
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
                 request.SetRequestHeader("Session-Id", ApprienIdentifier);
-                request.SendWebRequest();
+                SendWebRequest(request);
 
                 while (!request.isDone)
                 {
@@ -395,10 +411,18 @@ namespace Apprien
                     yield return null;
                 }
 
-                if (request.isNetworkError || request.isHttpError)
+                if (IsHttpError(request))
                 {
-                    SendError((int)request.responseCode, "Error occured while fetching Apprien prices");
-                    Debug.Log(request.responseCode + ": " + request.error);
+                    SendError((int)request.responseCode, "Error occured while fetching Apprien prices. HTTP error: " + request.downloadHandler.text);
+                    // On error return the fixed price = base IAP id
+                    if (callback != null)
+                    {
+                        callback();
+                    }
+                }
+                else if (IsNetworkError(request))
+                {
+                    SendError((int)request.responseCode, "Error occured while fetching Apprien prices. Network error");
                     // On error return the fixed price = base IAP id
                     if (callback != null)
                     {
@@ -453,12 +477,16 @@ namespace Apprien
             using (var request = UnityWebRequest.Post(url, formData))
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
-                yield return request.SendWebRequest();
+                yield return SendWebRequest(request);
 
-                if (request.isNetworkError || request.isHttpError)
+                if (IsHttpError(request))
                 {
-                    SendError((int)request.responseCode, "Error occured while posting receipt");
-                    Debug.Log(request.error);
+                    SendError((int)request.responseCode, "Error occured while posting receipt. HTTP error: " + request.downloadHandler.text);
+                    unityComponent.SendMessage("OnApprienPostReceiptFailed", request.responseCode + ": " + request.error, SendMessageOptions.DontRequireReceiver);
+                }
+                else if (IsNetworkError(request))
+                {
+                    SendError((int)request.responseCode, "Error occured while posting receipt. Network error");
                     unityComponent.SendMessage("OnApprienPostReceiptFailed", request.responseCode + ": " + request.error, SendMessageOptions.DontRequireReceiver);
                 }
                 else
@@ -500,6 +528,36 @@ namespace Apprien
             }
 
             return result;
+        }
+
+#if UNITY_2017_1_OR_NEWER
+        private UnityWebRequestAsyncOperation SendWebRequest(UnityWebRequest request)
+        {
+            return request.SendWebRequest();
+        }
+#elif UNITY_5_6_OR_NEWER
+        private AsyncOperation SendWebRequest(UnityWebRequest request)
+        {
+            return request.Send();
+        }
+#endif
+
+        private bool IsHttpError(UnityWebRequest request)
+        {
+#if UNITY_2017_1_OR_NEWER
+            return request.isHttpError;
+#else
+            return request.responseCode >= 400;
+#endif
+        }
+
+        private bool IsNetworkError(UnityWebRequest request)
+        {
+#if UNITY_2017_1_OR_NEWER
+            return request.isNetworkError;
+#else
+            return request.isError;
+#endif
         }
     }
 
