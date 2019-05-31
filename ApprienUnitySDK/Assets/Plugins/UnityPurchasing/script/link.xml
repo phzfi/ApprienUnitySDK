@@ -4,6 +4,7 @@
     </assembly>
     <assembly fullname="Stores">
         <type fullname="UnityEngine.Purchasing.CloudCatalogImpl" preserve="all"/>
+        <type fullname="UnityEngine.Purchasing.Promo" preserve="all"/>
     </assembly>
     <assembly fullname="mscorlib">
         <type fullname="System.Security.Cryptography.*" preserve="all"/>
