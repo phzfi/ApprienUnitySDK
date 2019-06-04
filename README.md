@@ -41,13 +41,15 @@ Before your game with Apprien integration goes live, Apprien will generate IAP i
 
 You need to integrate ApprienUnitySDK to your current Store Manager. The general overview of the end result is as follows: 
 * When the store is initialized, you have the IAP ids of the products for your game.
-* Before you fetch or show the prices from the store, the IAP ids are passed to the Apprien Game API in a web request, which will respond with one IAP id variant for each product, with optimal pricing. 
+* You initialize an instance of ApprienManager class and wrap your products inside the ApprienProduct instances. See the [relevant part of the API documentation](#class-apprienproduct).
+* Before you fetch the prices from the store, the IAP ids are passed to the Apprien Game API in a web request, which will respond with one IAP id variant for each product, with optimal pricing. The `ApprienProduct` instances that were passed to the relevant API method have been populated with optimized product variants.
 * You fetch the prices from Google and Apple using the `UnityEngine.Purchasing.IStoreListener` interface (or by other means). It is important to fetch prices for all products, both default and those returned from Apprien. If using the ConfigurationBuilder in Unity, it is safer to first add all defaults products to the builder, in case connection issues with Apprien, and only then fetch optimum prices, and initialize the `IStoreListener` (see code samples below in [SDK API documentation](#sdk-api-documentation)).
-* It is important that you send back to Apprien all products that are shown for Apprien to work correctly.
-* You display the same product / reward on the store, but the IAP id is the variant IAP id received from Apprien
+* __It is important that upon displaying the Apprien optimized prices for products to the players, you notify the Apprien API endpoint of these events using the SDK or by other means. Otherwise Apprien will be unable to optimize the pricer for your products. See [API documentation](#sdk-api-documentation) below, specifically `ApprienManager.ProductsShown`.__. This is when the user is displayed with the optimized price, e.g. when the store view is opened and the product is displayed with a price tag.
+* You display the same product / reward on the in-game store, and the IAP id is the variant IAP id received from Apprien.
 * When a user purchases the product, the sale and transaction will be for the Apprien IAP id variant, instead of the fixed price product. The SDK has a failsafe, where any errors or connection problems will return the base IAP id instead, so that the players will be able to purchase products, only with the fixed price.
 * Your Store Manager should refresh the optimal prices every now and then. Apprien updates the price points every 15 minutes. If you only fetch the Apprien-optimized prices during game load, players will not get served the most optimal price.
 
+### System Overview
 ![Apprien SDK process overview](Images/process_overview.png)
 
 See the [SDK API documentation](#sdk-api-documentation) below for code examples on how to use the SDK to fetch the optimal prices. Additionally, `ExampleStoreUIController.cs` shows a minimal example of enabling Apprien dynamic pricing in an abstract store. 
@@ -171,10 +173,14 @@ StartCoroutine(
 | | |
 --- | ---
 Method | `IEnumerator ProductsShown(ApprienProduct[] apprienProducts)`
-Description | Sends Apprien what products are shown.
+Description | Notifies Apprien that the given optimized prices have been presented to the player.
 
 Usage:
 ``` csharp
+// The game has fetched prices for the given products from Google or Apple stores.
+// The prices have been loaded into the UI and the player has seen the price offer for the product.
+// This is an important step for the Apprien price optimizer, without this information
+// the prices cannot be properly optimized
 StartCoroutine(
     _apprienManager.ProductsShown(_apprienProducts);
 );
