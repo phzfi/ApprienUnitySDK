@@ -95,7 +95,6 @@ namespace Apprien
 
         /// <summary>
         /// Apprien REST API endpoint for POSTing a notice to Apprien that product was shown.false
-
         /// </summary>
         public string REST_POST_PRODUCTS_SHOWN_URL = "https://game.apprien.com/api/v1/stores/{0}/shown/products";
 
@@ -526,11 +525,11 @@ namespace Apprien
 
                 if (IsHttpError(request))
                 {
-                    SendError((int)request.responseCode, "Error occured while posting receipt. HTTP error: " + request.downloadHandler.text);
+                    SendError((int)request.responseCode, "Error occured while posting products shown. HTTP error: " + request.downloadHandler.text);
                 }
                 else if (IsNetworkError(request))
                 {
-                    SendError((int)request.responseCode, "Error occured while posting receipt. Network error");
+                    SendError((int)request.responseCode, "Error occured while posting products shown. Network error");
                 }
             }
         }

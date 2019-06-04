@@ -43,6 +43,7 @@ You need to integrate ApprienUnitySDK to your current Store Manager. The general
 * When the store is initialized, you have the IAP ids of the products for your game.
 * Before you fetch or show the prices from the store, the IAP ids are passed to the Apprien Game API in a web request, which will respond with one IAP id variant for each product, with optimal pricing. 
 * You fetch the prices from Google and Apple using the `UnityEngine.Purchasing.IStoreListener` interface (or by other means). It is important to fetch prices for all products, both default and those returned from Apprien. If using the ConfigurationBuilder in Unity, it is safer to first add all defaults products to the builder, in case connection issues with Apprien, and only then fetch optimum prices, and initialize the `IStoreListener` (see code samples below in [SDK API documentation](#sdk-api-documentation)).
+* It is important that you send back to Apprien all products that are shown for Apprien to work correctly.
 * You display the same product / reward on the store, but the IAP id is the variant IAP id received from Apprien
 * When a user purchases the product, the sale and transaction will be for the Apprien IAP id variant, instead of the fixed price product. The SDK has a failsafe, where any errors or connection problems will return the base IAP id instead, so that the players will be able to purchase products, only with the fixed price.
 * Your Store Manager should refresh the optimal prices every now and then. Apprien updates the price points every 15 minutes. If you only fetch the Apprien-optimized prices during game load, players will not get served the most optimal price.
@@ -164,6 +165,18 @@ StartCoroutine(
             UnityPurchasing.Initialize(this, _builder);
         }
     )
+);
+```
+-----
+| | |
+--- | ---
+Method | `IEnumerator ProductsShown(ApprienProduct[] apprienProducts)`
+Description | Sends Apprien what products are shown.
+
+Usage:
+``` csharp
+StartCoroutine(
+    _apprienManager.ProductsShown(_apprienProducts);
 );
 ```
 -----
