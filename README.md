@@ -264,7 +264,7 @@ foreach (var product in Products)
 
 _apprienProducts = ApprienProduct.FromConfigurationBuilder(ConfigurationBuilder builder);
 
-// Fetch the apprien prices and add them to the builder before initizling UnityPurchasing
+// Fetch the apprien prices and add them to the builder before initializing UnityPurchasing
 ```
 -----
 
