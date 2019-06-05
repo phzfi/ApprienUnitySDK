@@ -94,7 +94,7 @@ namespace Apprien
         public string REST_POST_ERROR_URL = "https://game.apprien.com/error?message={0}&responseCode={1}&storeGame={2}&store={3}";
 
         /// <summary>
-        /// Apprien REST API endpoint for POSTing a notice to Apprien that product was shown.false
+        /// Apprien REST API endpoint for POSTing a notice to Apprien that product was shown.
         /// </summary>
         public string REST_POST_PRODUCTS_SHOWN_URL = "https://game.apprien.com/api/v1/stores/{0}/shown/products";
 
