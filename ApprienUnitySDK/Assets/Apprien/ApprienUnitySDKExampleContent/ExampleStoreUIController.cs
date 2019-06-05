@@ -193,7 +193,7 @@ namespace ApprienUnitySDK.ExampleProject
             }
 
             // Tell Apprien that the products were shown
-            _apprienManager.ProductsShown(_apprienProducts);
+            StartCoroutine(_apprienManager.ProductsShown(_apprienProducts));
         }
 
         public void RefreshButtonPressed()
