@@ -94,6 +94,11 @@ namespace Apprien
         public string REST_POST_ERROR_URL = "https://game.apprien.com/error?message={0}&responseCode={1}&storeGame={2}&store={3}";
 
         /// <summary>
+        /// Apprien REST API endpoint for POSTing a notice to Apprien that product was shown.
+        /// </summary>
+        public string REST_POST_PRODUCTS_SHOWN_URL = "https://game.apprien.com/api/v1/stores/{0}/shown/products";
+
+        /// <summary>
         /// Dictionary for mapping store names (in Apprien REST API URLs) to ApprienIntegrationType
         /// </summary>
         private static readonly Dictionary<ApprienIntegrationType, string> _integrationURI =
@@ -495,6 +500,38 @@ namespace Apprien
                 }
             }
 
+        }
+
+        /// <summary>
+        /// Tell Apprien that these products were shown. NOTE: This is needed for Apprien to work correctly.
+        /// </summary>
+        /// <param name="apprienProducts"></param>
+        /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine.</returns>
+        public IEnumerator ProductsShown(ApprienProduct[] apprienProducts)
+        {
+            var formData = new List<IMultipartFormSection>();
+
+            for (var i = 0; i < apprienProducts.Length; i++)
+            {
+                formData.Add(new MultipartFormDataSection("iap_ids[" + i + "]", apprienProducts[i].ApprienVariantIAPId));
+            }
+
+            var url = String.Format(REST_POST_PRODUCTS_SHOWN_URL, StoreIdentifier);
+
+            using (var request = UnityWebRequest.Post(url, formData))
+            {
+                request.SetRequestHeader("Authorization", "Bearer " + Token);
+                yield return SendWebRequest(request);
+
+                if (IsHttpError(request))
+                {
+                    SendError((int)request.responseCode, "Error occured while posting products shown. HTTP error: " + request.downloadHandler.text);
+                }
+                else if (IsNetworkError(request))
+                {
+                    SendError((int)request.responseCode, "Error occured while posting products shown. Network error");
+                }
+            }
         }
 
         /// <summary>
