@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/ExampleContent/StoreExample.unity
+    path: Assets/Apprien/ApprienUnitySDKExampleContent/StoreExample_2018.unity
     guid: 5821c2ff8e31228488d657b37eb7fd2f
   m_configObjects: {}
