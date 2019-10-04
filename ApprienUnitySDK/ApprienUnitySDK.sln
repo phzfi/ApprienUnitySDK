@@ -1,13 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApprienUnitySDK", "Assembly-CSharp-firstpass.csproj", "{D4486734-18BC-EF61-5445-9F6C10BA353E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-firstpass", "Assembly-CSharp-firstpass.csproj", "{D4486734-18BC-EF61-5445-9F6C10BA353E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApprienUnitySDK", "Assembly-CSharp.csproj", "{2274CD60-FF40-FB2E-53FC-379401E41048}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests.csproj", "{70A6E55C-0CB7-616D-4910-61766EC3D0A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApprienUnitySDK", "Assembly-CSharp-Editor-firstpass.csproj", "{E1A7278E-B622-289F-4ECE-B43A8BE02B0B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{2274CD60-FF40-FB2E-53FC-379401E41048}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApprienUnitySDK", "Assembly-CSharp-Editor.csproj", "{FA2ADDEE-30CE-21BB-0C22-68C2FDA53732}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApprienUnitySDK", "ApprienUnitySDK.csproj", "{E06BFC38-530F-745F-51C7-9DB467C09525}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor-firstpass", "Assembly-CSharp-Editor-firstpass.csproj", "{E1A7278E-B622-289F-4ECE-B43A8BE02B0B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "Assembly-CSharp-Editor.csproj", "{FA2ADDEE-30CE-21BB-0C22-68C2FDA53732}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +23,18 @@ Global
 		{D4486734-18BC-EF61-5445-9F6C10BA353E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4486734-18BC-EF61-5445-9F6C10BA353E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4486734-18BC-EF61-5445-9F6C10BA353E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70A6E55C-0CB7-616D-4910-61766EC3D0A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70A6E55C-0CB7-616D-4910-61766EC3D0A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70A6E55C-0CB7-616D-4910-61766EC3D0A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70A6E55C-0CB7-616D-4910-61766EC3D0A2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2274CD60-FF40-FB2E-53FC-379401E41048}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2274CD60-FF40-FB2E-53FC-379401E41048}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2274CD60-FF40-FB2E-53FC-379401E41048}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2274CD60-FF40-FB2E-53FC-379401E41048}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E06BFC38-530F-745F-51C7-9DB467C09525}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E06BFC38-530F-745F-51C7-9DB467C09525}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E06BFC38-530F-745F-51C7-9DB467C09525}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E06BFC38-530F-745F-51C7-9DB467C09525}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E1A7278E-B622-289F-4ECE-B43A8BE02B0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E1A7278E-B622-289F-4ECE-B43A8BE02B0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1A7278E-B622-289F-4ECE-B43A8BE02B0B}.Release|Any CPU.ActiveCfg = Release|Any CPU

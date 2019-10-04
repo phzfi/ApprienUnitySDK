@@ -10,6 +10,13 @@ namespace ApprienUnitySDK.ExampleProject
 {
     public class ExampleStoreUIController : MonoBehaviour, IStoreListener
     {
+        // Internal type used for the demo to distinguish between IAP and subscription view
+        private enum CanvasType
+        {
+            IAPs,
+            Subscriptions
+        }
+
         private ApprienManager _apprienManager;
 
         [SerializeField]
@@ -27,11 +34,18 @@ namespace ApprienUnitySDK.ExampleProject
         [SerializeField]
         private Text[] ApprienPriceSKUTexts;
 
+        [SerializeField]
+        private GameObject _IAPCanvas;
+
+        [SerializeField]
+        private GameObject _subscriptionCanvas;
+
         private IStoreController _storeController;
         private IExtensionProvider _extensionProvider;
 
         private ConfigurationBuilder _builder;
         private ApprienProduct[] _apprienProducts;
+        private CanvasType _currentType = CanvasType.IAPs;
 
         void Awake()
         {
@@ -39,9 +53,13 @@ namespace ApprienUnitySDK.ExampleProject
             {
                 Debug.LogWarning("Token not provided for Apprien SDK. Unable to configure dynamic prices.");
             }
+            InitializeProducts();
+        }
 
-            // Create ApprienProducts from the IAP Catalog
-            var catalogFile = Resources.Load<TextAsset>("ApprienIAPProductCatalog");
+        private void InitializeProducts()
+        {
+            // Create ApprienProducts from the IAP or subscription Catalog
+            var catalogFile = Resources.Load<TextAsset>(_currentType == CanvasType.IAPs ? "ApprienIAPProductCatalog" : "ApprienSubscriptionProductCatalog");
             var catalog = ProductCatalog.FromTextAsset(catalogFile);
             _apprienProducts = ApprienProduct.FromIAPCatalog(catalog);
 
@@ -196,7 +214,7 @@ namespace ApprienUnitySDK.ExampleProject
             StartCoroutine(_apprienManager.ProductsShown(_apprienProducts));
         }
 
-        public void RefreshButtonPressed()
+        private void ResetTexts()
         {
             // Reset prices
             for (var i = 0; i < _apprienProducts.Length; i++)
@@ -207,8 +225,22 @@ namespace ApprienUnitySDK.ExampleProject
                 ApprienPriceTexts[i].text = "Loading...";
                 StandardPriceTexts[i].text = "Loading...";
             }
+        }
 
+        public void RefreshButtonPressed()
+        {
+            ResetTexts();
             FetchPrices();
+        }
+
+        public void SwitchButtonPressed()
+        {
+            _currentType = _currentType == CanvasType.IAPs ? CanvasType.Subscriptions : CanvasType.IAPs;
+            _IAPCanvas.SetActive(_currentType == CanvasType.IAPs);
+            _subscriptionCanvas.SetActive(_currentType == CanvasType.Subscriptions);
+
+            ResetTexts();
+            InitializeProducts();
         }
     }
 }
