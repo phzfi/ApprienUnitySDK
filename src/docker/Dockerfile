@@ -1,0 +1,7 @@
+FROM gableroux/unity3d:5.6.3f1 AS unity5
+
+ARG LICENSE_EMAIL=$LICENSE_EMAIL
+ARG LICENSE_PASSWORD=$LICENSE_PASSWORD
+
+RUN sh /root/project/src/bash/unity5-export-package.sh $LICENSE_EMAIL $LICENSE_PASSWORD
+
