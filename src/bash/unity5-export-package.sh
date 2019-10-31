@@ -1,2 +1,2 @@
 set -x
-/opt/Unity/Editor/Unity -username \'$1\' -password \'$2\' -batchmode -quit -projectPath /root/project/src/ApprienUnitySDK -nographics  -exportPackage Assets/Apprien /root/project/UnityPackages/apprien-unity-sdk-5-6-3.unityPackage
+/opt/Unity/Editor/Unity -username "$LICENSE_EMAIL" -password "$LICENSE_PASSWORD" -batchmode -nographics -quit -logFile /dev/stdout -projectPath /root/project/src/ApprienUnitySDK -exportPackage Assets/Apprien /root/project/UnityPackages/apprien-unity-sdk-5-6-3.unityPackage

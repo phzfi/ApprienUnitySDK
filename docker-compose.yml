@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  unity2017:
+    image: gableroux/unity3d:2017.4.9f1
+    environment:
+      - LICENSE_EMAIL=$EMAIL
+      - LICENSE_PASSWORD=$PASSWORD
+    volumes:
+      - .:/root/project
+      - ../licenses:/root/.local/share/unity3d/Unity
+    command: bash -c "/root/project/src/bash/unity5-export-package.sh"
+    
