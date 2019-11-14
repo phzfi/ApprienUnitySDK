@@ -1,4 +1,37 @@
-## []1.20.1] - 2018-10-5
+## [1.23.0] - 2019-10-16
+### Added
+- UDP - Upgrade to version 1.2.0: new installer to manage previously-installed versions in Project; new UI for UDP Settings window; injection of SDK version information into app manifest; premium game support; user permissions aligned between Unity editor and UDP console; improved security around the transmission of telemetry data (the data you see in your reporting dashboard) between the repacked games and the UDP backend.
+
+### Changed
+- UnityChannel / Xiaomi - Please use Unity Distributation Platform (UDP) for Xiaomi functionality. Removed UnityChannel.unitypackage from installer. Disabled and deprecated related APIs: `UnityEngine.Store`, `IUnityChannelExtensions`, `IUnityChannelConfiguration`.
+- Tizen - NOTICE Tizen Store support will be removed in an upcoming release.
+
+### Fixed
+- Improved installer compatibility with Unity 2018.4 and 2019.x
+
+## [1.22.1] - 2019-08-13
+### Fixed
+- GooglePlay - SubscriptionInfo.getSubscriptionInfo() KeyNotFoundException when parsing receipts which omit expected fields.
+- GooglePlay - IStoreListener.OnInitializeFailed / IStoreCallback.OnSetupFailed should return InitializationFailureReason.AppNotKnown error when user changes password off-device - user must login. Previously erroneously generated infinite error 6 codes when fetching purchase history after password change.
+- OverflowException when initializing if device locale used the comma (“,”) character as decimal separator.
+
+## [1.22.0] - 2019-03-18
+### Added
+- Added Unity Distribution Portal (UDP) module as an Android build target. Unity Distribution Portal streamlines your distribution process. UDP allows you to only build one version of your game, centralize the management of your marketing assets and metadata, and submit your content to multiple app stores, all in the same workflow. For more details, please refer to https://docs.unity3d.com/Packages/com.unity.purchasing.udp@1.0/manual/index.html.
+- Added extension function for Apple store to expose products' sku details
+- Added support for developer to include accountId in getBuyIntentExtraParams, this data helps Google analyze fraud attempts and prevent fraudulent transactions.
+- Added GooglePlay store extension function to support restore purchases.
+- Added GooglePlay store extension function to support consume(finish transaction) a purchase manually.
+
+### Fixed
+- Fixed UWP build errors.
+- Fixed errors when initializing with two purchasing modules on WebGL & Windows Standalone.
+- Fixed not "re-importing required assets" when switching build targets with IAP.
+- Re-enabled Facebook IAP implementation for non-Gameroom Canvas apps.
+- Fixed GooglePlay store consumable products already owned error due to network issues.
+- Fixed wrong product id when cancel a subscription product purchase.
+
+## [1.20.1] - 2018-10-5
 ### Added
 - Added a callback function that allows developers to check the state of the upgrade/downgrade process of subscriptions on GooglePlay.
 
@@ -29,7 +62,7 @@
 ## [1.19.0] - 2018-04-17
 ### Added
 - For GooglePlay store, `developerPayload` has been encoded to base64 string and formatted to a JSON string with two other information of the product. When extract `developerPayload` from the product receipt, firstly decode the json string and get the `developerPayload` field base64 string, secondly decode the base64 string to the original `developerPayload`.
-- `SubscriptionManager` - This new class allows developer to query the purchased subscription product's infomation. (available for AppleStore and GooglePlay store) 
+- `SubscriptionManager` - This new class allows developer to query the purchased subscription product's information. (available for AppleStore and GooglePlay store) 
     - For GooglePlay store, this class can only be used on products purchased using IAP 1.19.0 SDK. Products purchased on previous SDKs do not have the fields in the "developerPayload" that are needed to parse the subscription information.
         - If the "Payload" json string field in the product's json string receipt has a "skuDetails" filed, then this product can use `SubscriptionManager` to get its subscription information.
 - Added the `StoreSpecificPurchaseErrorCode` enum. Currently contains values for all Apple and Google Play error codes that are returned directly from the store.
