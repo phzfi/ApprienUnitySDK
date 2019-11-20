@@ -4,7 +4,6 @@ set -x
 -password "$LICENSE_PASSWORD" \
 -batchmode \
 -nographics \
--quit \
 -logFile /dev/stdout \
 -projectPath /root/project-local/src/ApprienUnitySDK \
 -runEditorTests \
