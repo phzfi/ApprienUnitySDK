@@ -7,7 +7,7 @@ set -x
 -quit \
 -logFile /dev/stdout \
 -projectPath /root/project-local/src/ApprienUnitySDK \
--runTests -testPlatform playmode \
--testResults /root/project-local/testResults.xml
+-runEditorTests \
+-editorTestsResultFile /root/project-local/testResults.xml
 
 cat /root/project-local/testResults.xml
