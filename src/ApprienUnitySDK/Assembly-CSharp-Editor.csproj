@@ -47,7 +47,8 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Apprien\Editor\ApprienConnectionTester.cs" />
-     <None Include="Assets\Apprien\Tests\Plugins\LICENSE.txt" />
+     <Compile Include="Assets\Apprien\Editor\ApprienSDKTest.cs" />
+     <None Include="Assets\Apprien\Editor\Plugins\LICENSE.txt" />
      <None Include="Assets\Apprien\ExampleStoreContent\Fonts\Medula_One\OFL.txt" />
      <None Include="Assets\Apprien\ExampleStoreContent\Fonts\electrolize\OFL.txt" />
      <None Include="Assets\Plugins\UnityPurchasing\script\link.xml" />
@@ -111,6 +112,9 @@
  <Reference Include="UnityEditor.WindowsStandalone.Extensions">
  <HintPath>C:/Program Files/Unity/Hub/Editor/5.6.3f1/Editor/Data/PlaybackEngines/windowsstandalonesupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
  </Reference>
+ <Reference Include="UDP">
+ <HintPath>C:/Users/phz/workspace/ApprienUnitySDK/src/ApprienUnitySDK/Assets/Plugins/UDP/UDP.dll</HintPath>
+ </Reference>
  <Reference Include="Editor">
  <HintPath>C:/Users/phz/workspace/ApprienUnitySDK/src/ApprienUnitySDK/Assets/Plugins/UnityPurchasing/Bin/Editor.dll</HintPath>
  </Reference>
@@ -134,9 +138,6 @@
  </Reference>
  <Reference Include="winrt">
  <HintPath>C:/Users/phz/workspace/ApprienUnitySDK/src/ApprienUnitySDK/Assets/Plugins/UnityPurchasing/winrt/winrt.dll</HintPath>
- </Reference>
- <Reference Include="UDP">
- <HintPath>C:/Users/phz/workspace/ApprienUnitySDK/src/ApprienUnitySDK/Assets/Plugins/UDP/UDP.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>

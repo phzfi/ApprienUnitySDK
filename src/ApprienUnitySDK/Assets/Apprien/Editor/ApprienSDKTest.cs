@@ -14,9 +14,58 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Purchasing;
 using UnityEngine.TestTools;
+using UnityEngine.Purchasing.Extension;
+using System.Collections.ObjectModel;
 
 namespace ApprienUnitySDK.ExampleProject.Tests
 {
+    public class DummyStore : IStore
+    {
+        private IStoreCallback _biller;
+
+        public void Initialize(IStoreCallback callback)
+        {
+            _biller = callback;
+        }
+
+        public void RetrieveProducts(ReadOnlyCollection<ProductDefinition> productDefinitions)
+        {
+            var products = new List<ProductDescription>();
+            foreach (var product in productDefinitions)
+            {
+                var metadata = new ProductMetadata("$123.45", "Fake title for " + product.id, "Fake description", "USD", 123.45m);
+                products.Add(new ProductDescription(product.storeSpecificId, metadata));
+            }
+            _biller.OnProductsRetrieved(products);
+        }
+
+        public void FinishTransaction(ProductDefinition product, string transactionId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Purchase(ProductDefinition product, string developerPayload)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+    public class DummyPurchasingModule : IPurchasingModule
+    {
+        public void Configure(IPurchasingBinder binder)
+        {
+            binder.RegisterStore("DummyStore", InstantiateDummyStore());
+            // Our Purchasing service implementation provides the real implementation.
+            //binder.RegisterExtension<IStoreExtension>(new FakeManufacturerExtensions());
+        }
+
+        public IStore InstantiateDummyStore()
+        {
+            return new DummyStore();
+        }
+
+        public IStoreExtension IManufacturerExtensions() { return null; }
+    }
+
     [TestFixture]
     public class ApprienSDKTest
     {
@@ -63,7 +112,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             _catalog.Add(new ProductCatalogItem() { id = _defaultIAPid, type = ProductType.Consumable });
 
             // Create UnityPurchasing Products
-            _builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
+            _builder = ConfigurationBuilder.Instance(new DummyPurchasingModule());
             _builder.AddProduct(_defaultIAPid, ProductType.Consumable);
 
             foreach (var id in _testIAPids)
@@ -148,6 +197,10 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                     }))
                 );
 
+            _mockServer.Given(Requests.WithUrl("/error")
+                .UsingPost())
+                .RespondWith(Responses.WithStatusCode(200));
+
             // No auth token
             _mockServer.Given(Requests.WithUrl("/api/v1/*").UsingGet())
                 .RespondWith(
@@ -158,6 +211,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             // Assign the URL for mocking Apprien
             _apprienManager.REST_GET_ALL_PRICES_URL = "http://localhost:" + _mockServer.Port + "/api/v1/stores/{0}/games/{1}/prices";
             _apprienManager.REST_GET_PRICE_URL = "http://localhost:" + _mockServer.Port + "/api/v1/stores/{0}/games/{1}/products/{2}/prices";
+            _apprienManager.REST_POST_ERROR_URL = "http://localhost:" + _mockServer.Port + "/error";
         }
 #endif
 
@@ -225,7 +279,13 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             SetupMockServer();
 
             var products = new ApprienProduct[] { GetProduct(0), GetProduct(1), GetProduct(2) };
-            yield return _apprienManager.FetchApprienPrices(products, () => { });
+
+            var fetch = _apprienManager.FetchApprienPrices(products, () => { });
+
+            while (fetch.MoveNext())
+            {
+                yield return null;
+            }
 
             for (var i = 0; i < 3; i++)
             {
@@ -239,7 +299,12 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             SetupMockServer();
 
             var product = GetProduct(0);
-            yield return _apprienManager.FetchApprienPrice(product, () => { });
+
+            var fetch = _apprienManager.FetchApprienPrice(product, () => { });
+            while (fetch.MoveNext())
+            {
+                yield return null;
+            }
 
             Assert.AreEqual(_testIAPids[0] + "-variant", product.ApprienVariantIAPId);
         }
@@ -253,7 +318,11 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             _apprienManager.REST_GET_PRICE_URL = "http://localhost:" + _mockServer.Port + "/api/v0/stores/google/games/{0}/products/{1}/prices";
 
             var product = GetProduct(0);
-            yield return _apprienManager.FetchApprienPrice(product, () => { });
+            var fetch = _apprienManager.FetchApprienPrice(product, () => { });
+            while (fetch.MoveNext())
+            {
+                yield return null;
+            }
 
             Assert.AreEqual(_testIAPids[0], product.ApprienVariantIAPId);
         }
@@ -266,7 +335,11 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             _apprienManager.Token = "another-dummy-token";
 
             var product = GetProduct(0);
-            yield return _apprienManager.FetchApprienPrice(product, () => { });
+            var fetch = _apprienManager.FetchApprienPrice(product, () => { });
+            while (fetch.MoveNext())
+            {
+                yield return null;
+            }
 
             Assert.AreEqual(_testIAPids[0], product.ApprienVariantIAPId);
         }
@@ -278,7 +351,11 @@ namespace ApprienUnitySDK.ExampleProject.Tests
 
             // IAP without a variant
             var product = GetProduct();
-            yield return _apprienManager.FetchApprienPrice(product, () => { });
+            var fetch = _apprienManager.FetchApprienPrice(product, () => { });
+            while (fetch.MoveNext())
+            {
+                yield return null;
+            }
 
             Assert.AreEqual(_defaultIAPid, product.ApprienVariantIAPId);
         }
