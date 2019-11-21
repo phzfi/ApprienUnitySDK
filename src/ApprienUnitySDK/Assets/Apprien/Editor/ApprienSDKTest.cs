@@ -231,6 +231,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         public void _ProductVariantIdShouldDefaultToBaseId()
         {
             Assert.AreEqual(_defaultIAPid, GetProduct(_defaultIAPid).ApprienVariantIAPId);
+            Assert.AreEqual(0, 1); // Test if this breaks CI
         }
 
         [Test]
