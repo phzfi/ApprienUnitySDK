@@ -6,17 +6,8 @@ version: "3"
 # Let a CI system export these files during the build step from a safe credential store, e.g. Jenkins Credentials Plugin
 
 services:
-  # Unity 5 CLI cannot run playmode tests
-  unity2017:
-    image: gableroux/unity3d:2017.4.9f1
-    environment:
-      - LICENSE_EMAIL=$EMAIL
-      - LICENSE_PASSWORD=$PASSWORD
-    volumes:
-      - .:/root/project
-      - ../licenses/2017-4-9f1:/root/.local/share/unity3d/Unity
-    command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-run-tests.sh"
-    
+  # Unity 5 CLI cannot run tests properly
+  # Unity 2017 CLI hangs after running editmode tests
   unity2018:
     image: gableroux/unity3d:2018.4.9f1
     environment:

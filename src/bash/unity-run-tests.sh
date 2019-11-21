@@ -1,4 +1,5 @@
 set -x
+xvfb-run \
 /opt/Unity/Editor/Unity \
 -username "$LICENSE_EMAIL" \
 -password "$LICENSE_PASSWORD" \
