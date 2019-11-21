@@ -10,7 +10,6 @@ set -x
 -exportPackage \
 Assets/Apprien/Editor \
 Assets/Apprien/Scripts \
-Assets/Apprien/Tests \
 Assets/Apprien/ExampleStoreContent/Fonts \
 Assets/Apprien/ExampleStoreContent/Resources \
 Assets/Apprien/ExampleStoreContent/Sprites \
