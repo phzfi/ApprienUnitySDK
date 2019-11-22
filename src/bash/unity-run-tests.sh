@@ -11,3 +11,4 @@ xvfb-run \
 -editorTestsResultFile /root/project-local/testResults.xml
 
 cat /root/project-local/testResults.xml
+exit $(grep failure /root/project-local/testResults.xml | wc -l | tr -d '[:space:]')
