@@ -1,1 +1,0 @@
-Write-Host "Start test.ps1 script"
