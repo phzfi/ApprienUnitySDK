@@ -1,13 +1,11 @@
 # ApprienUnitySDK
 Apprien Unity SDK is a lightweight client for Apprien Automatic Pricing API for mobile game companies using Unity. Apprien increases your In-App Purchases revenue by 20-40% by optimizing the prices by country, time of the day and customer segment.
 
-It typically takes roughly 2-4h to integrate Apprien Unity SDK with your game.
+It typically takes 2-4h to integrate Apprien Unity SDK with your game.
 
 The minimal compiled footprint of ApprienUnitySDK is roughly 16KB.
 
 `Apprien.cs` is a standalone C# class library that uses Apprien Game API. Other files are for Unity Editor integration and unit tests. An example store without purchasing logic is available in `ExampleStoreUIController.cs`
-
-## Features
 
 In case of any network or backend failure, ApprienUnitySDK will always revert to the base IAP ID and show the fixed prices.
 
@@ -17,9 +15,11 @@ You need to obtain an OAuth2 Access Token from Apprien. You also need to setup a
 
 Currently Apprien supports the following platforms
 * Google Play Store
-* Apple App Store (WIP)
 
-Please contact sales@apprien.com to get the integration instructions for different stores.
+Upcoming support on our roadmap
+* Apple App Store
+
+Please contact sales@apprien.com to get the integration instructions for other stores.
 
 Apprien provides your Quality Assurance team generic Apprien Game Testing Documentation and Test Cases on how to detect typical issues with your game and Apprien integration. By incorporating the Test Cases to your game's testing plan, you can ensure that Apprien integration works smoothly for your players.
 
@@ -29,17 +29,19 @@ __1) Acquire the authentication token__ as described above in the [Prerequisites
 
 __2) Open your project__ in a supported Unity version (see [Compatibility Notes](#compatibility-notes) below)
 
-__3) Import Apprien__ 
-  1) You can either use our prepared `.unityPackage` archives available in Releases containing everything required __(recommended)__, or
-  2) Copy `Assets/Apprien/Scripts/Apprien.cs` to your project.
+__3) Import the UnityPurchasing module and implement a store controller__ or use our example controller to get started.
 
-__4) Add integration to your Store Manager__
+__4) Import Apprien__ 
+  1) You can either use our prepared `.unityPackage` archives available in Releases containing everything required __(recommended)__ with an optional example store implementation
+  2) Or copy `Assets/Apprien/Scripts/Apprien.cs` to your project.
 
-(For an example on how Apprien can be integrated with your Store Manager, see `ExampleStoreUIController.cs`.)
+__5) Add integration to your Store controller__
+
+(For an example on how Apprien can be integrated with your Store controller, see `ExampleStoreUIController.cs`.)
 
 Before your game with Apprien integration goes live, Apprien will generate IAP id variants for your IAP products. These variants will contain the same reward, description and other product details, only the price will be different. When the integration is live for your players, Apprien will then map your IAP id to the variant that corresponds with the optimum price.
 
-You need to integrate ApprienUnitySDK to your current Store Manager. The general overview of the end result is as follows: 
+You need to integrate ApprienUnitySDK to your current Store controller. The general overview of the end result is as follows: 
 * When the store is initialized, you have the IAP ids of the products for your game.
 * You initialize an instance of ApprienManager class and wrap your products inside the ApprienProduct instances. See the [relevant part of the API documentation](#class-apprienproduct).
 * Before you fetch the prices from the store, the IAP ids are passed to the Apprien Game API in a web request, which will respond with one IAP id variant for each product, with optimal pricing. The `ApprienProduct` instances that were passed to the relevant API method have been populated with optimized product variants.
@@ -47,7 +49,7 @@ You need to integrate ApprienUnitySDK to your current Store Manager. The general
 * __It is important that upon displaying the Apprien optimized prices for products to the players, you notify the Apprien API endpoint of these events using the SDK or by other means. Otherwise Apprien will be unable to optimize the pricer for your products. See [API documentation](#sdk-api-documentation) below, specifically `ApprienManager.ProductsShown`.__. This is when the user is displayed with the optimized price, e.g. when the store view is opened and the product is displayed with a price tag.
 * You display the same product / reward on the in-game store, and the IAP id is the variant IAP id received from Apprien.
 * When a user purchases the product, the sale and transaction will be for the Apprien IAP id variant, instead of the fixed price product. The SDK has a failsafe, where any errors or connection problems will return the base IAP id instead, so that the players will be able to purchase products, only with the fixed price.
-* Your Store Manager should refresh the optimal prices every now and then. Apprien updates the price points every 15 minutes. If you only fetch the Apprien-optimized prices during game load, players will not get served the most optimal price.
+* Your Store controller should refresh the optimal prices every now and then. Apprien updates the price points every 15 minutes. If you only fetch the Apprien-optimized prices during game load, players will not get served the most optimal price.
 
 ### System Overview
 ![Apprien SDK process overview](Images/process_overview.png)
@@ -58,13 +60,13 @@ Typically the product IAP IDs have been hard-coded somewhere in your game (Scrip
 
 The player should be delivered the same amount of 'goods' (e.g. gems, gold) for the variants as for the base product. You can achieve this by passing the purchased variant IAP id through the static method `ApprienManager.GetBaseIAPId(...)` that converts the variant back to the base IAP id for the delivery of goods.
 
-__5) Receipts (Optional, but recommended)__
+__6) Receipts (Optional, but recommended)__
 
 Apprien requires the data of the purchased transactions to perform the optimal price analysis. Apprien can obtain the transaction history also from Google Play and Apple iTunes, but it takes 24h or more to get the data. A faster way is to send the data straight away to Apprien from the client. This enables the pricing to be updated in real time (or by every 15 mins). For a code sample, see [SDK API documentation](#sdk-api-documentation) below.
 
 Also, if you are using a Store (e.g. Chinese) where Apprien doesn't yet have backend-to-backend integration, you can use client side integration to enable dynamic pricing.
 
-__6) Fraud Management backend (Optional)__
+__7) Fraud Management backend (Optional)__
 
 A few gaming companies are using fraud management backends to verify real purchases from fraudulent ones (sent by hackers). Often the fraud management backends are written in various programming languages such as C#, Java, Node.js, Go, Python or PHP. 
 
@@ -72,7 +74,7 @@ The problem is that the fraud management backend typically refuses the purchases
 
 While we are working to implement adaptations for all commonly used programming languages, you can convert the `GetBaseIAPId()` method from `Apprien.cs` to your preferred language, since it works by using simple string manipulation available for all languages.
 
-__7) Testing__
+__8) Testing__
 
 Please test the integration by following the generic Apprien game test cases.
 
@@ -84,10 +86,13 @@ Provided is also a set of unit tests for the SDK.
 
 The SDK sends a web request to fetch a variant IAP ID that has the current optimal price set in the supported stores. The SDK uses UnityWebRequest for maximal platform support, and thus Unity 4.x and below are not currently supported in the SDK. Unity 4.x users can still access Apprien Game API for optimal prices, but the SDK does not offer a web request interface for 4.x (yet).
 
-Supported Unity versions:
+Officially supported Unity versions:
 * Unity 5.x
 * Unity 2017.x
-* Unity 2018.x and later
+* Unity 2018.x
+* Unity 2019.x
+
+Using the latest available unityPackage might work just fine in newer Unity releases. We aim to support all LTS versions and a mid-year release for the current newest version.
 
 The SDK supports the official `UnityEngine.Purchasing` module for defining products. See the [SDK API documentation](#sdk-api-documentation) below for using the SDK with your product model.
 
