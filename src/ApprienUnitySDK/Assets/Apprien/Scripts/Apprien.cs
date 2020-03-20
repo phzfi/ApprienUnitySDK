@@ -309,6 +309,10 @@ namespace Apprien
                     // Timeout the request and return false
                     if ((DateTime.Now - requestSendTimestamp).TotalSeconds > REQUEST_TIMEOUT)
                     {
+                        if (callback != null)
+                        {
+                            callback();
+                        }
                         yield break;
                     }
 
@@ -319,20 +323,10 @@ namespace Apprien
                 if (IsHttpError(request))
                 {
                     SendError((int)request.responseCode, "Error occured while fetching Apprien prices: HTTP error: " + request.downloadHandler.text);
-                    // On error return the fixed price = base IAP id
-                    if (callback != null)
-                    {
-                        callback();
-                    }
                 }
                 else if (IsNetworkError(request))
                 {
                     SendError((int)request.responseCode, "Error occured while fetching Apprien prices: Network error");
-                    // On error return the fixed price = base IAP id
-                    if (callback != null)
-                    {
-                        callback();
-                    }
                 }
                 else
                 {
@@ -359,21 +353,18 @@ namespace Apprien
                             }
                         }
                         catch { } // If the JSON cannot be parsed, products will be using default IAP ids
-
-                        if (callback != null)
-                        {
-                            callback();
-                        }
                     }
                     else
                     {
                         // If Apprien returns a non-200 message code, return base IAP id price
                         SendError((int)request.responseCode, "Error occured while fetching Apprien prices. Error: " + request.downloadHandler.text);
-                        if (callback != null)
-                        {
-                            callback();
-                        }
                     }
+                }
+
+                // Regardless of the outcome, execute the callback
+                if (callback != null)
+                {
+                    callback();
                 }
             }
         }
@@ -409,6 +400,10 @@ namespace Apprien
                     // Timeout the request and return false
                     if ((DateTime.Now - requestSendTimestamp).TotalSeconds > REQUEST_TIMEOUT)
                     {
+                        if (callback != null)
+                        {
+                            callback();
+                        }
                         yield break;
                     }
 
@@ -419,20 +414,10 @@ namespace Apprien
                 if (IsHttpError(request))
                 {
                     SendError((int)request.responseCode, "Error occured while fetching Apprien prices. HTTP error: " + request.downloadHandler.text);
-                    // On error return the fixed price = base IAP id
-                    if (callback != null)
-                    {
-                        callback();
-                    }
                 }
                 else if (IsNetworkError(request))
                 {
                     SendError((int)request.responseCode, "Error occured while fetching Apprien prices. Network error");
-                    // On error return the fixed price = base IAP id
-                    if (callback != null)
-                    {
-                        callback();
-                    }
                 }
                 else
                 {
@@ -441,21 +426,19 @@ namespace Apprien
                         // Apprien IAP id variant fetched, apply it to the given product and
                         var apprienVariantIAPid = request.downloadHandler.text;
                         product.ApprienVariantIAPId = apprienVariantIAPid;
-                        if (callback != null)
-                        {
-                            callback();
-                        }
                     }
                     else
                     {
                         // If Apprien returns a non-200 message code, return base IAP id price
                         SendError((int)request.responseCode, "Error occured while fetching Apprien prices");
                         Debug.Log("Apprien request error: " + request.responseCode + ". " + request.downloadHandler.text);
-                        if (callback != null)
-                        {
-                            callback();
-                        }
                     }
+                }
+
+                // Regardless of the outcome, execute the callback
+                if (callback != null)
+                {
+                    callback();
                 }
             }
 
