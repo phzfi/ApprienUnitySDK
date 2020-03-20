@@ -16,6 +16,7 @@ using UnityEngine.Purchasing;
 using UnityEngine.TestTools;
 using UnityEngine.Purchasing.Extension;
 using System.Collections.ObjectModel;
+using System;
 
 namespace ApprienUnitySDK.ExampleProject.Tests
 {
@@ -132,7 +133,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             );
         }
 #if NET_4_6 || NET_STANDARD_2_0
-        private void SetupMockServer()
+        private void SetupMockServer(float delaySeconds = 0f)
         {
             // Setup the mock server routes
             // Mock4Net is not very flexible, so we have to do some magic
@@ -157,6 +158,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                         Responses
                         .WithStatusCode(200)
                         .WithBody(id + "-variant")
+                        .AfterDelay(TimeSpan.FromSeconds(delaySeconds))
                     );
             }
 
@@ -172,6 +174,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                     Responses
                     .WithStatusCode(200)
                     .WithBody(_defaultIAPid)
+                    .AfterDelay(TimeSpan.FromSeconds(delaySeconds))
                 );
 
             _mockServer.Given(Requests.WithUrl(
@@ -195,17 +198,23 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                             new ApprienProductListProduct { @base = "test-5-id", variant = "test-5-id-variant" }
                         }
                     }))
+                    .AfterDelay(TimeSpan.FromSeconds(delaySeconds))
                 );
 
             _mockServer.Given(Requests.WithUrl("/error")
                 .UsingPost())
-                .RespondWith(Responses.WithStatusCode(200));
+                .RespondWith(
+                    Responses
+                    .WithStatusCode(200)
+                    .AfterDelay(TimeSpan.FromSeconds(delaySeconds))
+                );
 
             // No auth token
             _mockServer.Given(Requests.WithUrl("/api/v1/*").UsingGet())
                 .RespondWith(
                     Responses
                     .WithStatusCode(403)
+                    .AfterDelay(TimeSpan.FromSeconds(delaySeconds))
                 );
 
             // Assign the URL for mocking Apprien
@@ -358,6 +367,48 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             }
 
             Assert.AreEqual(_defaultIAPid, product.ApprienVariantIAPId);
+        }
+
+        [UnityTest, Timeout(2000)]
+        public IEnumerator FetchingProductsWithDelayShouldSucceed()
+        {
+            SetupMockServer(0.5f);
+
+            var products = new ApprienProduct[] { GetProduct(0), GetProduct(1), GetProduct(2) };
+
+            var fetch = _apprienManager.FetchApprienPrices(products, () => { });
+
+            while (fetch.MoveNext())
+            {
+                yield return null;
+            }
+
+            for (var i = 0; i < 3; i++)
+            {
+                Assert.AreEqual(_testIAPids[i] + "-variant", products[i].ApprienVariantIAPId);
+            }
+        }
+
+        [UnityTest, Timeout(2000)]
+        public IEnumerator FetchingProductsWithLongDelayShouldSucceed()
+        {
+            // Configure the SDK timeout to 1 second, but make the request take 1.5 seconds - non-variant products should be fetched
+            _apprienManager.REQUEST_TIMEOUT = 1f;
+            SetupMockServer(1.5f);
+
+            var products = new ApprienProduct[] { GetProduct(0), GetProduct(1), GetProduct(2) };
+
+            var fetch = _apprienManager.FetchApprienPrices(products, () => { });
+
+            while (fetch.MoveNext())
+            {
+                yield return null;
+            }
+
+            for (var i = 0; i < 3; i++)
+            {
+                Assert.AreEqual(_testIAPids[i], products[i].ApprienVariantIAPId);
+            }
         }
 #endif
 

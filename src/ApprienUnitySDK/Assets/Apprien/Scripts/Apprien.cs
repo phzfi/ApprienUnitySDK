@@ -61,7 +61,7 @@ namespace Apprien
         /// <summary>
         /// Request timeout in seconds
         /// </summary>
-        public const int REQUEST_TIMEOUT = 5;
+        public float REQUEST_TIMEOUT = 5f;
 
         /// <summary>
         /// Apprien REST API endpoint for testing the availability of the service
