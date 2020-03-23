@@ -372,6 +372,9 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         [UnityTest, Timeout(2000)]
         public IEnumerator FetchingProductsWithDelayShouldSucceed()
         {
+            // Configure the SDK timeout to 5 second, but make the request take 0.5 seconds
+            // Variant products should be fetched
+            _apprienManager.REQUEST_TIMEOUT = 5f;
             SetupMockServer(0.5f);
 
             var products = new ApprienProduct[] { GetProduct(0), GetProduct(1), GetProduct(2) };
@@ -392,9 +395,10 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         [UnityTest, Timeout(2000)]
         public IEnumerator FetchingProductsWithLongDelayShouldSucceed()
         {
-            // Configure the SDK timeout to 1 second, but make the request take 1.5 seconds - non-variant products should be fetched
-            _apprienManager.REQUEST_TIMEOUT = 1f;
-            SetupMockServer(1.5f);
+            // Configure the SDK timeout to 0.1 second, but make the request take 0.5 seconds
+            // Non-variant products should be fetched
+            _apprienManager.REQUEST_TIMEOUT = 0.1f;
+            SetupMockServer(0.5f);
 
             var products = new ApprienProduct[] { GetProduct(0), GetProduct(1), GetProduct(2) };
 
