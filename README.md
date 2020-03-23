@@ -333,9 +333,9 @@ See https://game.apprien.com for Game API documentation
 Please contact support@apprien.com or open a ticket on https://support.phz.fi/
 
 ## License
-Apprien is a SaaS service with a separate end user agreement. However, Apprien Unity SDK (this project) is open source, see LICENSE for more information and feel free to contribute!
+Apprien is a SaaS service with a separate end user agreement. However, Apprien Unity SDK (this project) is open source, see LICENSE for more information and feel free to contribute! This source contains third-party licensed content, see appropriate license files included with such content.
 
 Trademark® Apprien
  
-Copyright© Apprien Ltd 2015-2018
+Copyright© Apprien Ltd 2015-2020
 

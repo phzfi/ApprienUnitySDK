@@ -51,6 +51,7 @@
      <Compile Include="Assets\Apprien\Scripts\ApprienConnection.cs" />
      <None Include="Assets\Apprien\Editor\Plugins\LICENSE.txt" />
      <None Include="Assets\Apprien\ExampleStoreContent\Fonts\Medula_One\OFL.txt" />
+     <None Include="Assets\Plugins\license.txt" />
      <None Include="Assets\Apprien\ExampleStoreContent\Fonts\electrolize\OFL.txt" />
      <None Include="Assets\Plugins\UnityPurchasing\script\link.xml" />
      <None Include="Assets\Apprien\ExampleStoreContent\Fonts\monsterrat\SIL Open Font License.txt" />
