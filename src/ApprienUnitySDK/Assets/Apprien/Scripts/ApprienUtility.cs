@@ -46,6 +46,11 @@ namespace Apprien
         /// </summary>
         public static string REST_POST_PRODUCTS_SHOWN_URL = "https://game.apprien.com/api/v1/stores/{0}/shown/products";
 
+        /// <summary>
+        /// Convert the ApprienIntegrationType enum into a resource URI that gets passed to the Apprien backend.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static string GetIntegrationUri(ApprienIntegrationType type)
         {
             switch (type)
