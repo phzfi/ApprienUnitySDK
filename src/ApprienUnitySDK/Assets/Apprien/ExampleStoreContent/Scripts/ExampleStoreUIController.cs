@@ -84,17 +84,6 @@ namespace ApprienUnitySDK.ExampleProject
                 ApprienConnection.Token
             );
 
-            Debug.Log("Checking Apprien status...");
-            // Test the connection. Optional
-            StartCoroutine(
-                _apprienManager.TestConnection(
-                    (connected, valid) =>
-                    {
-                        Debug.Log("Apprien is reachable: " + connected);
-                        Debug.Log("Token is valid: " + valid);
-                    })
-            );
-
             // Add standard IAP ids, so that there is always a fallback if Apprien variants cannot be fetched
             foreach (var product in _apprienProducts)
             {
