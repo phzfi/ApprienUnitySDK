@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.Purchasing;
 
 namespace Apprien
@@ -26,6 +28,16 @@ namespace Apprien
         private bool _anyProducts;
         private List<ApprienProduct> _fetchedProducts;
         private string _catalogResourceName = "IAPProductCatalog";
+
+        /// <summary>
+        /// Apprien REST API endpoint for testing the availability of the service
+        /// </summary>
+        public string REST_GET_APPRIEN_STATUS = "https://game.apprien.com/status";
+
+        /// <summary>
+        /// Apprien REST API endpoint for testing the validity of the given token
+        /// </summary>
+        public string REST_GET_VALIDATE_TOKEN_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/auth";
 
         void OnEnable()
         {
@@ -102,7 +114,7 @@ namespace Apprien
                 var token = _apprienConnection.stringValue;
                 _apprienManager.Token = token;
 
-                _initializeFetch = _apprienManager.TestConnection((available, valid) =>
+                _initializeFetch = TestConnection((available, valid) =>
                 {
                     _fetchingStatus = false;
                     _connectionCheckPressed = true;
@@ -193,5 +205,111 @@ namespace Apprien
 
             EditorGUI.EndDisabledGroup();
         }
+
+        /// <summary>
+        /// Perform an availability check for the Apprien service and test the validity of the token.
+        /// </summary>
+        /// <param name="callback">The first parameter is true if Apprien is reachable. The second parameter is true if the provided token is valid</param>
+        /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
+        public IEnumerator TestConnection(Action<bool, bool> callback)
+        {
+            // Check service status and validate the token
+            var statusCheck = CheckServiceStatus();
+            var tokenCheck = CheckTokenValidity();
+
+            while (statusCheck.MoveNext() || tokenCheck.MoveNext())
+            {
+                yield return null;
+            }
+
+            // The two request IEnumerators will resolve to a boolean value in the end
+            // Inform the calling component that Apprien is online
+            if (callback != null)
+            {
+                callback((bool)statusCheck.Current, (bool)tokenCheck.Current);
+            }
+        }
+
+        /// <summary>
+        /// Check whether Apprien API service is online.
+        /// </summary>
+        /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
+        public IEnumerator<bool?> CheckServiceStatus()
+        {
+            var requestSendTimestamp = DateTime.Now;
+            using (var request = UnityWebRequest.Get(REST_GET_APPRIEN_STATUS))
+            {
+                ApprienUtility.SendWebRequest(request);
+
+                while (!request.isDone)
+                {
+                    // Timeout the request and return false
+                    if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _apprienManager.RequestTimeout)
+                    {
+                        Debug.Log("Timeout reached while checking Apprien status.");
+                        yield return false;
+                        yield break;
+                    }
+
+                    // Specify that the request is still in progress
+                    yield return null;
+                }
+
+                // If there was an error sending the request, or the server returns an error code > 400
+                if (ApprienUtility.IsHttpError(request))
+                {
+                    yield return false;
+                }
+                else if (ApprienUtility.IsNetworkError(request))
+                {
+                    yield return false;
+                }
+
+                // The service is online
+                yield return true;
+            }
+        }
+
+        /// <summary>
+        /// Validates the supplied access token with the Apprien API
+        /// </summary>
+        /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
+        public IEnumerator<bool?> CheckTokenValidity()
+        {
+            var requestSendTimestamp = DateTime.Now;
+            var url = string.Format(REST_GET_VALIDATE_TOKEN_URL, ApprienUtility.GetIntegrationUri(ApprienIntegrationType.GooglePlayStore), Application.identifier);
+            using (var request = UnityWebRequest.Get(url))
+            {
+                request.SetRequestHeader("Authorization", "Bearer " + _apprienManager.Token);
+                ApprienUtility.SendWebRequest(request);
+
+                while (!request.isDone)
+                {
+                    // Timeout the request and return false
+                    if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _apprienManager.RequestTimeout)
+                    {
+                        yield return false;
+                        yield break;
+                    }
+
+                    // Specify that the request is still in progress
+                    yield return null;
+                }
+                // If there was an error sending the request, or the server returns an error code > 400
+                if (ApprienUtility.IsHttpError(request))
+                {
+                    yield return false;
+                }
+                else if (ApprienUtility.IsNetworkError(request))
+                {
+                    yield return false;
+                }
+
+                // The token is valid
+                yield return true;
+
+            }
+        }
+
     }
 }

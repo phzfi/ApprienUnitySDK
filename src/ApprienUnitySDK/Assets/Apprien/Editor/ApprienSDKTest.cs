@@ -218,9 +218,9 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                 );
 
             // Assign the URL for mocking Apprien
-            _apprienManager.REST_GET_ALL_PRICES_URL = "http://localhost:" + _mockServer.Port + "/api/v1/stores/{0}/games/{1}/prices";
-            _apprienManager.REST_GET_PRICE_URL = "http://localhost:" + _mockServer.Port + "/api/v1/stores/{0}/games/{1}/products/{2}/prices";
-            _apprienManager.REST_POST_ERROR_URL = "http://localhost:" + _mockServer.Port + "/error";
+            ApprienUtility.REST_GET_ALL_PRICES_URL = "http://localhost:" + _mockServer.Port + "/api/v1/stores/{0}/games/{1}/prices";
+            ApprienUtility.REST_GET_PRICE_URL = "http://localhost:" + _mockServer.Port + "/api/v1/stores/{0}/games/{1}/products/{2}/prices";
+            ApprienUtility.REST_POST_ERROR_URL = "http://localhost:" + _mockServer.Port + "/error";
         }
 #endif
 
@@ -248,12 +248,12 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             var iapId = "z_base_iap_id.apprien_500_dfa3";
             var expected = "base_iap_id";
 
-            Assert.AreEqual(expected, ApprienManager.GetBaseIAPId(iapId));
+            Assert.AreEqual(expected, ApprienUtility.GetBaseIAPId(iapId));
 
             iapId = "z_loadout_bordkanone_37.apprien_1099_2wkh";
             expected = "loadout_bordkanone_37";
 
-            Assert.AreEqual(expected, ApprienManager.GetBaseIAPId(iapId));
+            Assert.AreEqual(expected, ApprienUtility.GetBaseIAPId(iapId));
         }
 
         [Test]
@@ -324,7 +324,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             SetupMockServer();
 
             // Bad URL, v0
-            _apprienManager.REST_GET_PRICE_URL = "http://localhost:" + _mockServer.Port + "/api/v0/stores/google/games/{0}/products/{1}/prices";
+            ApprienUtility.REST_GET_PRICE_URL = "http://localhost:" + _mockServer.Port + "/api/v0/stores/google/games/{0}/products/{1}/prices";
 
             var product = GetProduct(0);
             var fetch = _apprienManager.FetchApprienPrice(product, () => { });
@@ -374,7 +374,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         {
             // Configure the SDK timeout to 5 second, but make the request take 0.5 seconds
             // Variant products should be fetched
-            _apprienManager.REQUEST_TIMEOUT = 5f;
+            _apprienManager.RequestTimeout = 5f;
             SetupMockServer(0.5f);
 
             var products = new ApprienProduct[] { GetProduct(0), GetProduct(1), GetProduct(2) };
@@ -397,7 +397,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         {
             // Configure the SDK timeout to 0.1 second, but make the request take 0.5 seconds
             // Non-variant products should be fetched
-            _apprienManager.REQUEST_TIMEOUT = 0.1f;
+            _apprienManager.RequestTimeout = 0.1f;
             SetupMockServer(0.5f);
 
             var products = new ApprienProduct[] { GetProduct(0), GetProduct(1), GetProduct(2) };
