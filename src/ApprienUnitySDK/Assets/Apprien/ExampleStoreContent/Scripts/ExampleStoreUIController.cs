@@ -19,12 +19,17 @@ namespace ApprienUnitySDK.ExampleProject
 
         private ApprienManager _apprienManager;
 
+        [Space]
         [Header("References")]
         [SerializeField] private ApprienConnection ApprienConnection = default;
+
+        [Space]
         [SerializeField] private Text[] StandardPriceTexts = default;
         [SerializeField] private Text[] StandardPriceSKUTexts = default;
         [SerializeField] private Text[] ApprienPriceTexts = default;
         [SerializeField] private Text[] ApprienPriceSKUTexts = default;
+
+        [Space]
         [SerializeField] private GameObject _IAPCanvas = default;
         [SerializeField] private GameObject _subscriptionCanvas = default;
 
