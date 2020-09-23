@@ -5,7 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Apprien/ExampleStoreContent/Scenes/2018-4-9f1/StoreExample_2018.unity
     guid: 5821c2ff8e31228488d657b37eb7fd2f
+  - enabled: 1
+    path: Assets/Apprien/ExampleStoreContent/Scenes/2019-2-11f1/StoreExample_2019.unity
+    guid: a89f2c837670ce547b58aab6acc03f6d
   m_configObjects: {}
