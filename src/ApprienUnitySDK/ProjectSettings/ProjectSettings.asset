@@ -260,7 +260,7 @@ PlayerSettings:
   AndroidTargetArchitectures: 3
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: C:/Users/phz/workspace/ApprienUnitySDK_Keystore/.keystore
+  AndroidKeystoreName: /Users/phz/workspace/AprienUnitySDK_keystore/.keystore.keystore
   AndroidKeyaliasName: phz
   AndroidBuildApkPerCpuArchitecture: 0
   AndroidTVCompatibility: 1

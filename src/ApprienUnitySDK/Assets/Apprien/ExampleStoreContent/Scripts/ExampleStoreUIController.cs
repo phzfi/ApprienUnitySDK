@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using Apprien;
 using UnityEngine;
@@ -8,6 +8,7 @@ using UnityEngine.UI;
 // Partial code from https://unity3d.com/learn/tutorials/topics/ads-analytics/integrating-unity-iap-your-game
 namespace ApprienUnitySDK.ExampleProject
 {
+
     public class ExampleStoreUIController : MonoBehaviour, IStoreListener
     {
         // Internal type used for the demo to distinguish between IAP and subscription view
@@ -33,6 +34,11 @@ namespace ApprienUnitySDK.ExampleProject
         [SerializeField] private GameObject _IAPCanvas = default;
         [SerializeField] private GameObject _subscriptionCanvas = default;
 
+        [Space]
+        [Header("Debug")]
+        [SerializeField] private ExampleStoreDebug_UI _exampleStoreDebug = default;
+        [SerializeField] private ExampleStorePriceOfflineController _exampleStorePriceOfflineController = default;
+
         private IStoreController _storeController;
         private IExtensionProvider _extensionProvider;
 
@@ -40,7 +46,7 @@ namespace ApprienUnitySDK.ExampleProject
         private ApprienProduct[] _apprienProducts;
         private CanvasType _currentType = CanvasType.IAPs;
 
-        void Awake()
+        private void Awake()
         {
             if (ApprienConnection == null || ApprienConnection.Token.Length == 0)
             {
@@ -77,18 +83,22 @@ namespace ApprienUnitySDK.ExampleProject
                 ApprienConnection.Token
             );
 
-            Debug.Log("Checking Apprien status...");
-            // Test the connection. Optional
-            StartCoroutine(
-                _apprienManager.TestConnection(
-                    (connected, valid) =>
-                    {
-                        Debug.Log("Apprien is reachable: " + connected);
-                        Debug.Log("Token is valid: " + valid);
-                    })
-            );
+            _exampleStoreDebug.DebugApprienStatus("Checking Apprien status...", Color.black);
 
-            // Add standard IAP ids, so that there is always a fallback if Apprien variants cannot be fetched
+            // Test the connection. Optional
+            TestConnection(
+                () =>
+                {
+                    _exampleStoreDebug.DebugApprienStatus("Connection: SUCCESS", Color.green);
+
+                },
+                () =>
+                {
+                    _exampleStoreDebug.DebugApprienStatus("Connection: FAILED", Color.red);
+
+                });
+
+             // Add standard IAP ids, so that there is always a fallback if Apprien variants cannot be fetched
             foreach (var product in _apprienProducts)
             {
                 _builder.AddProduct(product.BaseIAPId, product.ProductType);
@@ -97,11 +107,30 @@ namespace ApprienUnitySDK.ExampleProject
             FetchPrices();
         }
 
+        private void TestConnection(Action OnSuccess, Action OnFailed)
+        {
+            StartCoroutine(
+                _apprienManager.TestConnection(
+                    (connected, valid) =>
+                    {
+                        if (connected && valid)
+                        {
+                            OnSuccess();
+                        }
+                        else
+                        {
+                            OnFailed();
+                        }
+                    }));
+        }
+
         /// <summary>
         /// Fetch Apprien variant IAP ids and re-initialize UnityPurchasing
         /// </summary>
         private void FetchPrices()
         {
+            _exampleStoreDebug.DebugMessage("Fetching prices...", Color.black);
+
             // Update the products with Apprien IAP ids
             StartCoroutine(
                 _apprienManager.FetchApprienPrices(
@@ -120,6 +149,7 @@ namespace ApprienUnitySDK.ExampleProject
 
                         // Initialize UnityPurchasing with the fetched IAP ids
                         UnityPurchasing.Initialize(this, _builder);
+                        _exampleStoreDebug.DebugMessage("Done!", Color.black);
                     }
                 )
             );
@@ -185,26 +215,37 @@ namespace ApprienUnitySDK.ExampleProject
         /// </summary>
         public void RefreshUI()
         {
-            var iapProducts = _storeController.products;
-            for (var i = 0; i < _apprienProducts.Length; i++)
-            {
-                var apprienProduct = _apprienProducts[i];
-                var iapApprienProduct = iapProducts.WithID(apprienProduct.ApprienVariantIAPId);
-                var iapStandardProduct = iapProducts.WithID(apprienProduct.BaseIAPId);
+            TestConnection(
+                () =>
+                {
+                    _exampleStoreDebug.DebugMessage("CONNECTECTION OK!", Color.green);
 
-                var apprienPrice = iapApprienProduct.metadata.localizedPriceString;
-                var standardPrice = iapStandardProduct.metadata.localizedPriceString;
+                    var iapProducts = _storeController.products;
+                    for (var i = 0; i < _apprienProducts.Length; i++)
+                    {
+                        var apprienProduct = _apprienProducts[i];
+                        var iapApprienProduct = iapProducts.WithID(apprienProduct.ApprienVariantIAPId);
+                        var iapStandardProduct = iapProducts.WithID(apprienProduct.BaseIAPId);
 
-                StandardPriceTexts[i].text = standardPrice;
-                ApprienPriceTexts[i].text = apprienPrice;
+                        var apprienPrice = iapApprienProduct.metadata.localizedPriceString;
+                        var standardPrice = iapStandardProduct.metadata.localizedPriceString;
 
-                // Update the Apprien IAP ids to text
+                        StandardPriceTexts[i].text = standardPrice;
+                        ApprienPriceTexts[i].text = apprienPrice;
 
-                ApprienPriceSKUTexts[i].text = apprienProduct.ApprienVariantIAPId;
-            }
+                        // Update the Apprien IAP ids to text
 
-            // Tell Apprien that the products were shown
-            StartCoroutine(_apprienManager.ProductsShown(_apprienProducts));
+                        ApprienPriceSKUTexts[i].text = apprienProduct.ApprienVariantIAPId;
+
+
+                        // Tell Apprien that the products were shown
+                        StartCoroutine(_apprienManager.ProductsShown(_apprienProducts));
+                    }
+                },
+                () =>
+                {
+                    _exampleStoreDebug.DebugMessage("SET DEFAULT PRODUCTS!", Color.red);
+                });
         }
 
         private void ResetTexts()
@@ -222,8 +263,18 @@ namespace ApprienUnitySDK.ExampleProject
 
         public void RefreshButtonPressed()
         {
-            ResetTexts();
-            FetchPrices();
+            TestConnection(
+            () =>
+            {
+                ResetTexts();
+                FetchPrices();
+            },
+            () =>
+            {
+                _exampleStoreDebug.DebugMessage("SET DEFAULT PRODUCTS!", Color.red);
+
+                
+            });
         }
 
         public void SwitchButtonPressed()
