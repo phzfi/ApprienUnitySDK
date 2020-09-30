@@ -2,7 +2,7 @@
 
 namespace ApprienUnitySDK.ExampleProject
 {
-    public class ExampleStorePriceOfflineController : MonoBehaviour
+    public class ExampleStoreOfflineProductController : MonoBehaviour
     {
         [SerializeField] private ExampleStoreOfflineProduct[] _standardIAPs = new ExampleStoreOfflineProduct[3];
         [SerializeField] private ExampleStoreOfflineProduct[] _apprienIAPs = new ExampleStoreOfflineProduct[3];

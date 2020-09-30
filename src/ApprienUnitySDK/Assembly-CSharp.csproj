@@ -65,7 +65,7 @@
   <ItemGroup>
     <Compile Include="Assets\Apprien\ExampleStoreContent\Scripts\ExampleStoreDebug_UI.cs" />
     <Compile Include="Assets\Apprien\ExampleStoreContent\Scripts\ExampleStoreOfflineProduct.cs" />
-    <Compile Include="Assets\Apprien\ExampleStoreContent\Scripts\ExampleStorePriceOfflineController.cs" />
+    <Compile Include="Assets\Apprien\ExampleStoreContent\Scripts\ExampleStoreOfflineProductController.cs" />
     <Compile Include="Assets\Apprien\ExampleStoreContent\Scripts\ExampleStoreUIController.cs" />
     <None Include="Assets\Apprien\ExampleStoreContent\Fonts\Medula_One\OFL.txt" />
     <None Include="Assets\Apprien\ExampleStoreContent\Fonts\electrolize\OFL.txt" />
