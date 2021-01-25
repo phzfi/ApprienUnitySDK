@@ -1,4 +1,4 @@
-#if UNITY_PURCHASING
+#if UNITY_PURCHASING || UNITY_UNIFIED_IAP
 
 #if UNITY_ANDROID || UNITY_IPHONE || UNITY_STANDALONE_OSX || UNITY_TVOS
 // You must obfuscate your secrets using Window > Unity IAP > Receipt Validation Obfuscator
@@ -10,7 +10,7 @@
 //#define USE_PAYOUTS // Enables use of PayoutDefinitions to specify what the player should receive when a product is purchased
 //#define INTERCEPT_PROMOTIONAL_PURCHASES // Enables intercepting promotional purchases that come directly from the Apple App Store
 //#define SUBSCRIPTION_MANAGER //Enables subscription product manager for AppleStore and GooglePlay store
-
+//#define AGGRESSIVE_INTERRUPT_RECOVERY_GOOGLEPLAY // Enables also using getPurchaseHistory to recover from purchase interruptions, assuming developer is deduplicating to protect against "duplicate on cancel" flow
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -33,7 +33,6 @@ public class IAPDemo : MonoBehaviour, IStoreListener
     private IStoreController m_Controller;
 
     private IAppleExtensions m_AppleExtensions;
-    private IMoolahExtension m_MoolahExtensions;
     private ISamsungAppsExtensions m_SamsungExtensions;
     private IMicrosoftExtensions m_MicrosoftExtensions;
     private ITransactionHistoryExtensions m_TransactionHistoryExtensions;
@@ -43,7 +42,6 @@ public class IAPDemo : MonoBehaviour, IStoreListener
     private bool m_IsGooglePlayStoreSelected;
 #pragma warning restore 0414
     private bool m_IsSamsungAppsStoreSelected;
-    private bool m_IsCloudMoolahStoreSelected;
 
     private bool m_PurchaseInProgress;
 
@@ -68,7 +66,6 @@ public class IAPDemo : MonoBehaviour, IStoreListener
         m_Controller = controller;
         m_AppleExtensions = extensions.GetExtension<IAppleExtensions>();
         m_SamsungExtensions = extensions.GetExtension<ISamsungAppsExtensions>();
-        m_MoolahExtensions = extensions.GetExtension<IMoolahExtension>();
         m_MicrosoftExtensions = extensions.GetExtension<IMicrosoftExtensions>();
         m_TransactionHistoryExtensions = extensions.GetExtension<ITransactionHistoryExtensions>();
         m_GooglePlayStoreExtensions = extensions.GetExtension<IGooglePlayStoreExtensions>();
@@ -292,6 +289,11 @@ public class IAPDemo : MonoBehaviour, IStoreListener
 			UpdateProductPendingUI (p, remaining);
 		}
 
+        if (m_IsGooglePlayStoreSelected)
+        {
+            Debug.Log("Is " + p.definition.id + " currently owned, according to the Google Play store? "
+                      + m_GooglePlayStoreExtensions.IsOwned(p));
+        }
         Debug.Log("Confirming purchase of " + p.definition.id);
         m_Controller.ConfirmPendingPurchase(p);
         m_PendingProducts.Remove(p.definition.id);
@@ -354,20 +356,18 @@ public class IAPDemo : MonoBehaviour, IStoreListener
         m_IsGooglePlayStoreSelected =
             Application.platform == RuntimePlatform.Android && module.appStore == AppStore.GooglePlay;
 
-        // CloudMoolah Configuration setings
-        // All games must set the configuration. the configuration need to apply on the CloudMoolah Portal.
-        // CloudMoolah APP Key
-        builder.Configure<IMoolahConfiguration>().appKey = "d93f4564c41d463ed3d3cd207594ee1b";
-        // CloudMoolah Hash Key
-        builder.Configure<IMoolahConfiguration>().hashKey = "cc";
-        // This enables the CloudMoolah test mode for local testing.
-        // You would remove this, or set to CloudMoolahMode.Production, before building your release package.
-        builder.Configure<IMoolahConfiguration>().SetMode(CloudMoolahMode.AlwaysSucceed);
-        // This records whether we are using Cloud Moolah IAP.
-        // Cloud Moolah requires logging in to access your Digital Wallet, so:
-        // A) IAPDemo (this) displays the Cloud Moolah GUI button for Cloud Moolah
-        m_IsCloudMoolahStoreSelected =
-            Application.platform == RuntimePlatform.Android && module.appStore == AppStore.CloudMoolah;
+#if AGGRESSIVE_INTERRUPT_RECOVERY_GOOGLEPLAY
+        // For GooglePlay, if we have access to a backend server to deduplicate purchases, query purchase history
+        // when attempting to recover from a network-interruption encountered during purchasing. Strongly recommend
+        // deduplicating transactions across app reinstallations because this relies upon the on-device, deletable
+        // TransactionLog database.
+        builder.Configure<IGooglePlayConfiguration>().aggressivelyRecoverLostPurchases = true;
+        // Use purchaseToken instead of orderId for all transactions to avoid non-unique transactionIDs for a
+        // single purchase; two ProcessPurchase calls for one purchase, differing only by which field of the receipt
+        // is used for the Product.transactionID. Automatically true if aggressivelyRecoverLostPurchases is enabled
+        // and this API is not called at all.
+        builder.Configure<IGooglePlayConfiguration>().UsePurchaseTokenForTransactionId(true);
+#endif
 
         // Define our products.
         // Either use the Unity IAP Catalog, or manually use the ConfigurationBuilder.AddProduct API.
@@ -403,8 +403,6 @@ public class IAPDemo : MonoBehaviour, IStoreListener
         builder.AddProduct("100.gold.coins", ProductType.Consumable, new IDs
             {
                 {"com.unity3d.unityiap.unityiapdemo.100goldcoins.7", MacAppStore.Name},
-                {"000000596586", TizenStore.Name},
-                {"com.ff", MoolahAppStore.Name},
                 {"100.gold.coins", AmazonApps.Name},
                 {"100.gold.coins", AppleAppStore.Name}
             }
@@ -419,8 +417,6 @@ public class IAPDemo : MonoBehaviour, IStoreListener
         builder.AddProduct("500.gold.coins", ProductType.Consumable, new IDs
             {
                 {"com.unity3d.unityiap.unityiapdemo.500goldcoins.7", MacAppStore.Name},
-                {"000000596581", TizenStore.Name},
-                {"com.ee", MoolahAppStore.Name},
                 {"500.gold.coins", AmazonApps.Name},
             }
 #if USE_PAYOUTS
@@ -461,10 +457,6 @@ public class IAPDemo : MonoBehaviour, IStoreListener
         // B) IAPDemo (this) displays the "Restore" GUI button for Samsung Galaxy Apps
         m_IsSamsungAppsStoreSelected =
             Application.platform == RuntimePlatform.Android && module.appStore == AppStore.SamsungApps;
-
-        // This selects the GroupId that was created in the Tizen Store for this set of products
-        // An empty or non-matching GroupId here will result in no products available for purchase
-        builder.Configure<ITizenStoreConfiguration>().SetGroupId("100000085616");
 
 #if INTERCEPT_PROMOTIONAL_PURCHASES
         // On iOS and tvOS we can intercept promotional purchases that come directly from the App Store.
@@ -578,19 +570,7 @@ public class IAPDemo : MonoBehaviour, IStoreListener
 
     public void RestoreButtonClick()
     {
-        if (m_IsCloudMoolahStoreSelected)
-        {
-            // Restore abnornal transaction identifer, if Client don't receive transaction identifer.
-            m_MoolahExtensions.RestoreTransactionID((RestoreTransactionIDState restoreTransactionIDState) =>
-            {
-                Debug.Log("restoreTransactionIDState = " + restoreTransactionIDState.ToString());
-                bool success =
-                    restoreTransactionIDState != RestoreTransactionIDState.RestoreFailed &&
-                    restoreTransactionIDState != RestoreTransactionIDState.NotKnown;
-                OnTransactionsRestored(success);
-            });
-        }
-        else if (m_IsSamsungAppsStoreSelected)
+        if (m_IsSamsungAppsStoreSelected)
         {
             m_SamsungExtensions.RestoreTransactions(OnTransactionsRestored);
         }
@@ -668,8 +648,7 @@ public class IAPDemo : MonoBehaviour, IStoreListener
                Application.platform == RuntimePlatform.WSAPlayerX86 ||
                Application.platform == RuntimePlatform.WSAPlayerX64 ||
                Application.platform == RuntimePlatform.WSAPlayerARM ||
-               m_IsSamsungAppsStoreSelected ||
-               m_IsCloudMoolahStoreSelected;
+               m_IsSamsungAppsStoreSelected;
     }
 
     private void LogProductDefinitions()

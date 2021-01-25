@@ -1,41 +1,33 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApprienUnitySDK", "Assembly-CSharp-firstpass.csproj", "{D4486734-18BC-EF61-5445-9F6C10BA353E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-firstpass", "Assembly-CSharp-firstpass.csproj", "{346748d4-bc18-61ef-5445-9f6c10ba353e}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApprienUnitySDK", "Assembly-CSharp.csproj", "{2274CD60-FF40-FB2E-53FC-379401E41048}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{60cd7422-40ff-2efb-53fc-379401e41048}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApprienUnitySDK", "Assembly-CSharp-Editor-firstpass.csproj", "{E1A7278E-B622-289F-4ECE-B43A8BE02B0B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApprienUnitySDK", "ApprienUnitySDK.csproj", "{38fc6be0-0f53-5f74-51c7-9db467c09525}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApprienUnitySDK", "Assembly-CSharp-Editor.csproj", "{FA2ADDEE-30CE-21BB-0C22-68C2FDA53732}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor-firstpass", "Assembly-CSharp-Editor-firstpass.csproj", "{8e27a7e1-22b6-9f28-4ece-b43a8be02b0b}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "Assembly-CSharp-Editor.csproj", "{eedd2afa-ce30-bb21-0c22-68c2fda53732}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D4486734-18BC-EF61-5445-9F6C10BA353E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D4486734-18BC-EF61-5445-9F6C10BA353E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D4486734-18BC-EF61-5445-9F6C10BA353E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D4486734-18BC-EF61-5445-9F6C10BA353E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2274CD60-FF40-FB2E-53FC-379401E41048}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2274CD60-FF40-FB2E-53FC-379401E41048}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2274CD60-FF40-FB2E-53FC-379401E41048}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2274CD60-FF40-FB2E-53FC-379401E41048}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E1A7278E-B622-289F-4ECE-B43A8BE02B0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E1A7278E-B622-289F-4ECE-B43A8BE02B0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E1A7278E-B622-289F-4ECE-B43A8BE02B0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E1A7278E-B622-289F-4ECE-B43A8BE02B0B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FA2ADDEE-30CE-21BB-0C22-68C2FDA53732}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FA2ADDEE-30CE-21BB-0C22-68C2FDA53732}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FA2ADDEE-30CE-21BB-0C22-68C2FDA53732}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FA2ADDEE-30CE-21BB-0C22-68C2FDA53732}.Release|Any CPU.Build.0 = Release|Any CPU
+		{346748d4-bc18-61ef-5445-9f6c10ba353e}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{346748d4-bc18-61ef-5445-9f6c10ba353e}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60cd7422-40ff-2efb-53fc-379401e41048}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60cd7422-40ff-2efb-53fc-379401e41048}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38fc6be0-0f53-5f74-51c7-9db467c09525}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38fc6be0-0f53-5f74-51c7-9db467c09525}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8e27a7e1-22b6-9f28-4ece-b43a8be02b0b}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8e27a7e1-22b6-9f28-4ece-b43a8be02b0b}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{eedd2afa-ce30-bb21-0c22-68c2fda53732}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{eedd2afa-ce30-bb21-0c22-68c2fda53732}.Debug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Assembly-CSharp.csproj
 	EndGlobalSection
 EndGlobal
