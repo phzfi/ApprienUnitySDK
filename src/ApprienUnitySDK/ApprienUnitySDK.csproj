@@ -245,6 +245,12 @@
     <Reference Include="Apple">
         <HintPath>/Users/phz/workspace/ApprienUnitySDK/src/ApprienUnitySDK/Assets/Plugins/UnityPurchasing/Bin/Apple/Apple.dll</HintPath>
     </Reference>
+    <Reference Include="AppleMacos">
+        <HintPath>/Users/phz/workspace/ApprienUnitySDK/src/ApprienUnitySDK/Assets/Plugins/UnityPurchasing/Bin/Apple/AppleMacos.dll</HintPath>
+    </Reference>
+    <Reference Include="AppleCore">
+        <HintPath>/Users/phz/workspace/ApprienUnitySDK/src/ApprienUnitySDK/Assets/Plugins/UnityPurchasing/Bin/Apple/AppleCore.dll</HintPath>
+    </Reference>
     <Reference Include="Security">
         <HintPath>/Users/phz/workspace/ApprienUnitySDK/src/ApprienUnitySDK/Assets/Plugins/UnityPurchasing/Bin/Security/live/Security.dll</HintPath>
     </Reference>

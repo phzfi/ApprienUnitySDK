@@ -40,3 +40,8 @@ ExportedObj/
 
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
+
+# test token file for dev purposes
+src/ApprienUnitySDK/Assets/dont_push_token.asset
+src/ApprienUnitySDK/Assets/dont_push_token.asset.meta
+
