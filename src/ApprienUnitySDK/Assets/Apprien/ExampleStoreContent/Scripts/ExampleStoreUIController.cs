@@ -8,7 +8,6 @@ using UnityEngine.UI;
 // Partial code from https://unity3d.com/learn/tutorials/topics/ads-analytics/integrating-unity-iap-your-game
 namespace ApprienUnitySDK.ExampleProject
 {
-
     public class ExampleStoreUIController : MonoBehaviour, IStoreListener
     {
         // Internal type used for the demo to distinguish between IAP and subscription view
