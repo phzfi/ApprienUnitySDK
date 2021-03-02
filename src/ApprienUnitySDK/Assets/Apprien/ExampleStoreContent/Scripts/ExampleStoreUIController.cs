@@ -17,7 +17,7 @@ namespace ApprienUnitySDK.ExampleProject
             Subscriptions
         }
 
-        private ApprienManager _apprienManager;
+        private ApprienManager _apprienManager = default;
 
         [Space]
         [Header("References")]
