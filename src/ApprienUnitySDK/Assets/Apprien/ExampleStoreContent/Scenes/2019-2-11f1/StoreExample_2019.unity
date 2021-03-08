@@ -812,7 +812,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00cca5d65a7c2bc4b823d2141848703f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ApprienConnection: {fileID: 11400000, guid: a17b9c5893b34854e94d15eb91fbe99e, type: 2}
+  ApprienConnection: {fileID: 0}
   StandardPriceTexts:
   - {fileID: 114611979142291585}
   - {fileID: 114611978082317798}
@@ -831,7 +831,7 @@ MonoBehaviour:
   - {fileID: 114508819174827495}
   _IAPCanvas: {fileID: 375493156}
   _subscriptionCanvas: {fileID: 1871874269}
-  fakeLoadingTime: 2
+  fakeLoadingTime: 2.5
   _exampleStoreDebugController_UI: {fileID: 450313124}
   _exampleStoreOfflineProductController: {fileID: 1086498335}
 --- !u!114 &282313705
@@ -1764,14 +1764,14 @@ MonoBehaviour:
   - _nameID: test_subscription_02
     _price: "5,99\u20AC"
   - _nameID: test_subscription_03
-    _price: 
+    _price: 5,99
   _apprienSubscriptions:
   - _nameID: z_test_subscription_01.apprien_119_ty4a
     _price: "1,19\u20AC"
   - _nameID: z_test_subscription_02.apprien_499_aob6
     _price: "4,99\u20AC"
   - _nameID: test_subscription_03
-    _price: 
+    _price: 9,99
 --- !u!1 &1476851970
 GameObject:
   m_ObjectHideFlags: 0
