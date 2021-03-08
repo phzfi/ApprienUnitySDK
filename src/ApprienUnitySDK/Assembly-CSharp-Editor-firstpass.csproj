@@ -299,6 +299,12 @@
     <Reference Include="UnityEditor.Android.Extensions">
       <HintPath>E:/Game Engines/Unity/Unity Editors/2019.2.11f1/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEditor.iOS.Extensions">
+      <HintPath>E:/Game Engines/Unity/Unity Editors/2019.2.11f1/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
+      <HintPath>C:/Program Files (x86)/Microsoft Visual Studio Tools for Unity/16.0/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
+    </Reference>
     <Reference Include="Mock4Net.Core">
       <HintPath>E:/Game Engines/Unity/Unity Projects/ApprienUnitySDK/src/ApprienUnitySDK/Assets/Apprien/Editor/Plugins/Mock4Net.Core.dll</HintPath>
     </Reference>
@@ -335,11 +341,14 @@
     <Reference Include="UnityEditor.Purchasing">
       <HintPath>E:/Game Engines/Unity/Unity Projects/ApprienUnitySDK/src/ApprienUnitySDK/Library/PackageCache/com.unity.purchasing@2.0.6/Editor/UnityEditor.Purchasing.dll</HintPath>
     </Reference>
-    <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
-      <HintPath>C:/Program Files (x86)/Microsoft Visual Studio Tools for Unity/16.0/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>E:/Game Engines/Unity/Unity Projects/ApprienUnitySDK/src/ApprienUnitySDK/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.iOS.Extensions.Xcode">
+      <HintPath>E:/Game Engines/Unity/Unity Editors/2019.2.11f1/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.iOS.Extensions.Common">
+      <HintPath>E:/Game Engines/Unity/Unity Editors/2019.2.11f1/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Common.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>E:/Game Engines/Unity/Unity Editors/2019.2.11f1/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/mscorlib.dll</HintPath>
