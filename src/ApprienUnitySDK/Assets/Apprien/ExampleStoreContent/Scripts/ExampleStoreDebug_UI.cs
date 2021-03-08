@@ -7,12 +7,12 @@ namespace ApprienUnitySDK.ExampleProject
     {
         [Space]
         [Header("Settings")]
-        [SerializeField] private bool _useDebugMessages = default;
+        [SerializeField] private bool _useDebugMessages;
 
         [Space]
         [Header("References")]
-        [SerializeField] private Text _apprienStatusText = default;
-        [SerializeField] private Text _messageText = default;
+        [SerializeField] private Text _apprienStatusText;
+        [SerializeField] private Text _messageText;
 
         private void Start()
         {

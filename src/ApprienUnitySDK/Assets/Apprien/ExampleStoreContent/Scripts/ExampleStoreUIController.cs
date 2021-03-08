@@ -17,27 +17,27 @@ namespace ApprienUnitySDK.ExampleProject
             Subscriptions
         }
 
-        private ApprienManager _apprienManager = default;
+        private ApprienManager _apprienManager;
 
         [Space]
         [Header("References")]
-        [SerializeField] private ApprienConnection ApprienConnection = default;
+        [SerializeField] private ApprienConnection ApprienConnection;
 
         [Space]
-        [SerializeField] private Text[] StandardPriceTexts = default;
-        [SerializeField] private Text[] StandardPriceSKUTexts = default;
-        [SerializeField] private Text[] ApprienPriceTexts = default;
-        [SerializeField] private Text[] ApprienPriceSKUTexts = default;
+        [SerializeField] private Text[] StandardPriceTexts;
+        [SerializeField] private Text[] StandardPriceSKUTexts;
+        [SerializeField] private Text[] ApprienPriceTexts;
+        [SerializeField] private Text[] ApprienPriceSKUTexts;
 
         [Space]
-        [SerializeField] private GameObject _IAPCanvas = default;
-        [SerializeField] private GameObject _subscriptionCanvas = default;
+        [SerializeField] private GameObject _IAPCanvas;
+        [SerializeField] private GameObject _subscriptionCanvas;
 
         [Space]
         [Header("Debug")]
         [SerializeField][Range(0, 10)] private float fakeLoadingTime = 2f;
-        [SerializeField] private ExampleStoreDebug_UI _exampleStoreDebugController_UI = default;
-        [SerializeField] private ExampleStoreOfflineProductController _exampleStoreOfflineProductController = default;
+        [SerializeField] private ExampleStoreDebug_UI _exampleStoreDebugController_UI;
+        [SerializeField] private ExampleStoreOfflineProductController _exampleStoreOfflineProductController;
 
         private IStoreController _storeController;
         private IExtensionProvider _extensionProvider;
