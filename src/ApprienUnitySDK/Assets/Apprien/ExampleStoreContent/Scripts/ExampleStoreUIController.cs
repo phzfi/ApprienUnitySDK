@@ -21,23 +21,21 @@ namespace ApprienUnitySDK.ExampleProject
 
         [Space]
         [Header("References")]
-        [SerializeField] private ApprienConnection ApprienConnection;
-
-        [Space]
-        [SerializeField] private Text[] StandardPriceTexts;
-        [SerializeField] private Text[] StandardPriceSKUTexts;
-        [SerializeField] private Text[] ApprienPriceTexts;
-        [SerializeField] private Text[] ApprienPriceSKUTexts;
-
-        [Space]
-        [SerializeField] private GameObject _IAPCanvas;
-        [SerializeField] private GameObject _subscriptionCanvas;
+        public ApprienConnection ApprienConnection;
+        [Space]         
+        public Text[] StandardPriceTexts;
+        public Text[] StandardPriceSKUTexts;
+        public Text[] ApprienPriceTexts;
+        public Text[] ApprienPriceSKUTexts;
+        [Space]          
+        public GameObject _IAPCanvas;
+        public GameObject _subscriptionCanvas;
 
         [Space]
         [Header("Debug")]
-        [SerializeField][Range(0, 10)] private float fakeLoadingTime = 2f;
-        [SerializeField] private ExampleStoreDebug_UI _exampleStoreDebugController_UI;
-        [SerializeField] private ExampleStoreOfflineProductController _exampleStoreOfflineProductController;
+        [Range(0, 10)] public float fakeLoadingTime = 2f;
+        public ExampleStoreDebug_UI _exampleStoreDebugController_UI;
+        public ExampleStoreOfflineProductController _exampleStoreOfflineProductController;
 
         private IStoreController _storeController;
         private IExtensionProvider _extensionProvider;
