@@ -657,6 +657,8 @@ namespace Apprien
         public static ApprienProduct[] FromIAPCatalog(ProductCatalog catalog)
         {
             var catalogProducts = catalog.allValidProducts;
+            
+
             /*
             // TODO: Get the store-specific products
             foreach (var product in catalogProducts)

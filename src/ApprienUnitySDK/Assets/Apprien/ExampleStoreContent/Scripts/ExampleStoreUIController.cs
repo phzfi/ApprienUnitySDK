@@ -10,8 +10,8 @@ namespace ApprienUnitySDK.ExampleProject
 {
     public class ExampleStoreUIController : MonoBehaviour, IStoreListener
     {
-        // Internal type used for the demo to distinguish between IAP and subscription view
-        private enum CanvasType
+        // Demo app "TAB" type to define which type of products to show
+        private enum TabType
         {
             IAPs,
             Subscriptions
@@ -23,29 +23,29 @@ namespace ApprienUnitySDK.ExampleProject
         private ApprienConnection ApprienConnection;
 
         [SerializeField]
-        private Text[] StandardPriceTexts;
+        private Text[] ProductTitleLabels;
 
         [SerializeField]
-        private Text[] StandardPriceSKUTexts;
+        private Text[] StandardPriceLabels;
+        [SerializeField]
+        private Text[] StandardPriceIdLabels;
 
         [SerializeField]
-        private Text[] ApprienPriceTexts;
+        private Text[] ApprienPriceLabels;
+        [SerializeField]
+        private Text[] ApprienPriceIdLabels;
 
         [SerializeField]
-        private Text[] ApprienPriceSKUTexts;
-
+        private Button _iapsButton;
         [SerializeField]
-        private GameObject _IAPCanvas;
-
-        [SerializeField]
-        private GameObject _subscriptionCanvas;
+        private Button _subscriptionsButton;
 
         private IStoreController _storeController;
         private IExtensionProvider _extensionProvider;
 
         private ConfigurationBuilder _builder;
         private ApprienProduct[] _apprienProducts;
-        private CanvasType _currentType = CanvasType.IAPs;
+        private TabType _currentTab = TabType.IAPs;
 
         void Awake()
         {
@@ -53,13 +53,14 @@ namespace ApprienUnitySDK.ExampleProject
             {
                 Debug.LogWarning("Token not provided for Apprien SDK. Unable to configure dynamic prices.");
             }
-            InitializeProducts();
+            // includes initializeproducts, also updates ui correctly.
+            SwitchToTab(0);//InitializeProducts();
         }
 
         private void InitializeProducts()
         {
             // Create ApprienProducts from the IAP or subscription Catalog
-            var catalogFile = Resources.Load<TextAsset>(_currentType == CanvasType.IAPs ? "ApprienIAPProductCatalog" : "ApprienSubscriptionProductCatalog");
+            var catalogFile = Resources.Load<TextAsset>(_currentTab == TabType.IAPs ? "ApprienIAPProductCatalog" : "ApprienSubscriptionProductCatalog");
             var catalog = ProductCatalog.FromTextAsset(catalogFile);
             _apprienProducts = ApprienProduct.FromIAPCatalog(catalog);
 
@@ -132,10 +133,12 @@ namespace ApprienUnitySDK.ExampleProject
             );
 
             // Update standard IAP ids on the UI
+            /* note: this is done in UpdateUI()
             for (var i = 0; i < _apprienProducts.Length; i++)
             {
-                StandardPriceSKUTexts[i].text = _apprienProducts[i].BaseIAPId;
+                StandardPriceIdLabels[i].text = _apprienProducts[i].BaseIAPId;
             }
+            */
         }
 
         /// <summary>
@@ -193,6 +196,7 @@ namespace ApprienUnitySDK.ExampleProject
         public void RefreshUI()
         {
             var iapProducts = _storeController.products;
+            
             for (var i = 0; i < _apprienProducts.Length; i++)
             {
                 var apprienProduct = _apprienProducts[i];
@@ -202,12 +206,18 @@ namespace ApprienUnitySDK.ExampleProject
                 var apprienPrice = iapApprienProduct.metadata.localizedPriceString;
                 var standardPrice = iapStandardProduct.metadata.localizedPriceString;
 
-                StandardPriceTexts[i].text = standardPrice;
-                ApprienPriceTexts[i].text = apprienPrice;
+                StandardPriceLabels[i].text = standardPrice;
+                ApprienPriceLabels[i].text = apprienPrice;
 
+                // Update the product title
+                // TODO: if needed later, might use iapProducts.WithID(apprienProduct.BaseIAPId).metadata.localizedTitle
+                var productName = _currentTab == TabType.IAPs ? "Product" : "Subscription";
+                productName += " "+(i+1);
+                ProductTitleLabels[i].text = productName;
+                // Update the Standard IAP ids to text
+                StandardPriceIdLabels[i].text = apprienProduct.BaseIAPId;
                 // Update the Apprien IAP ids to text
-
-                ApprienPriceSKUTexts[i].text = apprienProduct.ApprienVariantIAPId;
+                ApprienPriceIdLabels[i].text = apprienProduct.ApprienVariantIAPId;
             }
 
             // Tell Apprien that the products were shown
@@ -219,28 +229,45 @@ namespace ApprienUnitySDK.ExampleProject
             // Reset prices
             for (var i = 0; i < _apprienProducts.Length; i++)
             {
-                ApprienPriceSKUTexts[i].text = "IAP id";
-                StandardPriceSKUTexts[i].text = "IAP id";
-
-                ApprienPriceTexts[i].text = "Loading...";
-                StandardPriceTexts[i].text = "Loading...";
+                ProductTitleLabels[i].text = "Loading title..";
+                ApprienPriceIdLabels[i].text = "Loading id...";
+                StandardPriceIdLabels[i].text = "Loading id...";
+                ApprienPriceLabels[i].text = "Loading price...";
+                StandardPriceLabels[i].text = "Loading price...";
             }
         }
 
+        // fetch dynamic prices from apprien api and update example ui
         public void RefreshButtonPressed()
         {
             ResetTexts();
             FetchPrices();
         }
 
-        public void SwitchButtonPressed()
+        // toggle between tabs
+        public void ToggleTabButtonPressed()
         {
-            _currentType = _currentType == CanvasType.IAPs ? CanvasType.Subscriptions : CanvasType.IAPs;
-            _IAPCanvas.SetActive(_currentType == CanvasType.IAPs);
-            _subscriptionCanvas.SetActive(_currentType == CanvasType.Subscriptions);
+            TabType toTab = _currentTab == TabType.IAPs ? TabType.Subscriptions : TabType.IAPs;
+            SwitchToTab((int)toTab);
+        }
 
-            ResetTexts();
+        // switch to tab by index
+        public void SwitchToTab(int toTab)
+        {
+            // switch visible tab/Tab
+            _currentTab = (TabType)toTab;
+            //_iapsTab.SetActive(_currentTab == TabType.IAPs);
+            //_subscriptionsTab.SetActive(_currentTab == TabType.Subscriptions);
+            // update tab link buttons
+            _iapsButton.interactable = _currentTab != TabType.IAPs;
+            _subscriptionsButton.interactable = _currentTab != TabType.Subscriptions;
+
+            // inits iaps or subscriptions based on current active tab/Tab
             InitializeProducts();
+
+            // set "loading" texts
+            // note: call after initializeproducts
+            ResetTexts();
         }
     }
 }
