@@ -6,7 +6,7 @@ xvfb-run \
 -batchmode \
 -nographics \
 -logFile /dev/stdout \
--projectPath /root/project-local/src/ApprienUnitySDK \
+-projectPath /root/project-local/src/ApprienUnitySDK-5-6-3f1 \
 -runEditorTests \
 -editorTestsResultFile /root/project-local/testResults.xml
 
