@@ -6,7 +6,7 @@ set -x
 -nographics \
 -quit \
 -logFile /dev/stdout \
--projectPath /root/project-local/src/ApprienUnitySDK \
+-projectPath /root/project-local/src/ApprienUnitySDK-5-6-3f1 \
 -exportPackage \
 Assets/Apprien/Editor \
 Assets/Apprien/Scripts \

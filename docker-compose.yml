@@ -14,7 +14,7 @@ services:
     volumes:
       - .:/root/project
       - ../licenses/5-6-3f1:/root/.local/share/unity3d/Unity
-    command: bash -c "cp -R /root/project /root/project-local && mkdir -p /root/.cache/unity3d && /root/project-local/src/bash/unity-export-package.sh 5-6-3f1"
+    command: bash -c "cp -R /root/project /root/project-local && mkdir -p /root/.cache/unity3d && /root/project-local/src/bash/unity-export-package-5-6-3f1.sh 5-6-3f1"
 
   unity2017:
     image: gableroux/unity3d:2017.4.9f1
@@ -24,7 +24,7 @@ services:
     volumes:
       - .:/root/project
       - ../licenses/2017-4-9f1:/root/.local/share/unity3d/Unity
-    command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package.sh 2017-4-9f1"
+    command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package-5-6-3f1.sh 2017-4-9f1"
     
   unity2018:
     image: gableroux/unity3d:2018.4.9f1
@@ -34,9 +34,10 @@ services:
     volumes:
       - .:/root/project
       - ../licenses/2018-4-9f1:/root/.local/share/unity3d/Unity
-    command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package.sh 2018-4-9f1"
+    command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package-2018.sh 2018-4-9f1"
 
   unity2019:
+    # todo: check does a later 2019 unity docker image exists?
     image: gableroux/unity3d:2019.2.11f1
     environment:
       - LICENSE_EMAIL=$EMAIL
@@ -44,4 +45,4 @@ services:
     volumes:
       - .:/root/project
       - ../licenses/2019-2-11f1:/root/.local/share/unity3d/Unity
-    command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package.sh 2019-2-11f1"
+    command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package-2018.sh 2019-2-11f1"
