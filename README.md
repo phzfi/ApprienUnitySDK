@@ -11,7 +11,7 @@ In case of any network or backend failure, ApprienUnitySDK will always revert to
 
 ## Prerequisites
 
-You need to obtain an OAuth2 Access Token from Apprien. You also need to setup app store integrations by providing Apprien the credentials to access the platforms to perform price optimization and automatically create the Apprien-generated products for your game.
+You need to obtain an OAuth2 Access Token from Apprien. You also need to setup app store integrations by providing Apprien the credentials to access the platforms to perform price optimization and automatically create the Apprien-generated products for your game. 
 
 Currently Apprien supports the following platforms
 * Google Play Store
