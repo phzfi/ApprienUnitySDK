@@ -44,6 +44,7 @@ services:
     environment:
       - LICENSE_EMAIL=$EMAIL
       - LICENSE_PASSWORD=$PASSWORD
+      # test
     volumes:
       - .:/root/project
       - ../licenses/2019-2-11f1:/root/.local/share/unity3d/Unity
