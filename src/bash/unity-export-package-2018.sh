@@ -6,7 +6,8 @@ set -x
 -nographics \
 -quit \
 -logFile /dev/stdout \
--projectPath /root/project-local/src/ApprienUnitySDK-5-6-3f1 \
+# TODO: support 2018 and later unity project versions that use UnityEngine.Purchasing iap from package manager
+-projectPath /root/project-local/src/ApprienUnitySDK-5-6-3f1 \ 
 -exportPackage \
 Assets/Apprien/Editor \
 Assets/Apprien/Scripts \

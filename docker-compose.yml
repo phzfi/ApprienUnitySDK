@@ -25,24 +25,26 @@ services:
       - .:/root/project
       - ../licenses/2017-4-9f1:/root/.local/share/unity3d/Unity
     command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package-5-6-3f1.sh 2017-4-9f1"
-    
+  
+    # Unity Package manager support starts from 2018.2
   unity2018:
-    image: gableroux/unity3d:2018.4.9f1
+    image: gableroux/unity3d:2018.4.9f1 # gableroux/unity3d:2018.2.0f1 # 
     environment:
       - LICENSE_EMAIL=$EMAIL
       - LICENSE_PASSWORD=$PASSWORD
     volumes:
       - .:/root/project
       - ../licenses/2018-4-9f1:/root/.local/share/unity3d/Unity
-    command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package-2018.sh 2018-4-9f1"
-
+    command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package-2018.sh 2018-4-9f1" # 2018-2-0f1" #
+  
+  # latest Unity LTS (that was found as linux docker image)
+  # TODO: set scene files paths for later versions inside correct unityprojects
   unity2019:
-    # todo: check does a later 2019 unity docker image exists?
-    image: gableroux/unity3d:2019.2.11f1
+    image: docker pull gableroux/unity3d:2019.2.11f1 # gableroux/unity3d:2019.4.14f1 # 
     environment:
       - LICENSE_EMAIL=$EMAIL
       - LICENSE_PASSWORD=$PASSWORD
     volumes:
       - .:/root/project
       - ../licenses/2019-2-11f1:/root/.local/share/unity3d/Unity
-    command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package-2018.sh 2019-2-11f1"
+    command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package-2018.sh 2019-2-11f1" # 2019-4-14f1" # 
