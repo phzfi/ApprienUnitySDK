@@ -106,12 +106,11 @@ namespace Apprien
         {
             var url = string.Format(REST_POST_ERROR_URL, errorMessage, responseCode, packageName, storeIdentifier);
 
-            using (var post = UnityWebRequest.Post(url, ""))
+            using(var post = UnityWebRequest.Post(url, ""))
             {
                 ApprienUtility.SendWebRequest(post);
             }
         }
-
 
 #if UNITY_2017_1_OR_NEWER
         public static UnityWebRequestAsyncOperation SendWebRequest(UnityWebRequest request)
@@ -124,23 +123,36 @@ namespace Apprien
             return request.Send();
         }
 #endif
-
+        // check request HTTP error
         public static bool IsHttpError(UnityWebRequest request)
         {
+            bool fail;
+
 #if UNITY_2017_1_OR_NEWER
-            return request.isHttpError;
+            fail = request.isHttpError;
 #else
-            return request.responseCode >= 400;
+            fail = request.responseCode >= 400;
 #endif
+            if (fail)
+                Debug.LogError(request.method + " request URL '" + request.url + "' HTTP error code '" + request.responseCode + "'");
+
+            return fail;
         }
 
+        // check request Network error
         public static bool IsNetworkError(UnityWebRequest request)
         {
+            bool fail;
+
 #if UNITY_2017_1_OR_NEWER
-            return request.isNetworkError;
-#else
-            return request.isError;
+            fail = request.isNetworkError;
+#else       
+            fail = request.isError;
 #endif
+            if (fail)
+                Debug.LogError(request.method + " request URL '" + request.url + "' NETWORK error Code '" + request.responseCode + "'");
+
+            return fail;
         }
     }
 }

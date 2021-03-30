@@ -27,7 +27,7 @@ namespace Apprien
         private bool _fetchingProducts;
         private bool _anyProducts;
         private List<ApprienProduct> _fetchedProducts;
-        private string _catalogResourceName = "IAPProductCatalog";
+        private string _catalogResourceName = "ApprienIAPProductCatalog";
 
         /// <summary>
         /// Apprien REST API endpoint for testing the availability of the service
@@ -133,11 +133,11 @@ namespace Apprien
             {
                 // Display connection information
                 EditorGUILayout.LabelField(_connectionOK ?
-                    "  Connection OK" :
-                    "  Unable to connecto to Apprien.");
+                    "  Apprien API connection is OK." :
+                    "  Apprien API connection failed.");
 
                 EditorGUILayout.LabelField(_tokenOK ?
-                    "  Token OK" :
+                    "  Apprien Token is OK" :
                     "  Apprien Token is invalid.");
             }
 
@@ -157,6 +157,7 @@ namespace Apprien
                 var catalogFile = Resources.Load<TextAsset>(_catalogResourceName);
                 if (catalogFile != null)
                 {
+                    // catalog file exists
                     var catalog = ProductCatalog.FromTextAsset(catalogFile);
                     var products = ApprienProduct.FromIAPCatalog(catalog);
 
@@ -183,7 +184,8 @@ namespace Apprien
 
             if (!_anyProducts)
             {
-                EditorGUILayout.LabelField("No products are defined in the default IAP Catalog.");
+                // catalog file does not exist
+                EditorGUILayout.LabelField("Could not load catalog file: " + _catalogResourceName);
                 return;
             }
 
@@ -197,8 +199,8 @@ namespace Apprien
             {
                 foreach (var product in _fetchedProducts)
                 {
-                    EditorGUILayout.LabelField("  IAP id: " + product.BaseIAPId);
-                    EditorGUILayout.LabelField("  Apprien variant: " + product.ApprienVariantIAPId);
+                    EditorGUILayout.LabelField("  Base Product ID: " + product.BaseIAPId);
+                    EditorGUILayout.LabelField("  Apprien variant ID: " + product.ApprienVariantIAPId);
                     EditorGUILayout.Space();
                 }
             }
@@ -226,7 +228,7 @@ namespace Apprien
             // Inform the calling component that Apprien is online
             if (callback != null)
             {
-                callback((bool)statusCheck.Current, (bool)tokenCheck.Current);
+                callback((bool) statusCheck.Current, (bool) tokenCheck.Current);
             }
         }
 
@@ -237,7 +239,7 @@ namespace Apprien
         public IEnumerator<bool?> CheckServiceStatus()
         {
             var requestSendTimestamp = DateTime.Now;
-            using (var request = UnityWebRequest.Get(REST_GET_APPRIEN_STATUS))
+            using(var request = UnityWebRequest.Get(REST_GET_APPRIEN_STATUS))
             {
                 ApprienUtility.SendWebRequest(request);
 
@@ -258,15 +260,20 @@ namespace Apprien
                 // If there was an error sending the request, or the server returns an error code > 400
                 if (ApprienUtility.IsHttpError(request))
                 {
+                    //Debug.LogError("Connection check: HTTP Error " + request.responseCode);
                     yield return false;
+                    yield break;
                 }
                 else if (ApprienUtility.IsNetworkError(request))
                 {
+                    //Debug.LogError("Connection check: Network Error " + request.responseCode);
                     yield return false;
+                    yield break;
                 }
 
                 // The service is online
                 yield return true;
+                yield break;
             }
         }
 
@@ -278,7 +285,7 @@ namespace Apprien
         {
             var requestSendTimestamp = DateTime.Now;
             var url = string.Format(REST_GET_VALIDATE_TOKEN_URL, ApprienUtility.GetIntegrationUri(ApprienIntegrationType.GooglePlayStore), Application.identifier);
-            using (var request = UnityWebRequest.Get(url))
+            using(var request = UnityWebRequest.Get(url))
             {
                 request.SetRequestHeader("Authorization", "Bearer " + _apprienManager.Token);
                 ApprienUtility.SendWebRequest(request);
@@ -288,6 +295,7 @@ namespace Apprien
                     // Timeout the request and return false
                     if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _apprienManager.RequestTimeout)
                     {
+                        Debug.LogError("Token check: Request Timeout");
                         yield return false;
                         yield break;
                     }
@@ -298,16 +306,20 @@ namespace Apprien
                 // If there was an error sending the request, or the server returns an error code > 400
                 if (ApprienUtility.IsHttpError(request))
                 {
+                    //Debug.LogError("Token check: HTTP Error " + request.responseCode);
                     yield return false;
+                    yield break;
                 }
                 else if (ApprienUtility.IsNetworkError(request))
                 {
+                    //Debug.LogError("Token check: Network Error " + request.responseCode);
                     yield return false;
+                    yield break;
                 }
 
                 // The token is valid
                 yield return true;
-
+                yield break;
             }
         }
 
