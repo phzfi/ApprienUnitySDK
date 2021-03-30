@@ -319,7 +319,6 @@ namespace Apprien
 
                 // The token is valid
                 yield return true;
-                yield break;
             }
         }
 

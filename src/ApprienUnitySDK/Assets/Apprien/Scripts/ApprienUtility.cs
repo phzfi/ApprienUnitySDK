@@ -105,7 +105,6 @@ namespace Apprien
         public static void SendError(int responseCode, string errorMessage, string packageName, string storeIdentifier)
         {
             var url = string.Format(REST_POST_ERROR_URL, errorMessage, responseCode, packageName, storeIdentifier);
-
             using(var post = UnityWebRequest.Post(url, ""))
             {
                 ApprienUtility.SendWebRequest(post);
@@ -133,8 +132,7 @@ namespace Apprien
 #else
             fail = request.responseCode >= 400;
 #endif
-            if (fail)
-                Debug.LogError(request.method + " request URL '" + request.url + "' HTTP error code '" + request.responseCode + "'");
+            if (fail) Debug.LogError(request.method + " request URL '" + request.url + "' HTTP error code '" + request.responseCode + "'");
 
             return fail;
         }
@@ -149,8 +147,7 @@ namespace Apprien
 #else       
             fail = request.isError;
 #endif
-            if (fail)
-                Debug.LogError(request.method + " request URL '" + request.url + "' NETWORK error Code '" + request.responseCode + "'");
+            if (fail) Debug.Log(request.method + " request URL '" + request.url + "' NETWORK error Code '" + request.responseCode + "'");
 
             return fail;
         }

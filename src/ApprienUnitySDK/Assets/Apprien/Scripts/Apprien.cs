@@ -144,7 +144,6 @@ namespace Apprien
                     // Specify that the request is still in progress
                     yield return null;
                 }
-
                 if (ApprienUtility.IsHttpError(request))
                 {
                     SendError((int) request.responseCode, "Error occured while fetching Apprien prices: HTTP error: " + request.downloadHandler.text);
@@ -238,10 +237,12 @@ namespace Apprien
 
                 if (ApprienUtility.IsHttpError(request))
                 {
+                    // send apprien api info about the error
                     SendError((int) request.responseCode, "Error occured while fetching Apprien prices. HTTP error: " + request.downloadHandler.text);
                 }
                 else if (ApprienUtility.IsNetworkError(request))
                 {
+                    // send apprien api info about the error
                     SendError((int) request.responseCode, "Error occured while fetching Apprien prices. Network error");
                 }
                 else
@@ -266,7 +267,6 @@ namespace Apprien
                     callback();
                 }
             }
-
         }
 
         /// <summary>
