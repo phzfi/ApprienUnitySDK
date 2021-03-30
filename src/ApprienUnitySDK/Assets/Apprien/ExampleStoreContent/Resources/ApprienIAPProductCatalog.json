@@ -1,1 +1,82 @@
-{"appleSKU":"","appleTeamID":"","enableCodelessAutoInitialization":false,"products":[{"id":"test_product_1_sku","type":0,"storeIDs":[{"store":"AppleAppStore","id":"test_product_1_apple"},{"store":"GooglePlay","id":"test_product_1_google"}],"defaultDescription":{"googleLocale":4,"title":"","description":""},"screenshotPath":"","applePriceTier":0,"xiaomiPriceTier":0,"googlePrice":{"data":[0,0,0,0],"num":0.0},"pricingTemplateID":"","descriptions":[],"payouts":[]},{"id":"test_product_2_sku","type":0,"storeIDs":[],"defaultDescription":{"googleLocale":4,"title":"","description":""},"screenshotPath":"","applePriceTier":0,"xiaomiPriceTier":0,"googlePrice":{"data":[0,0,0,0],"num":0.0},"pricingTemplateID":"","descriptions":[],"payouts":[]},{"id":"test_product_3_sku","type":0,"storeIDs":[],"defaultDescription":{"googleLocale":4,"title":"","description":""},"screenshotPath":"","applePriceTier":0,"xiaomiPriceTier":0,"googlePrice":{"data":[0,0,0,0],"num":0.0},"pricingTemplateID":"","descriptions":[],"payouts":[]}]}
+{
+    "appleSKU": "",
+    "appleTeamID": "",
+    "enableCodelessAutoInitialization": false,
+    "products": [
+        {
+            "id": "test_product_1_sku",
+            "type": 0,
+            "storeIDs": [],
+            "defaultDescription": {
+                "googleLocale": 4,
+                "title": "",
+                "description": ""
+            },
+            "screenshotPath": "",
+            "applePriceTier": 0,
+            "xiaomiPriceTier": 0,
+            "googlePrice": {
+                "data": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "num": 0.0
+            },
+            "pricingTemplateID": "",
+            "descriptions": [],
+            "payouts": []
+        },
+        {
+            "id": "test_product_2_sku",
+            "type": 0,
+            "storeIDs": [],
+            "defaultDescription": {
+                "googleLocale": 4,
+                "title": "",
+                "description": ""
+            },
+            "screenshotPath": "",
+            "applePriceTier": 0,
+            "xiaomiPriceTier": 0,
+            "googlePrice": {
+                "data": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "num": 0.0
+            },
+            "pricingTemplateID": "",
+            "descriptions": [],
+            "payouts": []
+        },
+        {
+            "id": "test_product_3_sku",
+            "type": 0,
+            "storeIDs": [],
+            "defaultDescription": {
+                "googleLocale": 4,
+                "title": "",
+                "description": ""
+            },
+            "screenshotPath": "",
+            "applePriceTier": 0,
+            "xiaomiPriceTier": 0,
+            "googlePrice": {
+                "data": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "num": 0.0
+            },
+            "pricingTemplateID": "",
+            "descriptions": [],
+            "payouts": []
+        }
+    ]
+}

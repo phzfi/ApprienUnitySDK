@@ -72,7 +72,7 @@ namespace ApprienUnitySDK.ExampleProject
             ApprienIntegrationType integrationType;
 
 #if UNITY_IOS
-			integrationType = ApprienIntegrationType.AppleAppStore;
+            integrationType = ApprienIntegrationType.AppleAppStore;
 #else
             integrationType = ApprienIntegrationType.GooglePlayStore;
 #endif
@@ -230,14 +230,14 @@ namespace ApprienUnitySDK.ExampleProject
         public void ToggleTabButtonPressed()
         {
             TabType toTab = _currentTab == TabType.IAPs ? TabType.Subscriptions : TabType.IAPs;
-            SwitchToTab((int)toTab);
+            SwitchToTab((int) toTab);
         }
 
         // switch to tab by index
         public void SwitchToTab(int toTab)
         {
             // switch visible tab/Tab
-            _currentTab = (TabType)toTab;
+            _currentTab = (TabType) toTab;
             //_iapsTab.SetActive(_currentTab == TabType.IAPs);
             //_subscriptionsTab.SetActive(_currentTab == TabType.Subscriptions);
             // update tab link buttons

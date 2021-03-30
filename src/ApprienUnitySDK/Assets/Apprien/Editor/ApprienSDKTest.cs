@@ -8,15 +8,14 @@ using Apprien;
 using Mock4Net.Core;
 #endif
 
+using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.Purchasing;
-using UnityEngine.TestTools;
 using UnityEngine.Purchasing.Extension;
-using System.Collections.ObjectModel;
-using System;
+using UnityEngine.TestTools;
 
 namespace ApprienUnitySDK.ExampleProject.Tests
 {
@@ -94,7 +93,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
 
             // Setup products for testing
             _defaultIAPid = "test-default-id";
-
+            // 
             _testIAPids = new List<string>()
             {
                 "test-1-id",
@@ -202,7 +201,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                 );
 
             _mockServer.Given(Requests.WithUrl("/error")
-                .UsingPost())
+                    .UsingPost())
                 .RespondWith(
                     Responses
                     .WithStatusCode(200)
@@ -319,8 +318,10 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         }
 
         [UnityTest, Timeout(2000)]
-        public IEnumerator FetchingProductsWithBadURLShouldFail()
+        public IEnumerator FetchingProductsWithBadURLShouldReturnBaseIAPId()
         {
+            // we are expecting an HTTP 404 error
+            LogAssert.ignoreFailingMessages = true;
             SetupMockServer();
 
             // Bad URL, v0
@@ -328,6 +329,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
 
             var product = GetProduct(0);
             var fetch = _apprienManager.FetchApprienPrice(product, () => { });
+
             while (fetch.MoveNext())
             {
                 yield return null;
@@ -336,15 +338,20 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             Assert.AreEqual(_testIAPids[0], product.ApprienVariantIAPId);
         }
 
+        // NOTE: failure will default to the original base iap id
         [UnityTest, Timeout(2000)]
-        public IEnumerator FetchingProductsWithBadTokenShouldNotFetchVariants()
+        public IEnumerator FetchingProductsWithBadTokenShouldReturnBaseIAPId()
         {
+            // we are expecting an HTTP 403 error
+            LogAssert.ignoreFailingMessages = true;
+
             SetupMockServer();
 
             _apprienManager.Token = "another-dummy-token";
 
             var product = GetProduct(0);
             var fetch = _apprienManager.FetchApprienPrice(product, () => { });
+
             while (fetch.MoveNext())
             {
                 yield return null;
@@ -366,6 +373,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                 yield return null;
             }
 
+            //
             Assert.AreEqual(_defaultIAPid, product.ApprienVariantIAPId);
         }
 
