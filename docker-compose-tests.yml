@@ -8,12 +8,13 @@ version: "3"
 services:
   # Unity 5 CLI cannot run tests properly
   # Unity 2017 CLI hangs after running editmode tests
-  unity2018:
-    image: gableroux/unity3d:2019.2.11f1
+  # Unity 2018 todo: tests needed?
+  unity2019:
+    image: gableroux/unity3d:2019.4.0f1
     environment:
       - LICENSE_EMAIL=$EMAIL
       - LICENSE_PASSWORD=$PASSWORD
     volumes:
       - .:/root/project
-      - ../licenses/2019-2-11f1:/root/.local/share/unity3d/Unity
+      - ../licenses/2019-4-0f1:/root/.local/share/unity3d/Unity
     command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-run-tests.sh"
