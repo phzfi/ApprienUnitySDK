@@ -147,7 +147,7 @@ namespace Apprien
 #else       
             fail = request.isError;
 #endif
-            if (fail) Debug.Log(request.method + " request URL '" + request.url + "' NETWORK error Code '" + request.responseCode + "'");
+            if (fail) Debug.LogError(request.method + " request URL '" + request.url + "' NETWORK error Code '" + request.responseCode + "'");
 
             return fail;
         }
