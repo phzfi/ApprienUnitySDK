@@ -70,7 +70,7 @@ __7) Fraud Management backend (Optional)__
 
 A few gaming companies are using fraud management backends to verify real purchases from fraudulent ones (sent by hackers). Often the fraud management backends are written in various programming languages such as C#, Java, Node.js, Go, Python or PHP. 
 
-The problem is that the fraud management backend typically refuses the purchases of Apprien variant IAP ids because their names don't match to the expected ones. However, you can overcome this issue by passing the IAP id through the static `ApprienManager.GetBaseIAPId(...)` method, which returns the default, base IAP id. For example if the customer purchased a variant by name `z_base_product_name.apprien_599_dfa3`, the method returns the expected `base_product_name`.
+The problem is that the fraud management backend typically refuses the purchases of Apprien variant IAP ids because their names don't match to the expected ones. However, you can overcome this issue by passing the IAP id through the static `ApprienUtility.GetBaseIAPId(...)` method, which returns the default, base IAP id. For example if the customer purchased a variant by name `z_base_product_name.apprien_599_dfa3`, the method returns the expected `base_product_name`.
 
 While we are working to implement adaptations for all commonly used programming languages, you can convert the `GetBaseIAPId()` method from `Apprien.cs` to your preferred language, since it works by using simple string manipulation available for all languages.
 
@@ -100,6 +100,8 @@ The provided `.unityPackage` files in Releases are exported for each major Unity
 
 ## SDK API documentation
 * [Apprien.cs](#appriencs)
+* [ApprienProduct.cs](#apprienproductcs)
+* [ApprienUtility.cs](#apprienutilitycs)
 * [ApprienConnection.cs](#apprienconnectioncs)
 * [ApprienConnectionTester.cs](#apprienconnectiontestercs)
 * [ApprienSDKTest.cs](#appriensdktestcs)
@@ -193,23 +195,6 @@ StartCoroutine(
 -----
 | | |
 --- | ---
-Method | `IEnumerator TestConnection(Action<bool, bool> callback)`
-Description | Optional. Perform an availability check for the Apprien service and test the validity of the OAuth2 token. Used in `ApprienConnectionTester.cs` Editor script. Can also be performed in the game, but not required.
-
-Usage:
-```csharp
-StartCoroutine(
-    _apprienManager.TestConnection((available, valid) =>
-        {
-            _connectionOK = available;
-            _tokenOK = valid;
-        }
-    )
-);
-```
------
-| | |
---- | ---
 Method | `IEnumerator PostReceipt(MonoBehaviour unityComponent, string receiptJson)`
 Description | Optional. Sends a receipt of a completed purchase to Apprien for better pricing optimization. The transactions are normally fetched daily from the stores for analysis, but using this expedites the process.
 
@@ -225,21 +210,9 @@ public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs e)
     return PurchaseProcessingResult.Complete;
 }
 ```
------
-| | |
---- | ---
-Method | `static string GetBaseIAPId(string storeIAPId)`
-Description | Optional. Converts an Apprien-formatted IAP id variant to the base IAP id. Doesnt't affect non-Apprien IAP ids.
-
-Usage:
-``` csharp
-var baseIapId = ApprienManager.GetBaseIAPId(apprienProduct.ApprienVariantIAPId);
-```
------
 
 
-
-
+### `ApprienProduct.cs`
 
 
 #### `class ApprienProduct`
@@ -293,18 +266,45 @@ foreach (var product in catalog.allValidProducts)
 ```
 -----
 
+### `ApprienUtility.cs`
+
 #### `enum ApprienIntegrationType`
 A helper enum for defining which store Apprien should connect to. Values:
 * GooglePlayStore
-* AppleAppStore (support by the end of 2018)
+* AppleAppStore (WIP)
+
+-----
+| | |
+--- | ---
+Method | `public static string GetBaseIAPId(string storeIAPId)`
+Description | Optional. Converts an Apprien-formatted IAP id variant to the base IAP id. Doesnt't affect non-Apprien IAP ids.
+
+Usage:
+``` csharp
+var baseIapId = ApprienUtility.GetBaseIAPId(apprienProduct.ApprienVariantIAPId);
+```
+-----
+
+
+| | |
+--- | ---
+Method | `public static string GetIntegrationUri(ApprienIntegrationType type)`
+Description | Convert the ApprienIntegrationType enum into a resource URI string that gets passed to the Apprien backend.
+
+Usage:
+``` csharp
+var uri = ApprienUtility.GetIntegrationUri(ApprienIntegrationType.GooglePlayStore);
+```
+-----
+
 
 ### `ApprienConnection.cs` 
-**(optional, recommended)**
+**(optional)**
 
 Offers an interface for managing the OAuth2 token in a ScriptableObject asset file, if e.g. you don't wish to leak the token on version control. The token is "public" information since it will have to be packaged with the game, yet nothing malicious can be done with it, since the token can only be used to fetch the optimum price at any time and post receipts.
 
 ### `ApprienConnectionTester.cs`
-**(optional, recommended)**
+**(optional)**
 
 Editor script for ScriptableObject instanced assets of `ApprienConnection.cs`. Can be used to test your OAuth2 token against the Apprien Game API REST endpoints and for checking the optimum price variants for each product from the Unity Editor without having to create a build.
 
