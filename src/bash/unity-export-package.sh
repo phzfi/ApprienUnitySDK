@@ -1,5 +1,5 @@
-set -x
-/opt/Unity/Editor/Unity \
+set -ex
+/opt/unity/Editor/Unity \
 -username "$LICENSE_EMAIL" \
 -password "$LICENSE_PASSWORD" \
 -batchmode \

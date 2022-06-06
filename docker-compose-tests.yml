@@ -9,22 +9,37 @@ services:
   # Unity 5 CLI cannot run tests properly
   # Unity 2017 CLI hangs after running editmode tests
   # Unity 2018 - run tests in edit mode
-  unity2018:
-    image: gableroux/unity3d:2018.4.0f1
-    environment:
-      - LICENSE_EMAIL=$EMAIL
-      - LICENSE_PASSWORD=$PASSWORD
-    volumes:
-      - .:/root/project
-      - ../licenses/2018-4-0f1:/root/.local/share/unity3d/Unity
-    command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-run-tests.sh"
+  #unity2018:
+  #  image: gableroux/unity3d:2018.4.9f1
+  #  environment:
+  #    - LICENSE_EMAIL=$EMAIL
+  #    - LICENSE_PASSWORD=$PASSWORD
+  #  volumes:
+  #    - .:/root/project
+  #    - ../licenses/2018-4-0f1:/root/.local/share/unity3d/Unity
+  #  command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-run-tests.sh"
   # Unity 2019 - run tests in edit mode
+  #unity2019:
+  #  image: gableroux/unity3d:2019.2.11f1
+  #  environment:
+  #    - LICENSE_EMAIL=$EMAIL
+  #    - LICENSE_PASSWORD=$PASSWORD
+  #  volumes:
+  #    - .:/root/project
+  #    - ../licenses/2019-2-11f1:/root/.local/share/unity3d/Unity
+  #  command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-run-tests.sh"
   unity2019:
-    image: gableroux/unity3d:2019.4.0f1
+    image: unityci/editor:ubuntu-2020.3.35f1-base-1
     environment:
       - LICENSE_EMAIL=$EMAIL
       - LICENSE_PASSWORD=$PASSWORD
+      - UNITY_LICENSE=$UNITY_LICENSE
     volumes:
       - .:/root/project
-      - ../licenses/2019-4-0f1:/root/.local/share/unity3d/Unity
+      - ../licenses/2020-3-35f1:/root/.local/share/unity3d/Unity
     command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-run-tests.sh"
+
+
+
+
+

@@ -27,21 +27,21 @@ services:
     command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package.sh 2017-4-9f1"
     
   unity2018:
-    image: gableroux/unity3d:2018.4.0f1
+    image: gableroux/unity3d:2018.4.9f1
     environment:
       - LICENSE_EMAIL=$EMAIL
       - LICENSE_PASSWORD=$PASSWORD
     volumes:
       - .:/root/project
-      - ../licenses/2018-4-0f1:/root/.local/share/unity3d/Unity
-    command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package.sh 2018-4-0f1"
+      - ../licenses/2018-4-9f1:/root/.local/share/unity3d/Unity
+    command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package.sh 2018-4-9f1"
 
   unity2019:
-    image: gableroux/unity3d:2019.4.0f1
+    image: gableroux/unity3d:2019.2.11f1
     environment:
       - LICENSE_EMAIL=$EMAIL
       - LICENSE_PASSWORD=$PASSWORD
     volumes:
       - .:/root/project
-      - ../licenses/2019-4-0f1:/root/.local/share/unity3d/Unity
-    command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package.sh 2019-4-0f1"
+      - ../licenses/2019-2-11f1:/root/.local/share/unity3d/Unity
+    command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package.sh 2019-2-11f1"

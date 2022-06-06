@@ -1,6 +1,8 @@
-set -x
+#!/bin/sh
+set -ex
+
 xvfb-run \
-/opt/Unity/Editor/Unity \
+/opt/unity/Editor/Unity \
 -username "$LICENSE_EMAIL" \
 -password "$LICENSE_PASSWORD" \
 -batchmode \
