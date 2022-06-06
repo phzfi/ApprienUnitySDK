@@ -33,7 +33,6 @@ services:
     environment:
       - LICENSE_EMAIL=$EMAIL
       - LICENSE_PASSWORD=$PASSWORD
-      - UNITY_LICENSE=$UNITY_LICENSE
     volumes:
       - .:/root/project
       - ../licenses/2020-3-35f1:/root/.local/share/unity3d/Unity
