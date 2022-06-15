@@ -123,7 +123,7 @@ namespace Apprien
             var requestSendTimestamp = DateTime.Now;
             var url = string.Format(ApprienUtility.REST_GET_ALL_PRICES_URL, StoreIdentifier, GamePackageName);
 
-            using(var request = UnityWebRequest.Get(url))
+            using (var request = UnityWebRequest.Get(url))
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
                 request.SetRequestHeader("Session-Id", ApprienIdentifier);
@@ -144,13 +144,14 @@ namespace Apprien
                     // Specify that the request is still in progress
                     yield return null;
                 }
+
                 if (ApprienUtility.IsHttpError(request))
                 {
-                    SendError((int) request.responseCode, "Error occured while fetching Apprien prices: HTTP error: " + request.downloadHandler.text);
+                    SendError((int)request.responseCode, $"Error occured while fetching Apprien prices: HTTP error: {request.downloadHandler.text}");
                 }
                 else if (ApprienUtility.IsNetworkError(request))
                 {
-                    SendError((int) request.responseCode, "Error occured while fetching Apprien prices: Network error");
+                    SendError((int)request.responseCode, "Error occured while fetching Apprien prices: Network error");
                 }
                 else
                 {
@@ -181,7 +182,7 @@ namespace Apprien
                     else
                     {
                         // If Apprien returns a non-200 message code, return base IAP id price
-                        SendError((int) request.responseCode, "Error occured while fetching Apprien prices. Error: " + request.downloadHandler.text);
+                        SendError((int)request.responseCode, "Error occured while fetching Apprien prices. Error: " + request.downloadHandler.text);
                     }
                 }
 
@@ -213,7 +214,7 @@ namespace Apprien
             var requestSendTimestamp = DateTime.Now;
             var url = string.Format(ApprienUtility.REST_GET_PRICE_URL, StoreIdentifier, GamePackageName, product.BaseIAPId);
 
-            using(var request = UnityWebRequest.Get(url))
+            using (var request = UnityWebRequest.Get(url))
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
                 request.SetRequestHeader("Session-Id", ApprienIdentifier);
@@ -238,12 +239,12 @@ namespace Apprien
                 if (ApprienUtility.IsHttpError(request))
                 {
                     // send apprien api info about the error
-                    SendError((int) request.responseCode, "Error occured while fetching Apprien prices. HTTP error: " + request.downloadHandler.text);
+                    SendError((int)request.responseCode, "Error occured while fetching Apprien prices. HTTP error: " + request.downloadHandler.text);
                 }
                 else if (ApprienUtility.IsNetworkError(request))
                 {
                     // send apprien api info about the error
-                    SendError((int) request.responseCode, "Error occured while fetching Apprien prices. Network error");
+                    SendError((int)request.responseCode, "Error occured while fetching Apprien prices. Network error");
                 }
                 else
                 {
@@ -256,7 +257,7 @@ namespace Apprien
                     else
                     {
                         // If Apprien returns a non-200 message code, return base IAP id price
-                        SendError((int) request.responseCode, "Error occured while fetching Apprien prices");
+                        SendError((int)request.responseCode, "Error occured while fetching Apprien prices");
                         Debug.Log("Apprien request error: " + request.responseCode + ". " + request.downloadHandler.text);
                     }
                 }
@@ -287,19 +288,19 @@ namespace Apprien
 
             var url = String.Format(ApprienUtility.REST_POST_RECEIPT_URL, StoreIdentifier, GamePackageName);
 
-            using(var request = UnityWebRequest.Post(url, formData))
+            using (var request = UnityWebRequest.Post(url, formData))
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
                 yield return ApprienUtility.SendWebRequest(request);
 
                 if (ApprienUtility.IsHttpError(request))
                 {
-                    SendError((int) request.responseCode, "Error occured while posting receipt. HTTP error: " + request.downloadHandler.text);
+                    SendError((int)request.responseCode, "Error occured while posting receipt. HTTP error: " + request.downloadHandler.text);
                     unityComponent.SendMessage("OnApprienPostReceiptFailed", request.responseCode + ": " + request.error, SendMessageOptions.DontRequireReceiver);
                 }
                 else if (ApprienUtility.IsNetworkError(request))
                 {
-                    SendError((int) request.responseCode, "Error occured while posting receipt. Network error");
+                    SendError((int)request.responseCode, "Error occured while posting receipt. Network error");
                     unityComponent.SendMessage("OnApprienPostReceiptFailed", request.responseCode + ": " + request.error, SendMessageOptions.DontRequireReceiver);
                 }
                 else
@@ -326,18 +327,18 @@ namespace Apprien
 
             var url = String.Format(ApprienUtility.REST_POST_PRODUCTS_SHOWN_URL, StoreIdentifier);
 
-            using(var request = UnityWebRequest.Post(url, formData))
+            using (var request = UnityWebRequest.Post(url, formData))
             {
                 request.SetRequestHeader("Authorization", "Bearer " + Token);
                 yield return ApprienUtility.SendWebRequest(request);
 
                 if (ApprienUtility.IsHttpError(request))
                 {
-                    SendError((int) request.responseCode, "Error occured while posting products shown. HTTP error: " + request.downloadHandler.text);
+                    SendError((int)request.responseCode, "Error occured while posting products shown. HTTP error: " + request.downloadHandler.text);
                 }
                 else if (ApprienUtility.IsNetworkError(request))
                 {
-                    SendError((int) request.responseCode, "Error occured while posting products shown. Network error");
+                    SendError((int)request.responseCode, "Error occured while posting products shown. Network error");
                 }
             }
         }

@@ -228,7 +228,7 @@ namespace Apprien
             // Inform the calling component that Apprien is online
             if (callback != null)
             {
-                callback((bool) statusCheck.Current, (bool) tokenCheck.Current);
+                callback((bool)statusCheck.Current, (bool)tokenCheck.Current);
             }
         }
 
@@ -239,7 +239,7 @@ namespace Apprien
         public IEnumerator<bool?> CheckServiceStatus()
         {
             var requestSendTimestamp = DateTime.Now;
-            using(var request = UnityWebRequest.Get(REST_GET_APPRIEN_STATUS))
+            using (var request = UnityWebRequest.Get(REST_GET_APPRIEN_STATUS))
             {
                 ApprienUtility.SendWebRequest(request);
 
@@ -285,7 +285,7 @@ namespace Apprien
         {
             var requestSendTimestamp = DateTime.Now;
             var url = string.Format(REST_GET_VALIDATE_TOKEN_URL, ApprienUtility.GetIntegrationUri(ApprienIntegrationType.GooglePlayStore), Application.identifier);
-            using(var request = UnityWebRequest.Get(url))
+            using (var request = UnityWebRequest.Get(url))
             {
                 request.SetRequestHeader("Authorization", "Bearer " + _apprienManager.Token);
                 ApprienUtility.SendWebRequest(request);

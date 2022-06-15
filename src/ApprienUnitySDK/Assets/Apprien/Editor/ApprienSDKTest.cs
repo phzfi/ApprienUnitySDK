@@ -16,6 +16,7 @@ using UnityEngine;
 using UnityEngine.Purchasing;
 using UnityEngine.Purchasing.Extension;
 using UnityEngine.TestTools;
+using System.Text.RegularExpressions;
 
 namespace ApprienUnitySDK.ExampleProject.Tests
 {
@@ -93,7 +94,6 @@ namespace ApprienUnitySDK.ExampleProject.Tests
 
             // Setup products for testing
             _defaultIAPid = "test-default-id";
-            // 
             _testIAPids = new List<string>()
             {
                 "test-1-id",
@@ -152,7 +152,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                             _gamePackageName,
                             id
                         )
-                    ).UsingGet().WithHeader("Authorization", "Bearer " + _token))
+                    ).UsingGet().WithHeader("Authorization", $"Bearer {_token}"))
                     .RespondWith(
                         Responses
                         .WithStatusCode(200)
@@ -168,7 +168,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                         _gamePackageName,
                         _defaultIAPid
                     )
-                ).UsingGet().WithHeader("Authorization", "Bearer " + _token))
+                ).UsingGet().WithHeader("Authorization", $"Bearer {_token}"))
                 .RespondWith(
                     Responses
                     .WithStatusCode(200)
@@ -201,7 +201,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                 );
 
             _mockServer.Given(Requests.WithUrl("/error")
-                    .UsingPost())
+                .UsingPost())
                 .RespondWith(
                     Responses
                     .WithStatusCode(200)
@@ -217,9 +217,9 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                 );
 
             // Assign the URL for mocking Apprien
-            ApprienUtility.REST_GET_ALL_PRICES_URL = "http://localhost:" + _mockServer.Port + "/api/v1/stores/{0}/games/{1}/prices";
-            ApprienUtility.REST_GET_PRICE_URL = "http://localhost:" + _mockServer.Port + "/api/v1/stores/{0}/games/{1}/products/{2}/prices";
-            ApprienUtility.REST_POST_ERROR_URL = "http://localhost:" + _mockServer.Port + "/error";
+            ApprienUtility.REST_GET_ALL_PRICES_URL = $"http://localhost:{_mockServer.Port}/api/v1/stores/{{0}}/games/{{1}}/prices";
+            ApprienUtility.REST_GET_PRICE_URL = $"http://localhost:{_mockServer.Port}/api/v1/stores/{{0}}/games/{{1}}/products/{{2}}/prices";
+            ApprienUtility.REST_POST_ERROR_URL = $"http://localhost:{_mockServer.Port}/error";
         }
 #endif
 
@@ -320,12 +320,13 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         [UnityTest, Timeout(2000)]
         public IEnumerator FetchingProductsWithBadURLShouldReturnBaseIAPId()
         {
-            // we are expecting an HTTP 404 error
-            LogAssert.ignoreFailingMessages = true;
-            SetupMockServer();
-
             // Bad URL, v0
             ApprienUtility.REST_GET_PRICE_URL = "http://localhost:" + _mockServer.Port + "/api/v0/stores/google/games/{0}/products/{1}/prices";
+
+            // We are expecting an HTTP 404 error
+            LogAssert.Expect(LogType.Error, new Regex(".*NETWORK error.*"));
+
+            SetupMockServer();
 
             var product = GetProduct(0);
             var fetch = _apprienManager.FetchApprienPrice(product, () => { });
@@ -342,8 +343,8 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         [UnityTest, Timeout(2000)]
         public IEnumerator FetchingProductsWithBadTokenShouldReturnBaseIAPId()
         {
-            // we are expecting an HTTP 403 error
-            LogAssert.ignoreFailingMessages = true;
+            // We are expecting an HTTP 403 error
+            LogAssert.Expect(LogType.Error, new Regex(".*NETWORK error.*"));
 
             SetupMockServer();
 
@@ -373,7 +374,6 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                 yield return null;
             }
 
-            //
             Assert.AreEqual(_defaultIAPid, product.ApprienVariantIAPId);
         }
 
