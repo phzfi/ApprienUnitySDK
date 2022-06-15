@@ -401,7 +401,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         }
 
         [UnityTest, Timeout(2000)]
-        public IEnumerator FetchingProductsWithLongDelayShouldSucceed()
+        public IEnumerator FetchingProductsWithLongDelayShouldReturnBaseIAPId()
         {
             // Configure the SDK timeout to 0.1 second, but make the request take 0.5 seconds
             // Non-variant products should be fetched
