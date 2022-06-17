@@ -4,10 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Apprien;
 
-#if NET_4_6 || NET_STANDARD_2_0
-using Mock4Net.Core;
-#endif
-
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -82,10 +78,6 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         private ProductCatalog _catalog;
         private ConfigurationBuilder _builder;
 
-#if NET_4_6 || NET_STANDARD_2_0
-        private FluentMockServer _mockServer;
-#endif
-
         [SetUp]
         public void SetUp()
         {
@@ -122,127 +114,121 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                 _builder.AddProduct(id, ProductType.Consumable);
             }
 
-#if NET_4_6 || NET_STANDARD_2_0
-            _mockServer = FluentMockServer.Start();
-#endif
             _apprienManager = new ApprienManager(
                 _gamePackageName,
                 ApprienIntegrationType.GooglePlayStore,
                 _token
             );
         }
-#if NET_4_6 || NET_STANDARD_2_0
-        private void SetupMockServer(float delaySeconds = 0f)
-        {
-            // Setup the mock server routes
-            // Mock4Net is not very flexible, so we have to do some magic
-            // Possible to change the mocking server to https://github.com/WireMock-Net/WireMock.Net
-            // which also requires .NET 4.x
+        /*
+        #if NET_4_6 || NET_STANDARD_2_0
 
-            // Unity Test Runner can't send proper web requests so we have to mock the server.
+                private void SetupMockServer(float delaySeconds = 0f)
+                {
+                    // Setup the mock server routes
+                    // Mock4Net is not very flexible, so we have to do some magic
+                    // Possible to change the mocking server to https://github.com/WireMock-Net/WireMock.Net
+                    // which also requires .NET 4.x
 
-            foreach (var id in _testIAPids)
-            {
-                // If the API changes, update the mock server responses
-                // https://github.com/alexvictoor/mock4net
-                _mockServer.Given(Requests.WithUrl(
-                        string.Format(
-                            "/api/v1/stores/{0}/games/{1}/products/{2}/prices",
-                            "google",
-                            _gamePackageName,
-                            id
-                        )
-                    ).UsingGet().WithHeader("Authorization", $"Bearer {_token}"))
-                    .RespondWith(
-                        Responses
-                        .WithStatusCode(200)
-                        .WithBody(id + "-variant")
-                        .AfterDelay(TimeSpan.FromSeconds(delaySeconds))
-                    );
-            }
+                    // Unity Test Runner can't send proper web requests so we have to mock the server.
 
-            _mockServer.Given(Requests.WithUrl(
-                    string.Format(
-                        "/api/v1/stores/{0}/games/{1}/products/{2}/prices",
-                        "google",
-                        _gamePackageName,
-                        _defaultIAPid
-                    )
-                ).UsingGet().WithHeader("Authorization", $"Bearer {_token}"))
-                .RespondWith(
-                    Responses
-                    .WithStatusCode(200)
-                    .WithBody(_defaultIAPid)
-                    .AfterDelay(TimeSpan.FromSeconds(delaySeconds))
-                );
-
-            _mockServer.Given(Requests.WithUrl(
-                    string.Format(
-                        "/api/v1/stores/{0}/games/{1}/prices",
-                        "google",
-                        _gamePackageName
-                    )
-                ).UsingGet().WithHeader("Authorization", "Bearer " + _token))
-                .RespondWith(
-                    Responses
-                    .WithStatusCode(200)
-                    .WithBody(JsonUtility.ToJson(new ApprienProductList
+                    foreach (var id in _testIAPids)
                     {
-                        products = new List<ApprienProductListProduct>
-                        {
-                            new ApprienProductListProduct { @base = "test-1-id", variant = "test-1-id-variant" },
-                            new ApprienProductListProduct { @base = "test-2-id", variant = "test-2-id-variant" },
-                            new ApprienProductListProduct { @base = "test-3-id", variant = "test-3-id-variant" },
-                            new ApprienProductListProduct { @base = "test-4-id", variant = "test-4-id-variant" },
-                            new ApprienProductListProduct { @base = "test-5-id", variant = "test-5-id-variant" }
-                        }
-                    }))
-                    .AfterDelay(TimeSpan.FromSeconds(delaySeconds))
-                );
+                        // If the API changes, update the mock server responses
+                        // https://github.com/alexvictoor/mock4net
+                        _mockServer.Given(Requests.WithUrl(
+                                string.Format(
+                                    "/api/v1/stores/{0}/games/{1}/products/{2}/prices",
+                                    "google",
+                                    _gamePackageName,
+                                    id
+                                )
+                            ).UsingGet().WithHeader("Authorization", $"Bearer {_token}"))
+                            .RespondWith(
+                                Responses
+                                .WithStatusCode(200)
+                                .WithBody(id + "-variant")
+                                .AfterDelay(TimeSpan.FromSeconds(delaySeconds))
+                            );
+                    }
 
-            _mockServer.Given(Requests.WithUrl("/error")
-                .UsingPost())
-                .RespondWith(
-                    Responses
-                    .WithStatusCode(200)
-                    .AfterDelay(TimeSpan.FromSeconds(delaySeconds))
-                );
+                    _mockServer.Given(Requests.WithUrl(
+                            string.Format(
+                                "/api/v1/stores/{0}/games/{1}/products/{2}/prices",
+                                "google",
+                                _gamePackageName,
+                                _defaultIAPid
+                            )
+                        ).UsingGet().WithHeader("Authorization", $"Bearer {_token}"))
+                        .RespondWith(
+                            Responses
+                            .WithStatusCode(200)
+                            .WithBody(_defaultIAPid)
+                            .AfterDelay(TimeSpan.FromSeconds(delaySeconds))
+                        );
 
-            // No auth token
-            _mockServer.Given(Requests.WithUrl("/api/v1/*").UsingGet())
-                .RespondWith(
-                    Responses
-                    .WithStatusCode(403)
-                    .AfterDelay(TimeSpan.FromSeconds(delaySeconds))
-                );
+                    _mockServer.Given(Requests.WithUrl(
+                            string.Format(
+                                "/api/v1/stores/{0}/games/{1}/prices",
+                                "google",
+                                _gamePackageName
+                            )
+                        ).UsingGet().WithHeader("Authorization", "Bearer " + _token))
+                        .RespondWith(
+                            Responses
+                            .WithStatusCode(200)
+                            .WithBody(JsonUtility.ToJson(new ApprienProductList
+                            {
+                                products = new List<ApprienProductListProduct>
+                                {
+                                    new ApprienProductListProduct { @base = "test-1-id", variant = "test-1-id-variant" },
+                                    new ApprienProductListProduct { @base = "test-2-id", variant = "test-2-id-variant" },
+                                    new ApprienProductListProduct { @base = "test-3-id", variant = "test-3-id-variant" },
+                                    new ApprienProductListProduct { @base = "test-4-id", variant = "test-4-id-variant" },
+                                    new ApprienProductListProduct { @base = "test-5-id", variant = "test-5-id-variant" }
+                                }
+                            }))
+                            .AfterDelay(TimeSpan.FromSeconds(delaySeconds))
+                        );
 
-            // Assign the URL for mocking Apprien
-            ApprienUtility.REST_GET_ALL_PRICES_URL = $"http://localhost:{_mockServer.Port}/api/v1/stores/{{0}}/games/{{1}}/prices";
-            ApprienUtility.REST_GET_PRICE_URL = $"http://localhost:{_mockServer.Port}/api/v1/stores/{{0}}/games/{{1}}/products/{{2}}/prices";
-            ApprienUtility.REST_POST_ERROR_URL = $"http://localhost:{_mockServer.Port}/error";
-        }
-#endif
+                    _mockServer.Given(Requests.WithUrl("/error")
+                        .UsingPost())
+                        .RespondWith(
+                            Responses
+                            .WithStatusCode(200)
+                            .AfterDelay(TimeSpan.FromSeconds(delaySeconds))
+                        );
+
+                    // No auth token
+                    _mockServer.Given(Requests.WithUrl("/api/v1/*").UsingGet())
+                        .RespondWith(
+                            Responses
+                            .WithStatusCode(403)
+                            .AfterDelay(TimeSpan.FromSeconds(delaySeconds))
+                        );
+
+                    // Assign the URL for mocking Apprien
+                    ApprienUtility.REST_GET_ALL_PRICES_URL = $"http://localhost:{_mockServer.Port}/api/v1/stores/{{0}}/games/{{1}}/prices";
+                    ApprienUtility.REST_GET_PRICE_URL = $"http://localhost:{_mockServer.Port}/api/v1/stores/{{0}}/games/{{1}}/products/{{2}}/prices";
+                    ApprienUtility.REST_POST_ERROR_URL = $"http://localhost:{_mockServer.Port}/error";
+                }
+        #endif
+        */
 
         [TearDown]
         public void TearDown()
         {
-#if NET_4_6 || NET_STANDARD_2_0
-            _mockServer.Stop();
-#endif
+
         }
 
-        /*
-         * Unit tests. Prefixed with underscore to sort them to the top in the Test Runner window
-         */
-
         [Test]
-        public void _ProductVariantIdShouldDefaultToBaseId()
+        public void ProductVariantIdShouldDefaultToBaseId()
         {
             Assert.AreEqual(_defaultIAPid, GetProduct(_defaultIAPid).ApprienVariantIAPId);
         }
 
         [Test]
-        public void _GettingBaseIapIdShouldReturnCorrectId()
+        public void GettingBaseIapIdShouldReturnCorrectId()
         {
             var iapId = "z_base_iap_id.apprien_500_dfa3";
             var expected = "base_iap_id";
@@ -256,7 +242,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         }
 
         [Test]
-        public void _CreatingProductsFromCatalogShouldWork()
+        public void CreatingProductsFromCatalogShouldWork()
         {
             var products = ApprienProduct.FromIAPCatalog(_catalog);
             var productIds = products.Select(item => item.BaseIAPId).ToList();
@@ -269,7 +255,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         }
 
         [Test]
-        public void _CreatingProductsFromConfigurationBuilderShouldWork()
+        public void CreatingProductsFromConfigurationBuilderShouldWork()
         {
             var products = ApprienProduct.FromConfigurationBuilder(_builder);
             var productIds = products.Select(item => item.BaseIAPId).ToList();
@@ -280,12 +266,10 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                 Assert.Contains(id, productIds);
             }
         }
-#if NET_4_6 || NET_STANDARD_2_0
-        [UnityTest, Timeout(2000)]
+
+        [Test]
         public IEnumerator FetchingManyProductsShouldSucceed()
         {
-            SetupMockServer();
-
             var products = new ApprienProduct[] { GetProduct(0), GetProduct(1), GetProduct(2) };
 
             var fetch = _apprienManager.FetchApprienPrices(products, () => { });
@@ -301,11 +285,9 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             }
         }
 
-        [UnityTest, Timeout(2000)]
+        [Test]
         public IEnumerator FetchingOneProductShouldSucceed()
         {
-            SetupMockServer();
-
             var product = GetProduct(0);
 
             var fetch = _apprienManager.FetchApprienPrice(product, () => { });
@@ -317,16 +299,14 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             Assert.AreEqual(_testIAPids[0] + "-variant", product.ApprienVariantIAPId);
         }
 
-        [UnityTest, Timeout(2000)]
+        [Test]
         public IEnumerator FetchingProductsWithBadURLShouldReturnBaseIAPId()
         {
             // Bad URL, v0
-            ApprienUtility.REST_GET_PRICE_URL = "http://localhost:" + _mockServer.Port + "/api/v0/stores/google/games/{0}/products/{1}/prices";
+            //ApprienUtility.REST_GET_PRICE_URL = "http://localhost:" + _mockServer.Port + "/api/v0/stores/google/games/{0}/products/{1}/prices";
 
             // We are expecting an HTTP 404 error
             LogAssert.Expect(LogType.Error, new Regex(".*NETWORK error.*"));
-
-            SetupMockServer();
 
             var product = GetProduct(0);
             var fetch = _apprienManager.FetchApprienPrice(product, () => { });
@@ -340,15 +320,13 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         }
 
         // NOTE: failure will default to the original base iap id
-        [UnityTest, Timeout(2000)]
+        [Test]
         public IEnumerator FetchingProductsWithBadTokenShouldReturnBaseIAPId()
         {
             // We are expecting an HTTP 403 error
             LogAssert.Expect(LogType.Error, new Regex(".*NETWORK error.*"));
 
-            SetupMockServer();
-
-            _apprienManager.Token = "another-dummy-token";
+            //_apprienManager.Token = "another-dummy-token";
 
             var product = GetProduct(0);
             var fetch = _apprienManager.FetchApprienPrice(product, () => { });
@@ -361,11 +339,9 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             Assert.AreEqual(_testIAPids[0], product.ApprienVariantIAPId);
         }
 
-        [UnityTest, Timeout(2000)]
+        [Test]
         public IEnumerator FetchingNonVariantProductShouldReturnBaseIAPId()
         {
-            SetupMockServer();
-
             // IAP without a variant
             var product = GetProduct();
             var fetch = _apprienManager.FetchApprienPrice(product, () => { });
@@ -377,13 +353,12 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             Assert.AreEqual(_defaultIAPid, product.ApprienVariantIAPId);
         }
 
-        [UnityTest, Timeout(2000)]
+        [Test]
         public IEnumerator FetchingProductsWithDelayShouldSucceed()
         {
             // Configure the SDK timeout to 5 second, but make the request take 0.5 seconds
             // Variant products should be fetched
-            _apprienManager.RequestTimeout = 5f;
-            SetupMockServer(0.5f);
+            //_apprienManager.RequestTimeout = 5f;
 
             var products = new ApprienProduct[] { GetProduct(0), GetProduct(1), GetProduct(2) };
 
@@ -400,13 +375,12 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             }
         }
 
-        [UnityTest, Timeout(2000)]
+        [Test]
         public IEnumerator FetchingProductsWithLongDelayShouldReturnBaseIAPId()
         {
             // Configure the SDK timeout to 0.1 second, but make the request take 0.5 seconds
             // Non-variant products should be fetched
-            _apprienManager.RequestTimeout = 0.1f;
-            SetupMockServer(0.5f);
+            //_apprienManager.RequestTimeout = 0.1f;
 
             var products = new ApprienProduct[] { GetProduct(0), GetProduct(1), GetProduct(2) };
 
@@ -422,9 +396,6 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                 Assert.AreEqual(_testIAPids[i], products[i].ApprienVariantIAPId);
             }
         }
-#endif
-
-        // Test helpers
 
         private ApprienProduct GetProduct(string iapId = null)
         {

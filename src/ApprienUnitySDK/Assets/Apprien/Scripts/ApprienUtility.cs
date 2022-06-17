@@ -47,6 +47,16 @@ namespace Apprien
         public static string REST_POST_PRODUCTS_SHOWN_URL = "https://game.apprien.com/api/v1/stores/{0}/shown/products";
 
         /// <summary>
+        /// Apprien REST API endpoint for testing the availability of the service
+        /// </summary>
+        public static string REST_GET_APPRIEN_STATUS = "https://game.apprien.com/status";
+
+        /// <summary>
+        /// Apprien REST API endpoint for testing the validity of the given token
+        /// </summary>
+        public static string REST_GET_VALIDATE_TOKEN_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/auth";
+
+        /// <summary>
         /// Convert the ApprienIntegrationType enum into a resource URI that gets passed to the Apprien backend.
         /// </summary>
         /// <param name="type"></param>

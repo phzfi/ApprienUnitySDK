@@ -29,16 +29,6 @@ namespace Apprien
         private List<ApprienProduct> _fetchedProducts;
         private string _catalogResourceName = "ApprienIAPProductCatalog";
 
-        /// <summary>
-        /// Apprien REST API endpoint for testing the availability of the service
-        /// </summary>
-        public string REST_GET_APPRIEN_STATUS = "https://game.apprien.com/status";
-
-        /// <summary>
-        /// Apprien REST API endpoint for testing the validity of the given token
-        /// </summary>
-        public string REST_GET_VALIDATE_TOKEN_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/auth";
-
         void OnEnable()
         {
             _apprienConnection = serializedObject.FindProperty("Token");
@@ -112,7 +102,7 @@ namespace Apprien
 
                 // Refresh the token to the manager before testing connection
                 var token = _apprienConnection.stringValue;
-                _apprienManager.Token = token;
+                _apprienManager.SetToken(token);
 
                 _initializeFetch = TestConnection((available, valid) =>
                 {
