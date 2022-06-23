@@ -13,6 +13,7 @@ namespace Apprien
         IEnumerator FetchApprienPrice(ApprienProduct product, Action callback = null);
         IEnumerator PostReceipt(MonoBehaviour unityComponent, string receiptJson);
         IEnumerator ProductsShown(ApprienProduct[] apprienProducts);
+        IEnumerator<bool?> CheckServiceStatus();
         IEnumerator<bool?> CheckTokenValidity(string token);
         void SetToken(string token);
         float RequestTimeout { get; }
@@ -314,16 +315,14 @@ namespace Apprien
         }
 
         /// <summary>
-        /// Validates the supplied access token with the Apprien API
+        /// Check whether Apprien API service is online.
         /// </summary>
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
-        public IEnumerator<bool?> CheckTokenValidity()
+        public IEnumerator<bool?> CheckServiceStatus()
         {
             var requestSendTimestamp = DateTime.Now;
-            var url = string.Format(ApprienUtility.REST_GET_VALIDATE_TOKEN_URL, ApprienUtility.GetIntegrationUri(ApprienIntegrationType.GooglePlayStore), Application.identifier);
-            using (var request = UnityWebRequest.Get(url))
+            using (var request = UnityWebRequest.Get(ApprienUtility.REST_GET_APPRIEN_STATUS))
             {
-                request.SetRequestHeader("Authorization", "Bearer " + _token);
                 ApprienUtility.SendWebRequest(request);
 
                 while (!request.isDone)
@@ -331,7 +330,52 @@ namespace Apprien
                     // Timeout the request and return false
                     if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _requestTimeout)
                     {
-                        Debug.Log("Apprien Token validity check: Request Timeout");
+                        yield return false;
+                        yield break;
+                    }
+
+                    // Specify that the request is still in progress
+                    yield return null;
+                }
+
+                // If there was an error sending the request, or the server returns an error code > 400
+                if (ApprienUtility.IsHttpError(request))
+                {
+                    //Debug.LogError("Connection check: HTTP Error " + request.responseCode);
+                    yield return false;
+                    yield break;
+                }
+                else if (ApprienUtility.IsNetworkError(request))
+                {
+                    //Debug.LogError("Connection check: Network Error " + request.responseCode);
+                    yield return false;
+                    yield break;
+                }
+
+                // The service is online
+                yield return true;
+                yield break;
+            }
+        }
+
+        /// <summary>
+        /// Validates the supplied access token with the Apprien API
+        /// </summary>
+        /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
+        public IEnumerator<bool?> CheckTokenValidity(string token)
+        {
+            var requestSendTimestamp = DateTime.Now;
+            var url = string.Format(ApprienUtility.REST_GET_VALIDATE_TOKEN_URL, ApprienUtility.GetIntegrationUri(ApprienIntegrationType.GooglePlayStore), Application.identifier);
+            using (var request = UnityWebRequest.Get(url))
+            {
+                request.SetRequestHeader("Authorization", "Bearer " + token);
+                ApprienUtility.SendWebRequest(request);
+
+                while (!request.isDone)
+                {
+                    // Timeout the request and return false
+                    if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _requestTimeout)
+                    {
                         yield return false;
                         yield break;
                     }

@@ -138,5 +138,23 @@ namespace Apprien
         {
             return _backend.ProductsShown(apprienProducts);
         }
+
+        /// <summary>
+        /// Check whether Apprien API service is online.
+        /// </summary>
+        /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
+        public IEnumerator<bool?> CheckServiceStatus()
+        {
+            return _backend.CheckServiceStatus();
+        }
+
+        /// <summary>
+        /// Validates the supplied access token with the Apprien API
+        /// </summary>
+        /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
+        public IEnumerator<bool?> CheckTokenValidity(string token)
+        {
+            return _backend.CheckTokenValidity(token);
+        }
     }
 }

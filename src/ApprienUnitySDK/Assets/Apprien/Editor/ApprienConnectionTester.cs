@@ -104,7 +104,7 @@ namespace Apprien
                 var token = _apprienConnection.stringValue;
                 _apprienManager.SetToken(token);
 
-                _initializeFetch = TestConnection((available, valid) =>
+                _initializeFetch = TestConnection(token, (available, valid) =>
                 {
                     _fetchingStatus = false;
                     _connectionCheckPressed = true;
@@ -203,11 +203,11 @@ namespace Apprien
         /// </summary>
         /// <param name="callback">The first parameter is true if Apprien is reachable. The second parameter is true if the provided token is valid</param>
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
-        public IEnumerator TestConnection(Action<bool, bool> callback)
+        public IEnumerator TestConnection(string token, Action<bool, bool> callback)
         {
             // Check service status and validate the token
-            var statusCheck = CheckServiceStatus();
-            var tokenCheck = CheckTokenValidity();
+            var statusCheck = _apprienManager.CheckServiceStatus();
+            var tokenCheck = _apprienManager.CheckTokenValidity(token);
 
             while (statusCheck.MoveNext() || tokenCheck.MoveNext())
             {
@@ -221,96 +221,5 @@ namespace Apprien
                 callback((bool)statusCheck.Current, (bool)tokenCheck.Current);
             }
         }
-
-        /// <summary>
-        /// Check whether Apprien API service is online.
-        /// </summary>
-        /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
-        public IEnumerator<bool?> CheckServiceStatus()
-        {
-            var requestSendTimestamp = DateTime.Now;
-            using (var request = UnityWebRequest.Get(REST_GET_APPRIEN_STATUS))
-            {
-                ApprienUtility.SendWebRequest(request);
-
-                while (!request.isDone)
-                {
-                    // Timeout the request and return false
-                    if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _apprienManager.RequestTimeout)
-                    {
-                        Debug.Log("Timeout reached while checking Apprien status.");
-                        yield return false;
-                        yield break;
-                    }
-
-                    // Specify that the request is still in progress
-                    yield return null;
-                }
-
-                // If there was an error sending the request, or the server returns an error code > 400
-                if (ApprienUtility.IsHttpError(request))
-                {
-                    //Debug.LogError("Connection check: HTTP Error " + request.responseCode);
-                    yield return false;
-                    yield break;
-                }
-                else if (ApprienUtility.IsNetworkError(request))
-                {
-                    //Debug.LogError("Connection check: Network Error " + request.responseCode);
-                    yield return false;
-                    yield break;
-                }
-
-                // The service is online
-                yield return true;
-                yield break;
-            }
-        }
-
-        /// <summary>
-        /// Validates the supplied access token with the Apprien API
-        /// </summary>
-        /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
-        public IEnumerator<bool?> CheckTokenValidity()
-        {
-            var requestSendTimestamp = DateTime.Now;
-            var url = string.Format(REST_GET_VALIDATE_TOKEN_URL, ApprienUtility.GetIntegrationUri(ApprienIntegrationType.GooglePlayStore), Application.identifier);
-            using (var request = UnityWebRequest.Get(url))
-            {
-                request.SetRequestHeader("Authorization", "Bearer " + _apprienManager.Token);
-                ApprienUtility.SendWebRequest(request);
-
-                while (!request.isDone)
-                {
-                    // Timeout the request and return false
-                    if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _apprienManager.RequestTimeout)
-                    {
-                        Debug.LogError("Token check: Request Timeout");
-                        yield return false;
-                        yield break;
-                    }
-
-                    // Specify that the request is still in progress
-                    yield return null;
-                }
-                // If there was an error sending the request, or the server returns an error code > 400
-                if (ApprienUtility.IsHttpError(request))
-                {
-                    //Debug.LogError("Token check: HTTP Error " + request.responseCode);
-                    yield return false;
-                    yield break;
-                }
-                else if (ApprienUtility.IsNetworkError(request))
-                {
-                    //Debug.LogError("Token check: Network Error " + request.responseCode);
-                    yield return false;
-                    yield break;
-                }
-
-                // The token is valid
-                yield return true;
-            }
-        }
-
     }
 }
