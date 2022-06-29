@@ -118,16 +118,11 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                 _builder.AddProduct(id, ProductType.Consumable);
             }
 
-            _backend = Substitute.For<IApprienBackendConnection>(
-                _gamePackageName,
-                ApprienIntegrationType.GooglePlayStore,
-                _token,
-                _apprienIdentifier
-            );
+            _backend = Substitute.For<IApprienBackendConnection>();
 
             _apprienManager = new ApprienManager(_backend);
 
-            // Request mocks
+            // TODO: Substitute backend calls
         }
 
         /*
