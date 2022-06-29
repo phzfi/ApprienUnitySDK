@@ -33,8 +33,8 @@ namespace Apprien
         public string ApprienVariantIAPId = "";
 
         /// <summary>
-        /// Optional. If defined, the IAPId only applies to the given store. If this product exists in multiple stores,
-        /// multiple ApprienProduct objects are required.
+        /// NOT IN USE. Optional. If defined, the IAPId only applies to the given store. If this product exists
+        /// in multiple stores, multiple ApprienProduct objects are required.
         /// The string is Unity's identifier for stores, e.g. "AppleAppStore", "GooglePlay" etc.
         /// </summary>
         public string Store;

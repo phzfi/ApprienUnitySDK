@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.Purchasing;
 
 namespace Apprien
@@ -61,6 +60,7 @@ namespace Apprien
             {
                 if (!_initializeFetch.MoveNext())
                 {
+                    Repaint();
                     _initializeFetch = null;
                 }
             }
@@ -69,9 +69,49 @@ namespace Apprien
             {
                 if (!_pricesFetch.MoveNext())
                 {
+                    Repaint();
                     _pricesFetch = null;
                 }
             }
+        }
+
+        private void FetchPrices()
+        {
+            _fetchingProducts = true;
+            _fetchedProducts.Clear();
+
+            var catalogFile = Resources.Load<TextAsset>(_catalogResourceName);
+            if (catalogFile != null)
+            {
+                var catalog = ProductCatalog.FromTextAsset(catalogFile);
+                var products = ApprienProduct.FromIAPCatalog(catalog);
+
+                if (products.Length == 0)
+                {
+                    _anyProducts = false;
+                }
+                else
+                {
+                    _anyProducts = true;
+                    _pricesFetch = FetchPricesCoroutine(products);
+                }
+            }
+            else
+            {
+                _anyProducts = false;
+            }
+        }
+
+        private IEnumerator FetchPricesCoroutine(ApprienProduct[] products)
+        {
+            var fetch = _apprienManager.FetchApprienPrices(products);
+            while (fetch.MoveNext())
+            {
+                yield return null;
+            }
+
+            _fetchingProducts = false;
+            _fetchedProducts = products.ToList();
         }
 
         public override void OnInspectorGUI()
@@ -141,35 +181,7 @@ namespace Apprien
 
             if (GUILayout.Button("Test fetching Apprien-generated products"))
             {
-                _fetchingProducts = true;
-                _fetchedProducts.Clear();
-
-                var catalogFile = Resources.Load<TextAsset>(_catalogResourceName);
-                if (catalogFile != null)
-                {
-                    // catalog file exists
-                    var catalog = ProductCatalog.FromTextAsset(catalogFile);
-                    var products = ApprienProduct.FromIAPCatalog(catalog);
-
-                    if (products.Length == 0)
-                    {
-                        _anyProducts = false;
-                    }
-                    else
-                    {
-                        _anyProducts = true;
-                        _pricesFetch = _apprienManager.FetchApprienPrices(products, () =>
-                        {
-                            _fetchingProducts = false;
-                            _fetchedProducts = products.ToList();
-                        });
-                    }
-                }
-                else
-                {
-                    _anyProducts = false;
-                }
-
+                FetchPrices();
             }
 
             if (!_anyProducts)

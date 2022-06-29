@@ -9,14 +9,19 @@ namespace Apprien
 {
     public interface IApprienBackendConnection
     {
-        IEnumerator FetchApprienPrices(ApprienProduct[] apprienProducts, Action callback = null);
-        IEnumerator FetchApprienPrice(ApprienProduct product, Action callback = null);
-        IEnumerator PostReceipt(MonoBehaviour unityComponent, string receiptJson);
-        IEnumerator ProductsShown(ApprienProduct[] apprienProducts);
-        IEnumerator<bool?> CheckServiceStatus();
-        IEnumerator<bool?> CheckTokenValidity(string token);
+        IEnumerator<ApprienFetchPricesResponse> FetchApprienPrices(IUnityWebRequest request);
+        IEnumerator<ApprienFetchPriceResponse> FetchApprienPrice(IUnityWebRequest request);
+        IEnumerator<ApprienPostReceiptResponse> PostReceipt(IUnityWebRequest request);
+        IEnumerator ProductsShown(IUnityWebRequest request);
+        IEnumerator<bool?> CheckServiceStatus(IUnityWebRequest request);
+        IEnumerator<bool?> CheckTokenValidity(IUnityWebRequest request);
         void SetToken(string token);
+        string GamePackageName { get; }
+        string Token { get; }
+        ApprienIntegrationType IntegrationType { get; }
         float RequestTimeout { get; }
+        string StoreIdentifier { get; }
+        string ApprienIdentifier { get; }
     }
 
     public class ApprienBackendConnection : IApprienBackendConnection
@@ -25,16 +30,19 @@ namespace Apprien
         /// The package name for the game. Usually Application.identifier.
         /// </summary>
         private string _gamePackageName;
+        public string GamePackageName => _gamePackageName;
 
         /// <summary>
         /// OAuth2 token received from Apprien Dashboard.
         /// </summary>
         private string _token = "TODO acquire token from Apprien Dashboard/support";
+        public string Token => _token;
 
         /// <summary>
         /// Define the store ApprienManager should integrate against, e.g. GooglePlayStore
         /// </summary>
         private ApprienIntegrationType _integrationType;
+        public ApprienIntegrationType IntegrationType => _integrationType;
 
         /// <summary>
         /// Request timeout in seconds
@@ -43,17 +51,12 @@ namespace Apprien
         public float RequestTimeout => _requestTimeout;
 
         /// <summary>
-        /// Gets the store's string identifier for the currently set ApprienIntegrationType
+        /// Gets the store's string identifier for the currently set IntegrationType
         /// </summary>
-        private string _storeIdentifier
-        {
-            get
-            {
-                return ApprienUtility.GetIntegrationUri(_integrationType);
-            }
-        }
+        public string StoreIdentifier => ApprienUtility.GetIntegrationUri(_integrationType);
 
         private string _apprienIdentifier;
+        public string ApprienIdentifier => _apprienIdentifier;
 
         public ApprienBackendConnection(
             string gamePackageName,
@@ -78,9 +81,9 @@ namespace Apprien
         /// </summary>
         /// <param name="responseCode"></param>
         /// <param name="errorMessage"></param>
-        public void SendError(int responseCode, string errorMessage)
+        public void SendError(long responseCode, string errorMessage)
         {
-            ApprienUtility.SendError(responseCode, errorMessage, _gamePackageName, _storeIdentifier);
+            SendError(responseCode, errorMessage, _gamePackageName, StoreIdentifier);
         }
 
         /// <summary>
@@ -95,76 +98,61 @@ namespace Apprien
         /// </summary>
         /// <param name="callback">Callback that is called when all product variant requests have completed.</param>
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
-        public IEnumerator FetchApprienPrices(ApprienProduct[] apprienProducts, Action callback = null)
+        public IEnumerator<ApprienFetchPricesResponse> FetchApprienPrices(IUnityWebRequest request)
         {
             var requestSendTimestamp = DateTime.Now;
-            var url = string.Format(ApprienUtility.REST_GET_ALL_PRICES_URL, _storeIdentifier, _gamePackageName);
 
-            using (var request = UnityWebRequest.Get(url))
+            SendWebRequest(request);
+
+            while (!request.isDone)
             {
-                request.SetRequestHeader("Authorization", "Bearer " + _token);
-                request.SetRequestHeader("Session-Id", _apprienIdentifier);
-                ApprienUtility.SendWebRequest(request);
-
-                while (!request.isDone)
+                // Timeout the request and return false
+                if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _requestTimeout)
                 {
-                    // Timeout the request and return false
-                    if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _requestTimeout)
+                    yield return new ApprienFetchPricesResponse
                     {
-                        if (callback != null)
-                        {
-                            callback();
-                        }
-                        yield break;
-                    }
-
-                    // Specify that the request is still in progress
-                    yield return null;
+                        Success = false,
+                        Error = "Request timed out"
+                    };
+                    yield break;
                 }
 
-                if (ApprienUtility.IsHttpError(request))
+                // Specify that the request is still in progress
+                yield return null;
+            }
+
+            var responseBody = request.downloadHandler?.text;
+
+            if (IsHttpError(request))
+            {
+                SendError(request.responseCode, $"Error occured while fetching prices. HTTP error {request.responseCode}, body: {responseBody}");
+                yield return new ApprienFetchPricesResponse
                 {
-                    SendError((int)request.responseCode, $"Error occured while fetching Apprien prices: HTTP error: {request.downloadHandler.text}");
-                }
-                else if (ApprienUtility.IsNetworkError(request))
+                    Success = false,
+                    Error = request.error,
+                    Message = responseBody
+                };
+                yield break;
+            }
+            else if (IsNetworkError(request))
+            {
+                SendError(request.responseCode, "Error occured while fetching Apprien prices: Network error");
+                yield return new ApprienFetchPricesResponse
                 {
-                    SendError((int)request.responseCode, "Error occured while fetching Apprien prices: Network error");
-                }
-                else
+                    Success = false,
+                    Error = request.error,
+                    Message = responseBody
+                };
+                yield break;
+            }
+            else
+            {
+                yield return new ApprienFetchPricesResponse
                 {
-                    if (request.responseCode == 200)
-                    {
-                        // Parse the JSON data and update the variant IAP ids
-                        try
-                        {
-                            // Create lookup to update the products in more linear time
-                            var productLookup = new Dictionary<string, ApprienProduct>();
-                            foreach (var product in apprienProducts)
-                            {
-                                productLookup[product.BaseIAPId] = product;
-                            }
-
-                            var json = request.downloadHandler.text;
-                            var productList = JsonUtility.FromJson<ApprienProductList>(json);
-                            foreach (var product in productList.products)
-                            {
-                                if (productLookup.ContainsKey(product.@base))
-                                {
-                                    productLookup[product.@base].ApprienVariantIAPId = product.variant;
-                                }
-                            }
-                        }
-                        catch { } // If the JSON cannot be parsed, products will be using default IAP ids
-                    }
-                    else
-                    {
-                        // If Apprien returns a non-200 message code, return base IAP id price
-                        SendError((int)request.responseCode, "Error occured while fetching Apprien prices. Error: " + request.downloadHandler.text);
-                    }
-                }
-
-                // Regardless of the outcome, execute the callback
-                callback?.Invoke();
+                    Success = true,
+                    JSON = responseBody
+                };
+                yield break;
             }
         }
 
@@ -183,61 +171,65 @@ namespace Apprien
         /// <param name="product">Apprien.Product instance. After the request completes, will contain the Apprien IAP id variant.</param>
         /// <param name="callback">Callback that is called when the request finishes. Takes string argument, containing the resolved IAP id.</param>
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine.</returns>
-        public IEnumerator FetchApprienPrice(ApprienProduct product, Action callback = null)
+        public IEnumerator<ApprienFetchPriceResponse> FetchApprienPrice(IUnityWebRequest request)
         {
             var requestSendTimestamp = DateTime.Now;
-            var url = string.Format(ApprienUtility.REST_GET_PRICE_URL, _storeIdentifier, _gamePackageName, product.BaseIAPId);
 
-            using (var request = UnityWebRequest.Get(url))
+            SendWebRequest(request);
+
+            while (!request.isDone)
             {
-                request.SetRequestHeader("Authorization", "Bearer " + _token);
-                request.SetRequestHeader("Session-Id", _apprienIdentifier);
-                ApprienUtility.SendWebRequest(request);
-
-                while (!request.isDone)
+                // Timeout the request and return false
+                if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _requestTimeout)
                 {
-                    // Timeout the request and return false
-                    if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _requestTimeout)
+                    yield return new ApprienFetchPriceResponse
                     {
-                        if (callback != null)
-                        {
-                            callback();
-                        }
-                        yield break;
-                    }
-
-                    // Specify that the request is still in progress
-                    yield return null;
+                        Success = false,
+                        Error = "Request timed out"
+                    };
+                    yield break;
                 }
 
-                if (ApprienUtility.IsHttpError(request))
-                {
-                    // send apprien api info about the error
-                    SendError((int)request.responseCode, "Error occured while fetching Apprien prices. HTTP error: " + request.downloadHandler.text);
-                }
-                else if (ApprienUtility.IsNetworkError(request))
-                {
-                    // send apprien api info about the error
-                    SendError((int)request.responseCode, "Error occured while fetching Apprien prices. Network error");
-                }
-                else
-                {
-                    if (request.responseCode == 200)
-                    {
-                        // Apprien IAP id variant fetched, apply it to the given product and
-                        var apprienVariantIAPid = request.downloadHandler.text;
-                        product.ApprienVariantIAPId = apprienVariantIAPid;
-                    }
-                    else
-                    {
-                        // If Apprien returns a non-200 message code, return base IAP id price
-                        SendError((int)request.responseCode, "Error occured while fetching Apprien prices");
-                        Debug.Log("Apprien request error: " + request.responseCode + ". " + request.downloadHandler.text);
-                    }
-                }
+                // Specify that the request is still in progress
+                yield return null;
+            }
 
-                // Regardless of the outcome, execute the callback
-                callback?.Invoke();
+            var responseBody = request.downloadHandler?.text;
+
+            if (IsHttpError(request))
+            {
+                // send apprien api info about the error
+                SendError(request.responseCode, $"Error occured while fetching prices. HTTP error {request.responseCode}, body: {responseBody}");
+                yield return new ApprienFetchPriceResponse
+                {
+                    Success = false,
+                    Error = request.error,
+                    Message = responseBody
+                };
+                yield break;
+            }
+            else if (IsNetworkError(request))
+            {
+                // send apprien api info about the error
+                SendError(request.responseCode, "Error occured while fetching Apprien prices. Network error");
+                yield return new ApprienFetchPriceResponse
+                {
+                    Success = false,
+                    Error = request.error,
+                    Message = responseBody
+                };
+                yield break;
+            }
+            else
+            {
+                yield return new ApprienFetchPriceResponse
+                {
+                    Success = true,
+                    VariantId = responseBody,
+                    Error = request.error,
+                    Message = responseBody
+                };
+                yield break;
             }
         }
 
@@ -252,34 +244,42 @@ namespace Apprien
         /// <param name="unityComponent">MonoBehaviour, typically 'this'.</param>
         /// <param name="receiptJson"></param>
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine.</returns>
-        public IEnumerator PostReceipt(MonoBehaviour unityComponent, string receiptJson)
+        public IEnumerator<ApprienPostReceiptResponse> PostReceipt(IUnityWebRequest request)
         {
-            var formData = new List<IMultipartFormSection>();
-            formData.Add(new MultipartFormDataSection("deal=receipt", receiptJson));
+            var requestSendTimestamp = DateTime.Now;
+            SendWebRequest(request);
 
-            var url = String.Format(ApprienUtility.REST_POST_RECEIPT_URL, _storeIdentifier, _gamePackageName);
-
-            using (var request = UnityWebRequest.Post(url, formData))
+            while (!request.isDone)
             {
-                request.SetRequestHeader("Authorization", "Bearer " + _token);
-                yield return ApprienUtility.SendWebRequest(request);
+                // Timeout the request and break
+                if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _requestTimeout)
+                {
+                    yield return null;
+                    yield break;
+                }
 
-                if (ApprienUtility.IsHttpError(request))
-                {
-                    SendError((int)request.responseCode, "Error occured while posting receipt. HTTP error: " + request.downloadHandler.text);
-                    unityComponent.SendMessage("OnApprienPostReceiptFailed", request.responseCode + ": " + request.error, SendMessageOptions.DontRequireReceiver);
-                }
-                else if (ApprienUtility.IsNetworkError(request))
-                {
-                    SendError((int)request.responseCode, "Error occured while posting receipt. Network error");
-                    unityComponent.SendMessage("OnApprienPostReceiptFailed", request.responseCode + ": " + request.error, SendMessageOptions.DontRequireReceiver);
-                }
-                else
-                {
-                    unityComponent.SendMessage("OnApprienPostReceiptSuccess", request.downloadHandler.text, SendMessageOptions.DontRequireReceiver);
-                }
+                // Specify that the request is still in progress
+                yield return null;
             }
 
+            var responseBody = request.downloadHandler?.text;
+
+            if (IsHttpError(request))
+            {
+                SendError(request.responseCode, $"Error occured while posting receipt. HTTP error {request.responseCode}, body: {responseBody}");
+            }
+            else if (IsNetworkError(request))
+            {
+                SendError(request.responseCode, "Error occured while posting receipt. Network error");
+            }
+
+            yield return new ApprienPostReceiptResponse
+            {
+                ResponseCode = request.responseCode,
+                Error = request.error,
+                Message = responseBody
+            };
+            yield break;
         }
 
         /// <summary>
@@ -287,30 +287,18 @@ namespace Apprien
         /// </summary>
         /// <param name="apprienProducts"></param>
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine.</returns>
-        public IEnumerator ProductsShown(ApprienProduct[] apprienProducts)
+        public IEnumerator ProductsShown(IUnityWebRequest request)
         {
-            var formData = new List<IMultipartFormSection>();
+            yield return SendWebRequest(request);
 
-            for (var i = 0; i < apprienProducts.Length; i++)
+            if (IsHttpError(request))
             {
-                formData.Add(new MultipartFormDataSection("iap_ids[" + i + "]", apprienProducts[i].ApprienVariantIAPId));
+                var responseBody = request.downloadHandler?.text;
+                SendError(request.responseCode, $"Error occured while posting products shown. HTTP error {request.responseCode}, body: {responseBody}");
             }
-
-            var url = String.Format(ApprienUtility.REST_POST_PRODUCTS_SHOWN_URL, _storeIdentifier);
-
-            using (var request = UnityWebRequest.Post(url, formData))
+            else if (IsNetworkError(request))
             {
-                request.SetRequestHeader("Authorization", "Bearer " + _token);
-                yield return ApprienUtility.SendWebRequest(request);
-
-                if (ApprienUtility.IsHttpError(request))
-                {
-                    SendError((int)request.responseCode, "Error occured while posting products shown. HTTP error: " + request.downloadHandler.text);
-                }
-                else if (ApprienUtility.IsNetworkError(request))
-                {
-                    SendError((int)request.responseCode, "Error occured while posting products shown. Network error");
-                }
+                SendError(request.responseCode, "Error occured while posting products shown. Network error");
             }
         }
 
@@ -318,88 +306,169 @@ namespace Apprien
         /// Check whether Apprien API service is online.
         /// </summary>
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
-        public IEnumerator<bool?> CheckServiceStatus()
+        public IEnumerator<bool?> CheckServiceStatus(IUnityWebRequest request)
         {
             var requestSendTimestamp = DateTime.Now;
-            using (var request = UnityWebRequest.Get(ApprienUtility.REST_GET_APPRIEN_STATUS))
+            SendWebRequest(request);
+
+            while (!request.isDone)
             {
-                ApprienUtility.SendWebRequest(request);
-
-                while (!request.isDone)
+                // Timeout the request and return false
+                if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _requestTimeout)
                 {
-                    // Timeout the request and return false
-                    if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _requestTimeout)
-                    {
-                        yield return false;
-                        yield break;
-                    }
-
-                    // Specify that the request is still in progress
-                    yield return null;
-                }
-
-                // If there was an error sending the request, or the server returns an error code > 400
-                if (ApprienUtility.IsHttpError(request))
-                {
-                    //Debug.LogError("Connection check: HTTP Error " + request.responseCode);
-                    yield return false;
-                    yield break;
-                }
-                else if (ApprienUtility.IsNetworkError(request))
-                {
-                    //Debug.LogError("Connection check: Network Error " + request.responseCode);
                     yield return false;
                     yield break;
                 }
 
-                // The service is online
-                yield return true;
+                // Specify that the request is still in progress
+                yield return null;
+            }
+
+            // If there was an error sending the request, or the server returns an error code > 400
+            if (IsHttpError(request))
+            {
+                //Debug.LogError("Connection check: HTTP Error " + request.responseCode);
+                yield return false;
                 yield break;
             }
+            else if (IsNetworkError(request))
+            {
+                //Debug.LogError("Connection check: Network Error " + request.responseCode);
+                yield return false;
+                yield break;
+            }
+
+            // The service is online
+            yield return true;
+            yield break;
         }
 
         /// <summary>
         /// Validates the supplied access token with the Apprien API
         /// </summary>
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
-        public IEnumerator<bool?> CheckTokenValidity(string token)
+        public IEnumerator<bool?> CheckTokenValidity(IUnityWebRequest request)
         {
             var requestSendTimestamp = DateTime.Now;
-            var url = string.Format(ApprienUtility.REST_GET_VALIDATE_TOKEN_URL, ApprienUtility.GetIntegrationUri(ApprienIntegrationType.GooglePlayStore), Application.identifier);
-            using (var request = UnityWebRequest.Get(url))
+            SendWebRequest(request);
+
+            while (!request.isDone)
             {
-                request.SetRequestHeader("Authorization", "Bearer " + token);
-                ApprienUtility.SendWebRequest(request);
-
-                while (!request.isDone)
+                // Timeout the request and return false
+                if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _requestTimeout)
                 {
-                    // Timeout the request and return false
-                    if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _requestTimeout)
-                    {
-                        yield return false;
-                        yield break;
-                    }
-
-                    // Specify that the request is still in progress
-                    yield return null;
-                }
-                // If there was an error sending the request, or the server returns an error code > 400
-                if (ApprienUtility.IsHttpError(request))
-                {
-                    //Debug.LogError("Token check: HTTP Error " + request.responseCode);
-                    yield return false;
-                    yield break;
-                }
-                else if (ApprienUtility.IsNetworkError(request))
-                {
-                    //Debug.LogError("Token check: Network Error " + request.responseCode);
                     yield return false;
                     yield break;
                 }
 
-                // The token is valid
-                yield return true;
+                // Specify that the request is still in progress
+                yield return null;
+            }
+            // If there was any error in the request, the token is invalid
+            if (IsHttpError(request))
+            {
+                //Debug.LogError("Token check: HTTP Error " + request.responseCode);
+                yield return false;
+                yield break;
+            }
+            else if (IsNetworkError(request))
+            {
+                //Debug.LogError("Token check: Network Error " + request.responseCode);
+                yield return false;
+                yield break;
+            }
+
+            // The token is valid
+            yield return true;
+        }
+
+        /// <summary>
+        /// Sends an error message to Apprien backend when the SDK encounters problems
+        /// </summary>
+        /// <param name="responseCode"></param>
+        /// <param name="errorMessage"></param>
+        private void SendError(long responseCode, string errorMessage, string packageName, string storeIdentifier)
+        {
+            var url = string.Format(ApprienUtility.REST_POST_ERROR_URL, errorMessage, responseCode, packageName, storeIdentifier);
+            using (var post = UnityWebRequest.Post(url, ""))
+            {
+                SendWebRequest(new UnityWebRequestWrapper() { unityWebRequest = post });
             }
         }
+
+#if UNITY_2017_1_OR_NEWER
+        private static UnityWebRequestAsyncOperation SendWebRequest(IUnityWebRequest request)
+        {
+            return request.SendWebRequest();
+        }
+#elif UNITY_5_6_OR_NEWER
+        private static AsyncOperation SendWebRequest(UnityWebRequest request)
+        {
+            return request.Send();
+        }
+#endif
+
+        private static bool IsHttpError(IUnityWebRequest request)
+        {
+            bool fail;
+
+#if UNITY_2020_1_OR_NEWER
+            fail = request.result == UnityWebRequest.Result.ProtocolError ||
+                request.result == UnityWebRequest.Result.DataProcessingError;
+#elif UNITY_2017_1_OR_NEWER
+            fail = request.isHttpError;
+#else
+            fail = request.responseCode >= 400;
+#endif
+            if (fail)
+            {
+                Debug.LogError($"{request.method} request URL '{request.url}' HTTP error code '{request.responseCode}'");
+            }
+
+            return fail;
+        }
+
+        private static bool IsNetworkError(IUnityWebRequest request)
+        {
+            bool fail;
+
+#if UNITY_2020_1_OR_NEWER
+            fail = request.result == UnityWebRequest.Result.ConnectionError;
+#elif UNITY_2017_1_OR_NEWER
+            fail = request.isNetworkError;
+#else       
+            fail = request.isError;
+#endif
+            if (fail)
+            {
+                Debug.LogError($"{request.method} request URL '{request.url}' NETWORK error Code '{request.responseCode}'");
+            }
+
+            return fail;
+        }
+    }
+
+    public class ApprienFetchPricesResponse
+    {
+        public bool Success;
+        public string JSON;
+        public string Message;
+        public string Error;
+    }
+
+    public class ApprienFetchPriceResponse
+    {
+        public bool Success;
+        public string VariantId;
+        public string Message;
+        public string Error;
+    }
+
+    public class ApprienPostReceiptResponse
+    {
+        public long ResponseCode;
+        public bool Success => ResponseCode == 200;
+        public string Message;
+        public string Error;
     }
 }

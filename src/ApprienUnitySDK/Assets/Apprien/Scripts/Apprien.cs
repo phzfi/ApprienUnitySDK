@@ -30,24 +30,10 @@ namespace Apprien
     /// </summary>
     public class ApprienManager
     {
-        /// <summary>
-        /// Returns the first byte of MD5-hashed SystemInfo.deviceUniqueIdentifier as a hexadecimal string (two symbols).
-        /// The identifier is sent to Apprien Game API 
-        /// </summary>
-        /// <value></value>
-        public string ApprienIdentifier
-        {
-            get
-            {
-                var id = SystemInfo.deviceUniqueIdentifier;
-                var bytes = System.Text.ASCIIEncoding.ASCII.GetBytes(id);
-                var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
-                var hash = md5.ComputeHash(bytes);
-                return System.Convert.ToString(hash[0], 16);
-            }
-        }
-
-        public float RequestTimeout => _backend != null ? _backend.RequestTimeout : 0f;
+        private string _gamePackageName => _backend?.GamePackageName;
+        private string _token => _backend?.Token;
+        private string _storeIdentifier => _backend?.StoreIdentifier;
+        private string _apprienIdentifier => _backend?.ApprienIdentifier;
 
         private IApprienBackendConnection _backend;
 
@@ -63,7 +49,7 @@ namespace Apprien
             string token
         )
         {
-            _backend = new ApprienBackendConnection(gamePackageName, integrationType, token, ApprienIdentifier);
+            _backend = new ApprienBackendConnection(gamePackageName, integrationType, token, ApprienUtility.ApprienIdentifier);
         }
 
         public ApprienManager(IApprienBackendConnection backend)
@@ -88,9 +74,51 @@ namespace Apprien
         /// </summary>
         /// <param name="callback">Callback that is called when all product variant requests have completed.</param>
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
-        public IEnumerator FetchApprienPrices(ApprienProduct[] apprienProducts, Action callback = null)
+        public IEnumerator FetchApprienPrices(ApprienProduct[] apprienProducts)
         {
-            return _backend.FetchApprienPrices(apprienProducts, callback);
+            var url = string.Format(ApprienUtility.REST_GET_ALL_PRICES_URL, _storeIdentifier, _gamePackageName);
+
+            var unityWebRequest = UnityWebRequest.Get(url);
+            unityWebRequest.SetRequestHeader("Authorization", "Bearer " + _token);
+            unityWebRequest.SetRequestHeader("Session-Id", _apprienIdentifier);
+            var request = new UnityWebRequestWrapper() { unityWebRequest = unityWebRequest };
+
+            var fetch = _backend.FetchApprienPrices(request);
+            while (fetch.MoveNext())
+            {
+                yield return null;
+            }
+
+            var response = fetch.Current;
+
+            // Apply the variant to the product, if the fetch was successful
+            if (response != null && response.Success)
+            {
+                // Parse the JSON data and update the variant IAP ids
+                try
+                {
+                    // Create lookup to update the products in more linear time
+                    var productLookup = new Dictionary<string, ApprienProduct>();
+                    foreach (var product in apprienProducts)
+                    {
+                        productLookup[product.BaseIAPId] = product;
+                    }
+
+                    var productList = JsonUtility.FromJson<ApprienProductList>(response.JSON);
+                    foreach (var product in productList.products)
+                    {
+                        if (productLookup.ContainsKey(product.@base))
+                        {
+                            productLookup[product.@base].ApprienVariantIAPId = product.variant;
+                        }
+                    }
+                }
+                catch { } // If the JSON cannot be parsed, products will be using default IAP ids
+            }
+
+            // Caller can use the result to determine actions on success, failure etc.
+            yield return response;
+            yield break;
         }
 
         /// <summary>
@@ -108,9 +136,32 @@ namespace Apprien
         /// <param name="product">Apprien.Product instance. After the request completes, will contain the Apprien IAP id variant.</param>
         /// <param name="callback">Callback that is called when the request finishes. Takes string argument, containing the resolved IAP id.</param>
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine.</returns>
-        public IEnumerator FetchApprienPrice(ApprienProduct product, Action callback = null)
+        public IEnumerator<ApprienFetchPriceResponse> FetchApprienPrice(ApprienProduct product)
         {
-            return _backend.FetchApprienPrice(product, callback);
+            var url = string.Format(ApprienUtility.REST_GET_PRICE_URL, _storeIdentifier, _gamePackageName, product.BaseIAPId);
+
+            var unityWebRequest = UnityWebRequest.Get(url);
+            unityWebRequest.SetRequestHeader("Authorization", "Bearer " + _token);
+            unityWebRequest.SetRequestHeader("Session-Id", _apprienIdentifier);
+            var request = new UnityWebRequestWrapper() { unityWebRequest = unityWebRequest };
+
+            var fetch = _backend.FetchApprienPrice(request);
+            while (fetch.MoveNext())
+            {
+                yield return null;
+            }
+
+            var response = fetch.Current;
+
+            // Apply the variant to the product, if the fetch was successful
+            if (response != null && response.Success)
+            {
+                product.ApprienVariantIAPId = response.VariantId;
+            }
+
+            // Caller can use the result to determine actions on success, failure etc.
+            yield return response;
+            yield break;
         }
 
         /// <summary>
@@ -124,9 +175,17 @@ namespace Apprien
         /// <param name="unityComponent">MonoBehaviour, typically 'this'.</param>
         /// <param name="receiptJson"></param>
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine.</returns>
-        public IEnumerator PostReceipt(MonoBehaviour unityComponent, string receiptJson)
+        public IEnumerator<ApprienPostReceiptResponse> PostReceipt(string receiptJson)
         {
-            return _backend.PostReceipt(unityComponent, receiptJson);
+            var formData = new List<IMultipartFormSection>();
+            formData.Add(new MultipartFormDataSection("deal=receipt", receiptJson));
+
+            var url = String.Format(ApprienUtility.REST_POST_RECEIPT_URL, _storeIdentifier, _gamePackageName);
+            var unityWebRequest = UnityWebRequest.Post(url, formData);
+            unityWebRequest.SetRequestHeader("Authorization", "Bearer " + _token);
+
+            var request = new UnityWebRequestWrapper() { unityWebRequest = unityWebRequest };
+            return _backend.PostReceipt(request);
         }
 
         /// <summary>
@@ -136,7 +195,19 @@ namespace Apprien
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine.</returns>
         public IEnumerator ProductsShown(ApprienProduct[] apprienProducts)
         {
-            return _backend.ProductsShown(apprienProducts);
+            var formData = new List<IMultipartFormSection>();
+
+            for (var i = 0; i < apprienProducts.Length; i++)
+            {
+                formData.Add(new MultipartFormDataSection("iap_ids[" + i + "]", apprienProducts[i].ApprienVariantIAPId));
+            }
+
+            var url = String.Format(ApprienUtility.REST_POST_PRODUCTS_SHOWN_URL, _storeIdentifier);
+            var unityWebRequest = UnityWebRequest.Post(url, formData);
+            unityWebRequest.SetRequestHeader("Authorization", "Bearer " + _token);
+
+            var request = new UnityWebRequestWrapper() { unityWebRequest = unityWebRequest };
+            return _backend.ProductsShown(request);
         }
 
         /// <summary>
@@ -145,7 +216,9 @@ namespace Apprien
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
         public IEnumerator<bool?> CheckServiceStatus()
         {
-            return _backend.CheckServiceStatus();
+            var unityWebRequest = UnityWebRequest.Get(ApprienUtility.REST_GET_APPRIEN_STATUS);
+            var request = new UnityWebRequestWrapper() { unityWebRequest = unityWebRequest };
+            return _backend.CheckServiceStatus(request);
         }
 
         /// <summary>
@@ -154,7 +227,12 @@ namespace Apprien
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
         public IEnumerator<bool?> CheckTokenValidity(string token)
         {
-            return _backend.CheckTokenValidity(token);
+            var url = string.Format(ApprienUtility.REST_GET_VALIDATE_TOKEN_URL, ApprienUtility.GetIntegrationUri(ApprienIntegrationType.GooglePlayStore), Application.identifier);
+            var unityWebRequest = UnityWebRequest.Get(url);
+            unityWebRequest.SetRequestHeader("Authorization", "Bearer " + token);
+
+            var request = new UnityWebRequestWrapper() { unityWebRequest = unityWebRequest };
+            return _backend.CheckTokenValidity(request);
         }
     }
 }

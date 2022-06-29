@@ -1,5 +1,4 @@
-﻿// Enable .NET 4.x in Player settings to enable more unit tests of Apprien SDK
-#if UNITY_EDITOR
+﻿#if UNITY_EDITOR
 using System.Collections;
 using System.Collections.Generic;
 using Apprien;
@@ -13,6 +12,8 @@ using UnityEngine.Purchasing;
 using UnityEngine.Purchasing.Extension;
 using UnityEngine.TestTools;
 using System.Text.RegularExpressions;
+
+using NSubstitute;
 
 namespace ApprienUnitySDK.ExampleProject.Tests
 {
@@ -67,6 +68,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
     public class ApprienSDKTest
     {
         private ApprienManager _apprienManager;
+        private IApprienBackendConnection _backend;
 
         private string _defaultIAPid;
         private List<string> _testIAPids;
@@ -74,6 +76,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
 
         private string _gamePackageName;
         private string _token;
+        private string _apprienIdentifier;
 
         private ProductCatalog _catalog;
         private ConfigurationBuilder _builder;
@@ -83,6 +86,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         {
             _gamePackageName = "dummy.package.name";
             _token = "dummy-token";
+            _apprienIdentifier = "FF"; // One byte as a hex string
 
             // Setup products for testing
             _defaultIAPid = "test-default-id";
@@ -114,12 +118,18 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                 _builder.AddProduct(id, ProductType.Consumable);
             }
 
-            _apprienManager = new ApprienManager(
+            _backend = Substitute.For<IApprienBackendConnection>(
                 _gamePackageName,
                 ApprienIntegrationType.GooglePlayStore,
-                _token
+                _token,
+                _apprienIdentifier
             );
+
+            _apprienManager = new ApprienManager(_backend);
+
+            // Request mocks
         }
+
         /*
         #if NET_4_6 || NET_STANDARD_2_0
 
@@ -272,7 +282,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         {
             var products = new ApprienProduct[] { GetProduct(0), GetProduct(1), GetProduct(2) };
 
-            var fetch = _apprienManager.FetchApprienPrices(products, () => { });
+            var fetch = _apprienManager.FetchApprienPrices(products);
 
             while (fetch.MoveNext())
             {
@@ -290,7 +300,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         {
             var product = GetProduct(0);
 
-            var fetch = _apprienManager.FetchApprienPrice(product, () => { });
+            var fetch = _apprienManager.FetchApprienPrice(product);
             while (fetch.MoveNext())
             {
                 yield return null;
@@ -309,7 +319,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             LogAssert.Expect(LogType.Error, new Regex(".*NETWORK error.*"));
 
             var product = GetProduct(0);
-            var fetch = _apprienManager.FetchApprienPrice(product, () => { });
+            var fetch = _apprienManager.FetchApprienPrice(product);
 
             while (fetch.MoveNext())
             {
@@ -329,7 +339,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             //_apprienManager.Token = "another-dummy-token";
 
             var product = GetProduct(0);
-            var fetch = _apprienManager.FetchApprienPrice(product, () => { });
+            var fetch = _apprienManager.FetchApprienPrice(product);
 
             while (fetch.MoveNext())
             {
@@ -344,7 +354,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         {
             // IAP without a variant
             var product = GetProduct();
-            var fetch = _apprienManager.FetchApprienPrice(product, () => { });
+            var fetch = _apprienManager.FetchApprienPrice(product);
             while (fetch.MoveNext())
             {
                 yield return null;
@@ -362,7 +372,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
 
             var products = new ApprienProduct[] { GetProduct(0), GetProduct(1), GetProduct(2) };
 
-            var fetch = _apprienManager.FetchApprienPrices(products, () => { });
+            var fetch = _apprienManager.FetchApprienPrices(products);
 
             while (fetch.MoveNext())
             {
@@ -384,7 +394,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
 
             var products = new ApprienProduct[] { GetProduct(0), GetProduct(1), GetProduct(2) };
 
-            var fetch = _apprienManager.FetchApprienPrices(products, () => { });
+            var fetch = _apprienManager.FetchApprienPrices(products);
 
             while (fetch.MoveNext())
             {
