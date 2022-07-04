@@ -18,10 +18,9 @@ namespace Apprien
         void SetToken(string token);
         string GamePackageName { get; }
         string Token { get; }
-        ApprienIntegrationType IntegrationType { get; }
-        float RequestTimeout { get; }
         string StoreIdentifier { get; }
         string ApprienIdentifier { get; }
+        float RequestTimeout { get; set; }
     }
 
     public class ApprienBackendConnection : IApprienBackendConnection
@@ -42,13 +41,16 @@ namespace Apprien
         /// Define the store ApprienManager should integrate against, e.g. GooglePlayStore
         /// </summary>
         private ApprienIntegrationType _integrationType;
-        public ApprienIntegrationType IntegrationType => _integrationType;
 
         /// <summary>
         /// Request timeout in seconds
         /// </summary>
         private float _requestTimeout = 3f;
-        public float RequestTimeout => _requestTimeout;
+        public float RequestTimeout
+        {
+            get { return _requestTimeout; }
+            set { _requestTimeout = value; }
+        }
 
         /// <summary>
         /// Gets the store's string identifier for the currently set IntegrationType
@@ -58,17 +60,28 @@ namespace Apprien
         private string _apprienIdentifier;
         public string ApprienIdentifier => _apprienIdentifier;
 
+        private ITimeProvider _timeProvider;
+
         public ApprienBackendConnection(
             string gamePackageName,
             ApprienIntegrationType integrationType,
             string token,
             string apprienIdentifier
+        ) : this(gamePackageName, integrationType, token, apprienIdentifier, new TimeProvider()) { }
+
+        public ApprienBackendConnection(
+            string gamePackageName,
+            ApprienIntegrationType integrationType,
+            string token,
+            string apprienIdentifier,
+            ITimeProvider timeProvider
         )
         {
             _gamePackageName = gamePackageName;
             _integrationType = integrationType;
             _token = token;
             _apprienIdentifier = apprienIdentifier;
+            _timeProvider = timeProvider;
         }
 
         public void SetToken(string token)
@@ -100,14 +113,14 @@ namespace Apprien
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
         public IEnumerator<ApprienFetchPricesResponse> FetchApprienPrices(IUnityWebRequest request)
         {
-            var requestSendTimestamp = DateTime.Now;
+            var requestSendTimestamp = _timeProvider.GetTimeNow();
 
             SendWebRequest(request);
 
             while (!request.isDone)
             {
                 // Timeout the request and return false
-                if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _requestTimeout)
+                if ((_timeProvider.GetTimeNow() - requestSendTimestamp).TotalSeconds > _requestTimeout)
                 {
                     yield return new ApprienFetchPricesResponse
                     {
@@ -173,14 +186,14 @@ namespace Apprien
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine.</returns>
         public IEnumerator<ApprienFetchPriceResponse> FetchApprienPrice(IUnityWebRequest request)
         {
-            var requestSendTimestamp = DateTime.Now;
+            var requestSendTimestamp = _timeProvider.GetTimeNow();
 
             SendWebRequest(request);
 
             while (!request.isDone)
             {
                 // Timeout the request and return false
-                if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _requestTimeout)
+                if ((_timeProvider.GetTimeNow() - requestSendTimestamp).TotalSeconds > _requestTimeout)
                 {
                     yield return new ApprienFetchPriceResponse
                     {
@@ -246,15 +259,20 @@ namespace Apprien
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine.</returns>
         public IEnumerator<ApprienPostReceiptResponse> PostReceipt(IUnityWebRequest request)
         {
-            var requestSendTimestamp = DateTime.Now;
+            var requestSendTimestamp = _timeProvider.GetTimeNow();
             SendWebRequest(request);
 
             while (!request.isDone)
             {
                 // Timeout the request and break
-                if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _requestTimeout)
+                if ((_timeProvider.GetTimeNow() - requestSendTimestamp).TotalSeconds > _requestTimeout)
                 {
-                    yield return null;
+                    yield return new ApprienPostReceiptResponse
+                    {
+                        ResponseCode = 0,
+                        Error = request.error,
+                        Message = "Request timed out"
+                    };
                     yield break;
                 }
 
@@ -308,13 +326,13 @@ namespace Apprien
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
         public IEnumerator<bool?> CheckServiceStatus(IUnityWebRequest request)
         {
-            var requestSendTimestamp = DateTime.Now;
+            var requestSendTimestamp = _timeProvider.GetTimeNow();
             SendWebRequest(request);
 
             while (!request.isDone)
             {
                 // Timeout the request and return false
-                if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _requestTimeout)
+                if ((_timeProvider.GetTimeNow() - requestSendTimestamp).TotalSeconds > _requestTimeout)
                 {
                     yield return false;
                     yield break;
@@ -349,13 +367,13 @@ namespace Apprien
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
         public IEnumerator<bool?> CheckTokenValidity(IUnityWebRequest request)
         {
-            var requestSendTimestamp = DateTime.Now;
+            var requestSendTimestamp = _timeProvider.GetTimeNow();
             SendWebRequest(request);
 
             while (!request.isDone)
             {
                 // Timeout the request and return false
-                if ((DateTime.Now - requestSendTimestamp).TotalSeconds > _requestTimeout)
+                if ((_timeProvider.GetTimeNow() - requestSendTimestamp).TotalSeconds > _requestTimeout)
                 {
                     yield return false;
                     yield break;
@@ -389,10 +407,10 @@ namespace Apprien
         /// <param name="errorMessage"></param>
         private void SendError(long responseCode, string errorMessage, string packageName, string storeIdentifier)
         {
-            var url = string.Format(ApprienUtility.REST_POST_ERROR_URL, errorMessage, responseCode, packageName, storeIdentifier);
-            using (var post = UnityWebRequest.Post(url, ""))
+            var url = string.Format(ApprienManager.REST_POST_ERROR_URL, errorMessage, responseCode, packageName, storeIdentifier);
+            using (var unityWebRequest = UnityWebRequest.Post(url, ""))
             {
-                SendWebRequest(new UnityWebRequestWrapper() { unityWebRequest = post });
+                SendWebRequest(new UnityWebRequestWrapper(unityWebRequest));
             }
         }
 

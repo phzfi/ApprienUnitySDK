@@ -1,14 +1,5 @@
 // From https://github.com/goedleIO/unity_http_mocking with MIT license
 
-using System;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngineInternal;
-using UnityEngine.Bindings;
-using UnityEngine.Scripting;
-using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Apprien
@@ -23,18 +14,26 @@ namespace Apprien
         long responseCode { get; }
         string method { get; set; }
         bool chunkedTransfer { get; set; }
+        int timeout { get; set; }
         string error { get; }
-        DownloadHandler downloadHandler { get; set; }
+        IDownloadHandler downloadHandler { get; set; }
         UploadHandler uploadHandler { get; set; }
         UnityWebRequest unityWebRequest { get; set; }
         UnityWebRequestAsyncOperation SendWebRequest();
         void SetRequestHeader(string name, string value);
+        string GetRequestHeader(string name);
     }
 
     public class UnityWebRequestWrapper : IUnityWebRequest
     {
+        public UnityWebRequestWrapper(UnityWebRequest webRequest)
+        {
+            _unityWebRequest = webRequest;
+            _downloadHandler = new DownloadHandlerWrapper(webRequest.downloadHandler);
+        }
 
         UnityWebRequest _unityWebRequest { get; set; }
+        IDownloadHandler _downloadHandler { get; set; }
 
         public UnityWebRequest.Result result
         {
@@ -75,22 +74,27 @@ namespace Apprien
             set { _unityWebRequest.chunkedTransfer = value; }
         }
 
+        public int timeout
+        {
+            get { return _unityWebRequest.timeout; }
+            set { _unityWebRequest.timeout = value; }
+        }
+
         public string error
         {
             get { return _unityWebRequest.error; }
+        }
+
+        public IDownloadHandler downloadHandler
+        {
+            get { return _downloadHandler; }
+            set { _downloadHandler = value; }
         }
 
         public UnityWebRequest unityWebRequest
         {
             get { return _unityWebRequest; }
             set { _unityWebRequest = value; }
-
-        }
-
-        public DownloadHandler downloadHandler
-        {
-            get { return _unityWebRequest.downloadHandler; }
-            set { _unityWebRequest.downloadHandler = value; }
         }
 
         public UploadHandler uploadHandler
@@ -112,6 +116,11 @@ namespace Apprien
         public void SetRequestHeader(string name, string value)
         {
             _unityWebRequest.SetRequestHeader(name, value);
+        }
+
+        public string GetRequestHeader(string name)
+        {
+            return _unityWebRequest.GetRequestHeader(name);
         }
     }
 }

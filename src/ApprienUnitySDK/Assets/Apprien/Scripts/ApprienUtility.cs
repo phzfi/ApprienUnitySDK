@@ -39,41 +39,6 @@ namespace Apprien
         }
 
         /// <summary>
-        /// Apprien REST API endpoint for fetching all optimum product variants
-        /// </summary>
-        public static string REST_GET_ALL_PRICES_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/prices";
-
-        /// <summary>
-        /// Apprien REST API endpoint for fetching the optimum product variant for a single product
-        /// </summary>
-        public static string REST_GET_PRICE_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/products/{2}/prices";
-
-        /// <summary>
-        /// Apprien REST API endpoint for POSTing the receipt json for successful transactions
-        /// </summary>
-        public static string REST_POST_RECEIPT_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/receipts";
-
-        /// <summary>
-        /// Apprien REST API endpoint for POSTing the receipt json for successful transactions
-        /// </summary>
-        public static string REST_POST_ERROR_URL = "https://game.apprien.com/error?message={0}&responseCode={1}&storeGame={2}&store={3}";
-
-        /// <summary>
-        /// Apprien REST API endpoint for POSTing a notice to Apprien that product was shown.
-        /// </summary>
-        public static string REST_POST_PRODUCTS_SHOWN_URL = "https://game.apprien.com/api/v1/stores/{0}/shown/products";
-
-        /// <summary>
-        /// Apprien REST API endpoint for testing the availability of the service
-        /// </summary>
-        public static string REST_GET_APPRIEN_STATUS = "https://game.apprien.com/status";
-
-        /// <summary>
-        /// Apprien REST API endpoint for testing the validity of the given token
-        /// </summary>
-        public static string REST_GET_VALIDATE_TOKEN_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/auth";
-
-        /// <summary>
         /// Convert the ApprienIntegrationType enum into a resource URI that gets passed to the Apprien backend.
         /// </summary>
         /// <param name="type"></param>
