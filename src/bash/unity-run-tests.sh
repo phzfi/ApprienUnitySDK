@@ -1,6 +1,13 @@
 #!/bin/sh
 set -x # No -ex - we wish to display test results even if tests fail
 
+./root/project-local/src/bash/unity-set-manifest.sh $1
+if test $? -gt 0
+then
+    echo "Unable to set correct manifest.json file for the Unity project - version mismatch?"
+    exit 1
+fi
+
 xvfb-run \
 /opt/unity/Editor/Unity \
 -username "$LICENSE_EMAIL" \

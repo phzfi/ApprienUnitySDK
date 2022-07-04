@@ -1,6 +1,8 @@
 #!/bin/bash
 set -ex
 
+./root/project-local/src/bash/unity-set-manifest.sh $1
+
 /opt/unity/Editor/Unity \
 -username "$LICENSE_EMAIL" \
 -password "$LICENSE_PASSWORD" \
