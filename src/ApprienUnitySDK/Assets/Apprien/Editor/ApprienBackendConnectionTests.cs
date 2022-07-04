@@ -196,9 +196,9 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             // Assert that the request is still in progress
             Assert.AreEqual(true, fetch.MoveNext());
 
-            fetch.Dispose();
+            request.isDone.Returns(true);
 
-            yield return null;
+            yield break;
         }
     }
 }

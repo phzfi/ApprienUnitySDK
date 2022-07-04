@@ -8,12 +8,9 @@ namespace Apprien
     {
         UnityWebRequest.Result result { get; }
         bool isDone { get; }
-        bool isHttpError { get; }
-        bool isNetworkError { get; }
         string url { get; set; }
         long responseCode { get; }
         string method { get; set; }
-        bool chunkedTransfer { get; set; }
         int timeout { get; set; }
         string error { get; }
         IDownloadHandler downloadHandler { get; set; }
@@ -45,17 +42,6 @@ namespace Apprien
             get { return _unityWebRequest.isDone; }
         }
 
-        public bool isNetworkError
-        {
-            get { return _unityWebRequest.isNetworkError; }
-
-        }
-
-        public bool isHttpError
-        {
-            get { return _unityWebRequest.isHttpError; }
-        }
-
         public string url
         {
             get { return _unityWebRequest.url; }
@@ -66,12 +52,6 @@ namespace Apprien
         {
             get { return _unityWebRequest.method; }
             set { _unityWebRequest.method = value; }
-        }
-
-        public bool chunkedTransfer
-        {
-            get { return _unityWebRequest.chunkedTransfer; }
-            set { _unityWebRequest.chunkedTransfer = value; }
         }
 
         public int timeout

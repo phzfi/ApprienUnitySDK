@@ -1,4 +1,6 @@
+#!/bin/bash
 set -ex
+
 /opt/unity/Editor/Unity \
 -username "$LICENSE_EMAIL" \
 -password "$LICENSE_PASSWORD" \
