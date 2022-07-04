@@ -6,7 +6,13 @@ namespace Apprien
 {
     public interface IUnityWebRequest
     {
+#if UNITY_2020_1_OR_NEWER
         UnityWebRequest.Result result { get; }
+#else
+        bool isHttpError { get; }
+        bool isNetworkError { get; }
+#endif
+
         bool isDone { get; }
         string url { get; set; }
         long responseCode { get; }
@@ -32,10 +38,23 @@ namespace Apprien
         UnityWebRequest _unityWebRequest { get; set; }
         IDownloadHandler _downloadHandler { get; set; }
 
+
+#if UNITY_2020_1_OR_NEWER
         public UnityWebRequest.Result result
         {
             get { return _unityWebRequest.result; }
         }
+#else
+        public bool isHttpError
+        {
+            get { return _unityWebRequest.isHttpError; }
+        }
+
+        public bool isNetworkError
+        {
+            get { return _unityWebRequest.isNetworkError; }
+        }
+#endif
 
         public bool isDone
         {

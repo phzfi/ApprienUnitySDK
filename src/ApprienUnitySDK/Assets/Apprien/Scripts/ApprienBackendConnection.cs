@@ -454,7 +454,7 @@ namespace Apprien
             fail = request.result == UnityWebRequest.Result.ConnectionError;
 #elif UNITY_2017_1_OR_NEWER
             fail = request.isNetworkError;
-#else       
+#else
             fail = request.isError;
 #endif
             if (fail)

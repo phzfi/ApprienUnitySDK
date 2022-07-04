@@ -55,7 +55,12 @@ namespace ApprienUnitySDK.ExampleProject.Tests
 
             var request = Substitute.For<IUnityWebRequest>();
             request.isDone.Returns(true);
+#if UNITY_2020_1_OR_NEWER
             request.result.Returns(UnityWebRequest.Result.Success);
+#else
+            request.isHttpError.Returns(false);
+            request.isNetworkError.Returns(false);
+#endif
             request.downloadHandler.Returns(_downloadHandler);
 
             var fetch = _backend.FetchApprienPrices(request);
@@ -84,7 +89,12 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             request.isDone.Returns(true);
             request.method.Returns("MOCK");
             request.url.Returns("http://mock.url");
+#if UNITY_2020_1_OR_NEWER
             request.result.Returns(UnityWebRequest.Result.ConnectionError);
+#else
+            request.isHttpError.Returns(false);
+            request.isNetworkError.Returns(true);
+#endif
             request.downloadHandler.Returns(_downloadHandler);
 
             var fetch = _backend.FetchApprienPrices(request);
@@ -113,7 +123,12 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             request.method.Returns("MOCK");
             request.url.Returns("http://mock.url");
             request.responseCode.Returns(500);
+#if UNITY_2020_1_OR_NEWER
             request.result.Returns(UnityWebRequest.Result.ProtocolError);
+#else
+            request.isHttpError.Returns(true);
+            request.isNetworkError.Returns(false);
+#endif
             request.downloadHandler.Returns(_downloadHandler);
 
             var fetch = _backend.FetchApprienPrices(request);
@@ -142,7 +157,12 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             request.method.Returns("MOCK");
             request.url.Returns("http://mock.url");
             request.responseCode.Returns(200);
+#if UNITY_2020_1_OR_NEWER
             request.result.Returns(UnityWebRequest.Result.DataProcessingError);
+#else
+            request.isHttpError.Returns(true);
+            request.isNetworkError.Returns(true);
+#endif
             request.downloadHandler.Returns(_downloadHandler);
 
             var fetch = _backend.FetchApprienPrices(request);
@@ -166,7 +186,12 @@ namespace ApprienUnitySDK.ExampleProject.Tests
 
             var request = Substitute.For<IUnityWebRequest>();
             request.isDone.Returns(false);
+#if UNITY_2020_1_OR_NEWER
             request.result.Returns(UnityWebRequest.Result.InProgress);
+#else
+            request.isHttpError.Returns(false);
+            request.isNetworkError.Returns(false);
+#endif
 
             var fetch = _backend.FetchApprienPrices(request);
 
@@ -189,7 +214,12 @@ namespace ApprienUnitySDK.ExampleProject.Tests
 
             var request = Substitute.For<IUnityWebRequest>();
             request.isDone.Returns(false);
+#if UNITY_2020_1_OR_NEWER
             request.result.Returns(UnityWebRequest.Result.InProgress);
+#else
+            request.isHttpError.Returns(false);
+            request.isNetworkError.Returns(false);
+#endif
 
             var fetch = _backend.FetchApprienPrices(request);
 
