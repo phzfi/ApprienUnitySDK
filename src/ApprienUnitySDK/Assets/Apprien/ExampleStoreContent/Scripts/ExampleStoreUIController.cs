@@ -101,26 +101,25 @@ namespace ApprienUnitySDK.ExampleProject
         private void FetchPrices()
         {
             // Update the products with Apprien IAP ids
-            StartCoroutine(
-                _apprienManager.FetchApprienPrices(
-                    _apprienProducts,
-                    () =>
-                    {
-                        // The products will now contain updated IAP ids. Add them to the product builder
-                        // If the connection failed or the variants were not fetched for some reason
-                        // this will add duplicates to the builder, which will ignore them safely.
-                        foreach (var product in _apprienProducts)
-                        {
-                            // Apprien variant IAP id. If connection failed, the variant IAP id
-                            // defaults to the base IAP id
-                            _builder.AddProduct(product.ApprienVariantIAPId, product.ProductType);
-                        }
+            StartCoroutine(FetchPricesCoroutine());
+        }
 
-                        // Initialize UnityPurchasing with the fetched IAP ids
-                        UnityPurchasing.Initialize(this, _builder);
-                    }
-                )
-            );
+        private IEnumerator FetchPricesCoroutine()
+        {
+            yield return _apprienManager.FetchApprienPrices(_apprienProducts);
+
+            // The products will now contain updated IAP ids. Add them to the product builder
+            // If the connection failed or the variants were not fetched for some reason
+            // this will add duplicates to the builder, which will ignore them safely.
+            foreach (var product in _apprienProducts)
+            {
+                // Apprien variant IAP id. If connection failed, the variant IAP id
+                // defaults to the base IAP id
+                _builder.AddProduct(product.ApprienVariantIAPId, product.ProductType);
+            }
+
+            // Initialize UnityPurchasing with the fetched IAP ids
+            UnityPurchasing.Initialize(this, _builder);
         }
 
         /// <summary>
@@ -230,14 +229,14 @@ namespace ApprienUnitySDK.ExampleProject
         public void ToggleTabButtonPressed()
         {
             TabType toTab = _currentTab == TabType.IAPs ? TabType.Subscriptions : TabType.IAPs;
-            SwitchToTab((int) toTab);
+            SwitchToTab((int)toTab);
         }
 
         // switch to tab by index
         public void SwitchToTab(int toTab)
         {
             // switch visible tab/Tab
-            _currentTab = (TabType) toTab;
+            _currentTab = (TabType)toTab;
             //_iapsTab.SetActive(_currentTab == TabType.IAPs);
             //_subscriptionsTab.SetActive(_currentTab == TabType.Subscriptions);
             // update tab link buttons
