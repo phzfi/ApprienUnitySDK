@@ -5,7 +5,7 @@ It typically takes 2-4h to integrate Apprien Unity SDK with your game.
 
 The minimal compiled footprint of ApprienUnitySDK is roughly 16KB.
 
-`Apprien.cs` is a standalone C# class library that uses Apprien Game API. Other files are for Unity Editor integration and unit tests. An example store without purchasing logic is available in `ExampleStoreUIController.cs`
+`Apprien.cs` contains the main programming interface with the SDK, the `ApprienManager` class. The SDK contains code files for Unity Editor integration and unit tests. An example store showing the way Apprien IAPs can be handled is available in `ExampleStoreUIController.cs`
 
 In case of any network or backend failure, ApprienUnitySDK will always revert to the base IAP ID and show the fixed prices.
 
@@ -23,17 +23,31 @@ Please contact sales@apprien.com to get the integration instructions for other s
 
 Apprien provides your Quality Assurance team generic Apprien Game Testing Documentation and Test Cases on how to detect typical issues with your game and Apprien integration. By incorporating the Test Cases to your game's testing plan, you can ensure that Apprien integration works smoothly for your players.
 
+## Compatibility Notes
+
+The SDK sends a web request to fetch a variant IAP ID that has the current optimal price set in the supported stores. The SDK uses UnityWebRequest for maximal platform support, and thus Unity 4.x and below are not currently supported in the SDK. Unity 4.x users can still access Apprien Game API for optimal prices, but the SDK does not offer a web request interface for 4.x (yet).
+
+Officially supported Unity versions:
+* Unity 2019.x
+* Unity 2020.x
+* Unity 2021.x
+
+Using the latest available unityPackage might work just fine in newer Unity releases. We aim to support all LTS versions and a mid-year release for the current newest version. Older Unity versions might work just fine with the 2019.x package, but some elbow grease can be required. The SDK code is provided in full so that modifications can be made to ensure high compatibility with old and new Unity versions, and custom purchasing logic.
+
+Using the SDK requires the official `In-App Purchasing` package by Unity in the Package Manager. All versions of the package for the supported Unity versions should work. See the [SDK API documentation](#sdk-api-documentation) below for using the SDK with your product model.
+
+The provided `.unityPackage` files in Releases are exported for each major Unity version, with latest available releases.
+
 ## Setup
 
 __1) Acquire the authentication token__ as described above in the [Prerequisites](#prerequisites) section
 
 __2) Open your project__ in a supported Unity version (see [Compatibility Notes](#compatibility-notes) below)
 
-__3) Import the UnityPurchasing module and implement a store controller__ or use our example controller to get started.
+__3) Install the In-App Purchasing package in the Unity Package Manager__
 
 __4) Import Apprien__ 
-  1) You can either use our prepared `.unityPackage` archives available in Releases containing everything required __(recommended)__ with an optional example store implementation
-  2) Or copy `Assets/Apprien/Scripts/Apprien.cs` to your project.
+  Import the correct version of the `.unityPackage` archive available in Releases containing everything required with an optional example store implementation.
 
 __5) Add integration to your Store controller__
 
@@ -46,7 +60,7 @@ You need to integrate ApprienUnitySDK to your current Store controller. The gene
 * You initialize an instance of ApprienManager class and wrap your products inside the ApprienProduct instances. See the [relevant part of the API documentation](#class-apprienproduct).
 * Before you fetch the prices from the store, the IAP ids are passed to the Apprien Game API in a web request, which will respond with one IAP id variant for each product, with optimal pricing. The `ApprienProduct` instances that were passed to the relevant API method have been populated with optimized product variants.
 * You fetch the prices from Google and Apple using the `UnityEngine.Purchasing.IStoreListener` interface (or by other means). It is important to fetch prices for all products, both default and those returned from Apprien. If using the ConfigurationBuilder in Unity, it is safer to first add all defaults products to the builder, in case connection issues with Apprien, and only then fetch optimum prices, and initialize the `IStoreListener` (see code samples below in [SDK API documentation](#sdk-api-documentation)).
-* __It is important that upon displaying the Apprien optimized prices for products to the players, you notify the Apprien API endpoint of these events using the SDK or by other means. Otherwise Apprien will be unable to optimize the pricer for your products. See [API documentation](#sdk-api-documentation) below, specifically `ApprienManager.ProductsShown`.__. This is when the user is displayed with the optimized price, e.g. when the store view is opened and the product is displayed with a price tag.
+* Upon displaying the Apprien optimized prices for products to the players, you notify the Apprien API endpoint of these events using the SDK. Otherwise Apprien will be unable to optimize the pricer for your products. See [API documentation](#sdk-api-documentation) below, specifically `ApprienManager.ProductsShown`. This is when the user is displayed with the optimized price, e.g. when the store view is opened and the product is displayed with a price tag. The pricing engine can accurately judge whether given prices are favorable for users to purchase with this information, and as a result the pricing can be more accurate and reactive.
 * You display the same product / reward on the in-game store, and the IAP id is the variant IAP id received from Apprien.
 * When a user purchases the product, the sale and transaction will be for the Apprien IAP id variant, instead of the fixed price product. The SDK has a failsafe, where any errors or connection problems will return the base IAP id instead, so that the players will be able to purchase products, only with the fixed price.
 * Your Store controller should refresh the optimal prices every now and then. Apprien updates the price points every 15 minutes. If you only fetch the Apprien-optimized prices during game load, players will not get served the most optimal price.
@@ -78,25 +92,9 @@ __8) Testing__
 
 Please test the integration by following the generic Apprien game test cases.
 
-The provided `.unityPackage`s contain an editor script for testing the connection to Apprien and for validating your OAuth2 token.
+The provided `.unityPackage`s contain an editor script for testing the connection to Apprien and for validating your token.
 
 Provided is also a set of unit tests for the SDK.
-
-## Compatibility Notes
-
-The SDK sends a web request to fetch a variant IAP ID that has the current optimal price set in the supported stores. The SDK uses UnityWebRequest for maximal platform support, and thus Unity 4.x and below are not currently supported in the SDK. Unity 4.x users can still access Apprien Game API for optimal prices, but the SDK does not offer a web request interface for 4.x (yet).
-
-Officially supported Unity versions:
-* Unity 5.x
-* Unity 2017.x
-* Unity 2018.x
-* Unity 2019.x
-
-Using the latest available unityPackage might work just fine in newer Unity releases. We aim to support all LTS versions and a mid-year release for the current newest version.
-
-The SDK supports the official `UnityEngine.Purchasing` module for defining products. See the [SDK API documentation](#sdk-api-documentation) below for using the SDK with your product model.
-
-The provided `.unityPackage` files in Releases are exported for each major Unity version, with latest available releases.
 
 ## SDK API documentation
 * [Apprien.cs](#appriencs)
@@ -104,7 +102,8 @@ The provided `.unityPackage` files in Releases are exported for each major Unity
 * [ApprienUtility.cs](#apprienutilitycs)
 * [ApprienConnection.cs](#apprienconnectioncs)
 * [ApprienConnectionTester.cs](#apprienconnectiontestercs)
-* [ApprienSDKTest.cs](#appriensdktestcs)
+* [ApprienManagerTests.cs](#appriensdktestcs)
+* [ApprienBackendConnectionTests.cs](#apprienbackendconnectiontestscs)
 
 The SDK uses C# `IEnumerator` objects in many of it's classes and methods for asynchronous operation. There are two ways to execute the asynchronous methods correctly:
 1) Using any `MonoBehaviour`'s `StartCoroutine()` method, e.g. `this.StartCoroutine(_apprienManager.FetchApprienPrices(...));`
@@ -149,32 +148,38 @@ _apprienManager = new ApprienManager(
 -----
 | | |
 --- | ---
-Method | `IEnumerator FetchApprienPrices(ApprienProduct[] products, Action callback = null)`
-| | `IEnumerator FetchApprienPrice(ApprienProduct product, Action callback = null)`
-Description | Main method for fetching IAP ids with optimal prices from Apprien. The first overload fetches all Apprien products using one HTTP request, while the second overload can be used to fetch single products. The former method is recommended if you have multiple products, to keep resource usage and loading times at minimum.
+Method | `IEnumerator<ApprienFetchPricesResponse> FetchApprienPrices(ApprienProduct[] products)`
+| | `IEnumerator<ApprienFetchPriceResponse> FetchApprienPrice(ApprienProduct product)`
+Description | Main method for fetching IAP ids with optimal prices from Apprien. The first overload fetches all Apprien products using one HTTP request, while the second overload can be used to fetch single products. The former method is recommended if you have multiple products, to keep resource usage and loading times at minimum. The response objects have a Success property that can be used to control situations where the fetch failed. The method updates the given products in-place, so you don't need to handle the JSON data returned in the response object.
 
 Usage:
 ```csharp
-StartCoroutine(
-    _apprienManager.FetchApprienPrices(
-        _apprienProducts,
-        () =>
-        {
-            // The products will now contain updated IAP ids. Add them to the product builder
-            // If the connection failed or the variants were not fetched for some reason
-            // this will add duplicates to the builder, which will ignore them safely.
-            foreach (var product in _apprienProducts)
-            {
-                // Apprien variant IAP id. If connection failed, the variant IAP id
-                // defaults to the base IAP id
-                _builder.AddProduct(product.ApprienVariantIAPId, product.ProductType);
-            }
+/// <summary>
+/// Fetch Apprien variant IAP ids and re-initialize UnityPurchasing
+/// </summary>
+private void FetchPrices()
+{
+    // Update the products with Apprien IAP ids
+    StartCoroutine(FetchPricesCoroutine());
+}
 
-            // Initialize UnityPurchasing with the fetched IAP ids
-            UnityPurchasing.Initialize(this, _builder);
-        }
-    )
-);
+private IEnumerator FetchPricesCoroutine()
+{
+    yield return _apprienManager.FetchApprienPrices(_apprienProducts);
+
+    // The products will now contain updated IAP ids. Add them to the product builder
+    // If the connection failed or the variants were not fetched for some reason
+    // this will add duplicates to the builder, which will ignore them safely.
+    foreach (var product in _apprienProducts)
+    {
+        // Apprien variant IAP id. If connection failed, the variant IAP id
+        // defaults to the base IAP id
+        _builder.AddProduct(product.ApprienVariantIAPId, product.ProductType);
+    }
+
+    // Initialize UnityPurchasing with the fetched IAP ids
+    UnityPurchasing.Initialize(this, _builder);
+}
 ```
 -----
 | | |
@@ -195,8 +200,8 @@ StartCoroutine(
 -----
 | | |
 --- | ---
-Method | `IEnumerator PostReceipt(MonoBehaviour unityComponent, string receiptJson)`
-Description | Optional. Sends a receipt of a completed purchase to Apprien for better pricing optimization. The transactions are normally fetched daily from the stores for analysis, but using this expedites the process.
+Method | `IEnumerator<ApprienPostReceiptResponse> PostReceipt(MonoBehaviour unityComponent, string receiptJson)`
+Description | Optional. Sends a receipt of a completed purchase to Apprien for better pricing optimization. The transactions are normally fetched daily from the stores for analysis, but using this expedites the process. The response object can be used to determine if the operation was successful, but handling it is optional.
 
 Usage:
 ``` csharp
@@ -216,7 +221,7 @@ public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs e)
 
 
 #### `class ApprienProduct`
-Intermediary model for products. Used to ensure that in case of connection errors or other failure, the base IAP id is used.
+Intermediate model for products. Used to ensure that in case of connection errors or other failure, the base IAP id is used.
 
 
 | | |
@@ -308,10 +313,11 @@ Offers an interface for managing the OAuth2 token in a ScriptableObject asset fi
 
 Editor script for ScriptableObject instanced assets of `ApprienConnection.cs`. Can be used to test your OAuth2 token against the Apprien Game API REST endpoints and for checking the optimum price variants for each product from the Unity Editor without having to create a build.
 
-### `ApprienSDKTest.cs`
+### `ApprienManagerTests.cs`
+### `ApprienBackendConnectionTests.cs`
 **(optional)**
 
-Unit tests for the SDK. The tests can be easily run using Unity Test Runner. If your project is configured to use .NET 4.x or later, additional unit tests are included with the Mock4Net library to mock the Apprien Game API REST interface.
+Unit tests for the SDK and the internal backend operations. The tests can be easily run using Unity Test Runner. If the tests fail to compile, make sure you are targeting .NET Standard 2.0 or later.
 
 ## Troubleshooting
     Apprien prices won't show up in game. Only default fixed prices are visible.

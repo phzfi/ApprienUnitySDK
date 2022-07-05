@@ -22,29 +22,21 @@ namespace Apprien
     public static class ApprienUtility
     {
         /// <summary>
-        /// Apprien REST API endpoint for fetching all optimum product variants
+        /// Returns the first byte of MD5-hashed SystemInfo.deviceUniqueIdentifier as a hexadecimal string (two symbols).
+        /// The identifier is sent to Apprien Game API 
         /// </summary>
-        public static string REST_GET_ALL_PRICES_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/prices";
-
-        /// <summary>
-        /// Apprien REST API endpoint for fetching the optimum product variant for a single product
-        /// </summary>
-        public static string REST_GET_PRICE_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/products/{2}/prices";
-
-        /// <summary>
-        /// Apprien REST API endpoint for POSTing the receipt json for successful transactions
-        /// </summary>
-        public static string REST_POST_RECEIPT_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/receipts";
-
-        /// <summary>
-        /// Apprien REST API endpoint for POSTing the receipt json for successful transactions
-        /// </summary>
-        public static string REST_POST_ERROR_URL = "https://game.apprien.com/error?message={0}&responseCode={1}&storeGame={2}&store={3}";
-
-        /// <summary>
-        /// Apprien REST API endpoint for POSTing a notice to Apprien that product was shown.
-        /// </summary>
-        public static string REST_POST_PRODUCTS_SHOWN_URL = "https://game.apprien.com/api/v1/stores/{0}/shown/products";
+        /// <value></value>
+        public static string ApprienIdentifier
+        {
+            get
+            {
+                var id = SystemInfo.deviceUniqueIdentifier;
+                var bytes = System.Text.ASCIIEncoding.ASCII.GetBytes(id);
+                var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+                var hash = md5.ComputeHash(bytes);
+                return System.Convert.ToString(hash[0], 16);
+            }
+        }
 
         /// <summary>
         /// Convert the ApprienIntegrationType enum into a resource URI that gets passed to the Apprien backend.
@@ -95,61 +87,6 @@ namespace Apprien
             }
 
             return result;
-        }
-
-        /// <summary>
-        /// Sends an error message to Apprien backend when the SDK encounters problems
-        /// </summary>
-        /// <param name="responseCode"></param>
-        /// <param name="errorMessage"></param>
-        public static void SendError(int responseCode, string errorMessage, string packageName, string storeIdentifier)
-        {
-            var url = string.Format(REST_POST_ERROR_URL, errorMessage, responseCode, packageName, storeIdentifier);
-            using(var post = UnityWebRequest.Post(url, ""))
-            {
-                ApprienUtility.SendWebRequest(post);
-            }
-        }
-
-#if UNITY_2017_1_OR_NEWER
-        public static UnityWebRequestAsyncOperation SendWebRequest(UnityWebRequest request)
-        {
-            return request.SendWebRequest();
-        }
-#elif UNITY_5_6_OR_NEWER
-        public static AsyncOperation SendWebRequest(UnityWebRequest request)
-        {
-            return request.Send();
-        }
-#endif
-        // check request HTTP error
-        public static bool IsHttpError(UnityWebRequest request)
-        {
-            bool fail;
-
-#if UNITY_2017_1_OR_NEWER
-            fail = request.isHttpError;
-#else
-            fail = request.responseCode >= 400;
-#endif
-            if (fail) Debug.LogError(request.method + " request URL '" + request.url + "' HTTP error code '" + request.responseCode + "'");
-
-            return fail;
-        }
-
-        // check request Network error
-        public static bool IsNetworkError(UnityWebRequest request)
-        {
-            bool fail;
-
-#if UNITY_2017_1_OR_NEWER
-            fail = request.isNetworkError;
-#else       
-            fail = request.isError;
-#endif
-            if (fail) Debug.LogError(request.method + " request URL '" + request.url + "' NETWORK error Code '" + request.responseCode + "'");
-
-            return fail;
         }
     }
 }
