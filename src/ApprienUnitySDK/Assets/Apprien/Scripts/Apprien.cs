@@ -126,7 +126,7 @@ namespace Apprien
         /// </summary>
         /// <param name="callback">Callback that is called when all product variant requests have completed.</param>
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
-        public IEnumerator FetchApprienPrices(ApprienProduct[] apprienProducts)
+        public IEnumerator<ApprienFetchPricesResponse> FetchApprienPrices(ApprienProduct[] apprienProducts)
         {
             var url = string.Format(REST_GET_ALL_PRICES_URL, _storeIdentifier, _gamePackageName);
 
