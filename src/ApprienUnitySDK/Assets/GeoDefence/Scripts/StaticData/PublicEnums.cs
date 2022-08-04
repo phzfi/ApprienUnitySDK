@@ -16,6 +16,7 @@ namespace GeoDefence
     //Values equals for game states where state happens
     public enum SceneName
     {
+        None = -1,
         LoadScene = 0,
         MainMenu = 1,
         StoreExample_2021 = 2,

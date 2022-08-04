@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GeoDefence
 {
@@ -9,6 +10,9 @@ namespace GeoDefence
         public static StateManager Instance;
 
         public GameState CurrentGameState { get; private set; }
+        private GameState _nextState;
+        private SceneName _nextSceneName;
+        private SceneName _currentSceneName;
 
         private void Awake()
         {
@@ -21,6 +25,57 @@ namespace GeoDefence
             else
             {
                 Destroy(gameObject);
+            }
+        }
+
+        private void Update()
+        {
+            if (CurrentGameState != _nextState)
+            {
+                if (TransitionManager.Instance.GetInTransition() && TransitionManager.Instance.GetInMiddlePoint())
+                {
+                    if (_nextSceneName != _currentSceneName)
+                    {
+                        _currentSceneName = _nextSceneName;
+                        CurrentGameState = _nextState;
+                        SceneManager.LoadScene(_nextState.ToString());
+                    }
+                    else
+                    {
+                        CurrentGameState = _nextState;
+                    }
+                }
+            }
+        }
+
+        public void ChangeGameState(GameState nextGameState, float transitionTimeInSeconds, SceneName nextScene = SceneName.None)
+        {
+            //We want to change scene
+            if (nextScene != SceneName.None)
+            {
+                if (transitionTimeInSeconds < 0.001f)
+                {
+                    SceneManager.LoadScene(nextScene.ToString());
+                }
+                else
+                {
+                    TransitionManager.Instance.OrderTransition(transitionTimeInSeconds);
+                    _nextState = nextGameState;
+                    _nextSceneName = nextScene;
+                }
+            }
+            //We DON'T want to change scene
+            else
+            {
+                if (transitionTimeInSeconds < 0.001f)
+                {
+                    CurrentGameState = nextGameState;
+                }
+                else
+                {
+                    TransitionManager.Instance.OrderTransition(transitionTimeInSeconds);
+                    _nextState = nextGameState;
+                }
             }
         }
     }

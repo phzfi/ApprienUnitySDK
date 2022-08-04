@@ -1,12 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace GeoDefence
 {
     public class TransitionManager : MonoBehaviour
     {
         public static TransitionManager Instance;
+
+        [SerializeField] private AnimationCurve _transitionCurve;
+        [SerializeField] private Image _transitionPanelImage;
 
         private void Awake()
         {
@@ -20,6 +24,52 @@ namespace GeoDefence
             {
                 Destroy(gameObject);
             }
+        }
+
+        private bool _inTransition;
+        private bool _inMiddlePoint;
+        private float _timer;
+        private float _duration;
+
+        public void OrderTransition(float time)
+        {
+            _inTransition = true;
+            _duration = time;
+        }
+
+        private void Update()
+        {
+            if (_inTransition)
+            {
+                _timer += Time.deltaTime;
+
+                if (_transitionPanelImage.color.a >= 1)
+                {
+                    _inMiddlePoint = true;
+                }
+
+                if (_timer > _duration)
+                {
+                    _inTransition = false;
+                    _timer = 0;
+                    _inMiddlePoint = false;
+                }
+
+                _transitionPanelImage.color = new Color(_transitionPanelImage.color.r,
+                    _transitionPanelImage.color.g,
+                    _transitionPanelImage.color.b,
+                    _transitionCurve.Evaluate(_timer / _duration));
+            }
+        }
+
+        public bool GetInTransition()
+        {
+            return _inTransition;
+        }
+
+        public bool GetInMiddlePoint()
+        {
+            return _inMiddlePoint;
         }
     }
 }
