@@ -9,10 +9,11 @@ namespace GeoDefence
     {
         public static StateManager Instance;
 
-        public GameState CurrentGameState { get; private set; }
-        private GameState _nextState;
-        private SceneName _nextSceneName;
-        private SceneName _currentSceneName;
+        //Property cant be shown in editor?
+        [SerializeField] public GameState CurrentGameState { get; private set; }
+        [SerializeField] private GameState _nextState;
+        [SerializeField] private SceneName _nextSceneName;
+        [SerializeField] private SceneName _currentSceneName;
 
         private void Awake()
         {

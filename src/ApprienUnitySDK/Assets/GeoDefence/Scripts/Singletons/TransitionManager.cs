@@ -43,7 +43,7 @@ namespace GeoDefence
             {
                 _timer += Time.deltaTime;
 
-                if (_transitionPanelImage.color.a >= 1)
+                if (_transitionPanelImage.color.a >= 0.9f)
                 {
                     _inMiddlePoint = true;
                 }
