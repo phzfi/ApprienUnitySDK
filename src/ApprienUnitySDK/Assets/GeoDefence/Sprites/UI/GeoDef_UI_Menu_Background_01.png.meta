@@ -42,7 +42,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -126,7 +126,196 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: GeoDef_UI_Menu_Background_01_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 683
+        width: 341
+        height: 341
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 32c0463e86e65914faf574bb3c4aea30
+      internalID: -190865377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Menu_Background_TopCenter_01
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 683
+        width: 341
+        height: 341
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3cc4ff766867c9d439f9747a55cd9475
+      internalID: -1163406797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Menu_Background_TopRight_01
+      rect:
+        serializedVersion: 2
+        x: 683
+        y: 683
+        width: 341
+        height: 341
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 608fb7bde9f4db74587cc2c36aae2d06
+      internalID: -2059118281
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Menu_Background_MidLeft_01
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 341
+        width: 341
+        height: 341
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6a392145b234ca24694c158227c2bf46
+      internalID: 1401744473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Menu_Background_MidCenter_01
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 341
+        width: 341
+        height: 341
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 972360dd95187e949a1e77abe65f44e3
+      internalID: 135204559
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Menu_Background_MidRight_01
+      rect:
+        serializedVersion: 2
+        x: 683
+        y: 341
+        width: 341
+        height: 341
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6bffbaa842d09ca4fa5f93caa758e60f
+      internalID: 231228451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Menu_Background_BottomLeft_01
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 341
+        height: 341
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6a04c5c53b6f0a64aa31af210f964ebf
+      internalID: 1606209159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Menu_Background_BottomCenter_01
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 0
+        width: 341
+        height: 341
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 010fc80489fac924c8feeab95a47cf18
+      internalID: 937118833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Menu_Background_BottomRight_01
+      rect:
+        serializedVersion: 2
+        x: 683
+        y: 0
+        width: 341
+        height: 341
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 51638c70fdcb6a4428fcfa9955db4430
+      internalID: 189755825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -137,7 +326,16 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      GeoDef_UI_Menu_Background_TopCenter_01: -1163406797
+      GeoDef_UI_Menu_Background_TopRight_01: -2059118281
+      GeoDef_UI_Menu_Background_BottomLeft_01: 1606209159
+      GeoDef_UI_Menu_Background_MidRight_01: 231228451
+      GeoDef_UI_Menu_Background_BottomCenter_01: 937118833
+      GeoDef_UI_Menu_Background_BottomRight_01: 189755825
+      GeoDef_UI_Menu_Background_MidLeft_01: 1401744473
+      GeoDef_UI_Menu_Background_MidCenter_01: 135204559
+      GeoDef_UI_Menu_Background_01_0: -190865377
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

@@ -126,18 +126,238 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: GeoDef_UI_ButtonBase_01
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 834
+        width: 775
+        height: 175
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fba1abeab5d8b544a8b02c5e930eb62f
+      internalID: -348731421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Selector_TopLeft_01
+      rect:
+        serializedVersion: 2
+        x: 821
+        y: 927
+        width: 57
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f3785e60db30bac4d86e54054556b0ee
+      internalID: 677205035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Selector_TopRight_01
+      rect:
+        serializedVersion: 2
+        x: 899
+        y: 927
+        width: 58
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 74ed238fc048b7a499c03795ce2a80c0
+      internalID: -1144372634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Selector_BottomLeft_01
+      rect:
+        serializedVersion: 2
+        x: 819
+        y: 843
+        width: 57
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 93157dfcd9ed17f43819cd08b8437cd3
+      internalID: 959511380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Selector_BottomRight_01
+      rect:
+        serializedVersion: 2
+        x: 898
+        y: 843
+        width: 57
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c7baf43bc1bb8c46b07e1d1d3b1c5f2
+      internalID: -1908089604
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_ButtonBase_02
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 439
+        width: 341
+        height: 355
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b7eada13ed8084a4cbfbeea2d9a9d6f2
+      internalID: -1532803200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Healthbar_Base_01
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 670
+        width: 522
+        height: 131
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d47cae67be0d2a947be8a1c93dd356be
+      internalID: 392114970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Healthbar_Fill_01
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 515
+        width: 522
+        height: 131
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 38882c7c4b9c8604d92e1118282de5fb
+      internalID: 411794912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_VirtualJoystick_Base_01
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 150
+        width: 274
+        height: 274
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9e3212d0a7ac014409f64ff87b8d1b7b
+      internalID: -1119642656
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_VirtualJoystick_Stick_01
+      rect:
+        serializedVersion: 2
+        x: 350
+        y: 374
+        width: 138
+        height: 138
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 33ef9609fc3dd8f4694189bd8118fb64
+      internalID: 573371278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: a737187c8a3afb54cb6af174359ac3da
     internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      GeoDef_UI_Healthbar_Fill_01: 411794912
+      GeoDef_UI_ButtonBase_01: -348731421
+      GeoDef_UI_VirtualJoystick_Stick_01: 573371278
+      GeoDef_UI_Selector_TopRight_01: -1144372634
+      GeoDef_UI_Selector_BottomLeft_01: 959511380
+      GeoDef_UI_Selector_TopLeft_01: 677205035
+      GeoDef_UI_Selector_BottomRight_01: -1908089604
+      GeoDef_UI_Healthbar_Base_01: 392114970
+      GeoDef_UI_VirtualJoystick_Base_01: -1119642656
+      GeoDef_UI_ButtonBase_02: -1532803200
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

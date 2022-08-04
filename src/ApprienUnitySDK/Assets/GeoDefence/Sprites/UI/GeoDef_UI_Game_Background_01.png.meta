@@ -42,7 +42,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -126,7 +126,196 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: GeoDef_UI_Game_Background_TopLeft_01
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 683
+        width: 341
+        height: 341
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 188321eccbff4174f938f4cee89a0f23
+      internalID: -1787255308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Game_Background_TopRight_01
+      rect:
+        serializedVersion: 2
+        x: 683
+        y: 683
+        width: 341
+        height: 341
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 88a45a02f6c32c14ebec38865bb7d34b
+      internalID: 1823929748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Game_Background_BottomLeft_01
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 341
+        height: 341
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 76c182ab641288247beb6d94c870c85e
+      internalID: 483685018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Game_Background_BottomRight_01
+      rect:
+        serializedVersion: 2
+        x: 683
+        y: 0
+        width: 341
+        height: 341
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7577c79456822484eb6a753faae6d90f
+      internalID: -2110561470
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Game_Background_MidLeft_01
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 341
+        width: 341
+        height: 341
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 48be77689daf11d4e97a0a939537f0c6
+      internalID: 789705842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Game_Background_MidRight_01
+      rect:
+        serializedVersion: 2
+        x: 683
+        y: 341
+        width: 341
+        height: 341
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b447f9ddabda00240bde3656847bd8b1
+      internalID: -1450523003
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Game_Background_TopCenter_01
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 683
+        width: 341
+        height: 341
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5090f8b0a8f82fb4da0e2079daed49d9
+      internalID: 944690135
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Game_Background_MidCenter_01
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 341
+        width: 341
+        height: 341
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ec6cd2542d1e66143b3689f4bfda52de
+      internalID: -977385792
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GeoDef_UI_Game_Background_BottomCenter_01
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 0
+        width: 341
+        height: 341
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f031ad57743e18645801bc5c5980ba84
+      internalID: 1375612392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -137,7 +326,16 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      GeoDef_UI_Game_Background_MidLeft_01: 789705842
+      GeoDef_UI_Game_Background_MidRight_01: -1450523003
+      GeoDef_UI_Game_Background_MidCenter_01: -977385792
+      GeoDef_UI_Game_Background_BottomCenter_01: 1375612392
+      GeoDef_UI_Game_Background_BottomLeft_01: 483685018
+      GeoDef_UI_Game_Background_TopRight_01: 1823929748
+      GeoDef_UI_Game_Background_TopLeft_01: -1787255308
+      GeoDef_UI_Game_Background_TopCenter_01: 944690135
+      GeoDef_UI_Game_Background_BottomRight_01: -2110561470
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
