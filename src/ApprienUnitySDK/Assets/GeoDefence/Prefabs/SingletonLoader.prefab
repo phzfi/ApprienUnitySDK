@@ -60,7 +60,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -120,6 +120,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ae3bb07f7383423db27589502f7ebf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CurrentGameState: 0
+  _nextState: 0
+  _nextSceneName: 0
+  _currentSceneName: 0
 --- !u!1 &4215756722180978012
 GameObject:
   m_ObjectHideFlags: 0
@@ -258,7 +262,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1000
   m_TargetDisplay: 0
 --- !u!114 &326065723746516520
 MonoBehaviour:

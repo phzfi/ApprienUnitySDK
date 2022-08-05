@@ -10,7 +10,8 @@ namespace GeoDefence
         public static StateManager Instance;
 
         //Property cant be shown in editor?
-        [SerializeField] public GameState CurrentGameState { get; private set; }
+        //[SerializeField] public GameState CurrentGameState { get; private set; }
+        public GameState CurrentGameState;
         [SerializeField] private GameState _nextState;
         [SerializeField] private SceneName _nextSceneName;
         [SerializeField] private SceneName _currentSceneName;
@@ -39,7 +40,7 @@ namespace GeoDefence
                     {
                         _currentSceneName = _nextSceneName;
                         CurrentGameState = _nextState;
-                        SceneManager.LoadScene(_nextState.ToString());
+                        SceneManager.LoadScene(_nextSceneName.ToString());
                     }
                     else
                     {
