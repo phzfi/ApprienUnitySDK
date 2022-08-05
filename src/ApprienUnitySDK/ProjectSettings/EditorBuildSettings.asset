@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/GeoDefence/Scenes/BattleScene.unity
     guid: 2586b80c1b018417285a493b5ac1ed97
+  - enabled: 1
+    path: Assets/Apprien/ExampleStoreContent/Scenes/2021-3-5f1/StoreExample_2021.unity
+    guid: c3251fad605a77f41adeab3ec335fdd4
   m_configObjects: {}
