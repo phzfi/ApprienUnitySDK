@@ -5,7 +5,16 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/GeoDefence/Scenes/LoadScene.unity
+    guid: fd7c609e78eba4bacbf2936778b80cde
+  - enabled: 1
+    path: Assets/GeoDefence/Scenes/MainMenu.unity
+    guid: 1f41dd13397544c4c962ec588bf9eb10
+  - enabled: 1
+    path: Assets/GeoDefence/Scenes/BattleScene.unity
+    guid: 2586b80c1b018417285a493b5ac1ed97
+  - enabled: 1
+    path: Assets/Apprien/ExampleStoreContent/Scenes/2021-3-5f1/StoreExample_2021.unity
+    guid: c3251fad605a77f41adeab3ec335fdd4
   m_configObjects: {}
