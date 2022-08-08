@@ -4,10 +4,9 @@ using UnityEngine;
 
 namespace GeoDefence
 {
-    [CreateAssetMenu]
-    public class StaticDataStore : ScriptableObject
+    public class GamePlayManager : MonoBehaviour
     {
-        public GameObject EnemyPrefab;
+        
     }
 }
 
