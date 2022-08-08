@@ -27,6 +27,21 @@ namespace GeoDefence
         {
             return _staticDataStore.EnemyPrefab;
         }
+
+        public float GetStaticSpawnTime()
+        {
+            return _staticDataStore.StaticSpawnTime;
+        }
+
+        public float GetRandomSpawnTime()
+        {
+            return _staticDataStore.RandomSpawnTime;
+        }
+
+        public float GetEsclationStep()
+        {
+            return _staticDataStore.Escalation;
+        }
     }
 }
 

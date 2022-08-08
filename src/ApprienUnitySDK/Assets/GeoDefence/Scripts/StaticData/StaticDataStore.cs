@@ -8,6 +8,11 @@ namespace GeoDefence
     public class StaticDataStore : ScriptableObject
     {
         public GameObject EnemyPrefab;
+
+        [Space]
+        public float StaticSpawnTime;
+        public float RandomSpawnTime;
+        public float Escalation;
     }
 }
 

@@ -19,11 +19,16 @@ namespace GeoDefence
         {
             if (Input.GetKeyDown(KeyCode.S))
             {
-                var extentsX = _area.extents.x;
-                var extentsZ = _area.extents.z;
-                var spawnPos = new Vector3(transform.position.x - extentsX + Random.Range(0, extentsX * 2), transform.position.y, transform.position.z - extentsZ + Random.Range(0, extentsZ * 2));
-                Instantiate(GeneralDataStore.Instance.GetEnemyPrefab(), spawnPos, Quaternion.identity);
+                SpawnEnemy();
             }
+        }
+
+        public void SpawnEnemy()
+        {
+            var extentsX = _area.extents.x;
+            var extentsZ = _area.extents.z;
+            var spawnPos = new Vector3(transform.position.x - extentsX + Random.Range(0, extentsX * 2), transform.position.y, transform.position.z - extentsZ + Random.Range(0, extentsZ * 2));
+            Instantiate(GeneralDataStore.Instance.GetEnemyPrefab(), spawnPos, Quaternion.identity);
         }
     }
 }
