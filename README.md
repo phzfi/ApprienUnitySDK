@@ -72,7 +72,7 @@ See the [SDK API documentation](#sdk-api-documentation) below for code examples 
 
 Typically the product IAP IDs have been hard-coded somewhere in your game (ScriptableObjects, Unity IAP Catalog, JSON resources, fetched from your backend etc.). The SDK contains an intermediary model for products, `ApprienProduct`, which can be easily generated using the SDK from Unity IAP Catalog or the `ConfigurationBuilder` that is normally used to initialize products via `UnityEngine.Purchasing`
 
-The player should be delivered the same amount of 'goods' (e.g. gems, gold) for the variants as for the base product. You can achieve this by passing the purchased variant IAP id through the static method `ApprienManager.GetBaseIAPId(...)` that converts the variant back to the base IAP id for the delivery of goods.
+The player should be delivered the same amount of 'goods' (e.g. gems, gold) for the variants as for the base product. You can achieve this by passing the purchased variant IAP id through the static method `ApprienUtility.GetBaseIAPId(...)` that converts the variant back to the base IAP id for the delivery of goods.
 
 __6) Receipts (Optional, but recommended)__
 
