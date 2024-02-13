@@ -145,6 +145,17 @@ namespace ApprienUnitySDK.ExampleProject
         /// Note that this will not be called if Internet is unavailable; Unity IAP
         /// will attempt initialization until it becomes available.
         /// </summary>
+        public void OnInitializeFailed(InitializationFailureReason error, string message)
+        {
+            Debug.Log("Initialize failed with message: " + message);
+        }
+
+        /// <summary>
+        /// Called when Unity Purchasing encounters an unrecoverable initialization error.
+        ///
+        /// Note that this will not be called if Internet is unavailable; Unity IAP
+        /// will attempt initialization until it becomes available.
+        /// </summary>
         public void OnInitializeFailed(InitializationFailureReason error)
         {
             Debug.Log("Initialize failed");
