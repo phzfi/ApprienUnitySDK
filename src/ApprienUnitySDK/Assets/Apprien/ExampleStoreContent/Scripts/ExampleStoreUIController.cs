@@ -50,11 +50,8 @@ namespace ApprienUnitySDK.ExampleProject
 
         void Awake()
         {
-            if (ApprienConnection == null || ApprienConnection.Token.Length == 0)
-            {
-                Debug.LogWarning("Token not provided for Apprien SDK. Unable to configure dynamic prices.");
-            }
-            // includes initializeproducts, also updates ui correctly.
+            ApprienConnection = ScriptableObject.CreateInstance<ApprienConnection>();
+
             SwitchToTab(0); //InitializeProducts();
         }
 
@@ -213,6 +210,8 @@ namespace ApprienUnitySDK.ExampleProject
             }
 
             // Tell Apprien that the products were shown
+            // TODO it would be a better idea to get prices whenever products are shown. 
+            // the counter increases on backend also on GET prices
             StartCoroutine(_apprienManager.ProductsShown(_apprienProducts));
         }
 
