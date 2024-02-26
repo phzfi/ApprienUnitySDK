@@ -35,3 +35,14 @@ services:
       - .:/root/project
       - ../licenses/2021-3-5f1:/root/.local/share/unity3d/Unity
     command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-run-tests.sh 2021-3-5f1"
+
+  unity2022:
+    image: unityci/editor:ubuntu-2022.3.20f1-base-3 #LTS
+    environment:
+      - LICENSE_EMAIL=$EMAIL
+      - LICENSE_PASSWORD=$PASSWORD
+    volumes:
+      - .:/root/project
+      - ../licenses/2022-3-12f1:/root/.local/share/unity3d/Unity
+    command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-run-tests.sh 2022-3-12f1"
+
