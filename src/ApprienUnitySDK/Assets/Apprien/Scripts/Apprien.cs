@@ -237,10 +237,11 @@ namespace Apprien
         }
 
         /// <summary>
-        /// Tell Apprien that these products were shown. This is needed for the pricing engine to work efficiently.
+        /// Tell Apprien that these products were shown. This is needed for the pricing analysis to work more accurately.
         /// </summary>
         /// <param name="apprienProducts"></param>
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine.</returns>
+        /// <deprecated>Use GetPrices instead</deprecated>
         public IEnumerator ProductsShown(ApprienProduct[] apprienProducts)
         {
             var formData = new List<IMultipartFormSection>();
