@@ -50,11 +50,8 @@ namespace ApprienUnitySDK.ExampleProject
 
         void Awake()
         {
-            if (ApprienConnection == null || ApprienConnection.Token.Length == 0)
-            {
-                Debug.LogWarning("Token not provided for Apprien SDK. Unable to configure dynamic prices.");
-            }
-            // includes initializeproducts, also updates ui correctly.
+            ApprienConnection = ScriptableObject.CreateInstance<ApprienConnection>();
+
             SwitchToTab(0); //InitializeProducts();
         }
 
@@ -145,6 +142,17 @@ namespace ApprienUnitySDK.ExampleProject
         /// Note that this will not be called if Internet is unavailable; Unity IAP
         /// will attempt initialization until it becomes available.
         /// </summary>
+        public void OnInitializeFailed(InitializationFailureReason error, string message)
+        {
+            Debug.Log("Initialize failed with message: " + message);
+        }
+
+        /// <summary>
+        /// Called when Unity Purchasing encounters an unrecoverable initialization error.
+        ///
+        /// Note that this will not be called if Internet is unavailable; Unity IAP
+        /// will attempt initialization until it becomes available.
+        /// </summary>
         public void OnInitializeFailed(InitializationFailureReason error)
         {
             Debug.Log("Initialize failed");
@@ -202,6 +210,8 @@ namespace ApprienUnitySDK.ExampleProject
             }
 
             // Tell Apprien that the products were shown
+            // TODO it would be a better idea to get prices whenever products are shown. 
+            // the counter increases on backend also on GET prices
             StartCoroutine(_apprienManager.ProductsShown(_apprienProducts));
         }
 
