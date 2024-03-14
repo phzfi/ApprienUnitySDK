@@ -332,7 +332,7 @@ namespace Apprien
         private void SendError(long responseCode, string errorMessage, string packageName, string storeIdentifier)
         {
             var url = string.Format(ApprienManager.REST_POST_ERROR_URL, errorMessage, responseCode, packageName, storeIdentifier);
-            using (var unityWebRequest = UnityWebRequest.PostWwwForm(url, ""))
+            using (var unityWebRequest = UnityWebRequest.Post(url, ""))
             {
                 SendWebRequest(new UnityWebRequestWrapper(unityWebRequest));
             }
