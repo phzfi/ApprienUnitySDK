@@ -3,10 +3,17 @@ set -ex
 
 ./root/project-local/src/bash/unity-set-manifest.sh $1
 
+
 xvfb-run \
 /opt/unity/Editor/Unity \
--username "$LICENSE_EMAIL" \
--password "$LICENSE_PASSWORD" \
+-batchmode \
+-nographics \
+-logFile /dev/stdout \
+-manualLicenseFile /root/project-local/licenses/$1/Unity_lic.ulf
+
+
+xvfb-run \
+/opt/unity/Editor/Unity \
 -batchmode \
 -nographics \
 -quit \

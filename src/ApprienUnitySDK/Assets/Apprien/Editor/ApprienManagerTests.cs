@@ -75,7 +75,6 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         private Dictionary<string, ApprienProduct> _productsLookup;
 
         private string _gamePackageName;
-        private string _token;
         private string _apprienIdentifier;
         private string _storeIdentifier;
 
@@ -86,7 +85,6 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         public void SetUp()
         {
             _gamePackageName = "dummy.package.name";
-            _token = "dummy-token";
             _apprienIdentifier = "FF"; // One byte as a hex string
             _storeIdentifier = "google";
 
@@ -126,7 +124,6 @@ namespace ApprienUnitySDK.ExampleProject.Tests
 
             // Backend mocks
             _backend.GamePackageName.Returns(_gamePackageName);
-            _backend.Token.Returns(_token);
             _backend.ApprienIdentifier.Returns(_apprienIdentifier);
             _backend.StoreIdentifier.Returns(_storeIdentifier);
 
@@ -147,8 +144,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             });
 
             _backend.FetchApprienPrices(Arg.Is<IUnityWebRequest>(
-                r => r.GetRequestHeader("Authorization") == $"Bearer {_token}" &&
-                     r.url.Equals(string.Format(ApprienManager.REST_GET_ALL_PRICES_URL, _storeIdentifier, _gamePackageName))
+                r => r.url.Equals(string.Format(ApprienManager.REST_GET_ALL_PRICES_URL, _storeIdentifier, _gamePackageName))
             )).Returns(pricesFetchMock);
 
             // Mock the fetch of single price
@@ -163,8 +159,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
                 });
 
                 _backend.FetchApprienPrice(Arg.Is<IUnityWebRequest>(
-                    r => r.GetRequestHeader("Authorization") == $"Bearer {_token}" &&
-                         r.url.Equals(string.Format(ApprienManager.REST_GET_PRICE_URL, _storeIdentifier, _gamePackageName, id))
+                    r => r.url.Equals(string.Format(ApprienManager.REST_GET_PRICE_URL, _storeIdentifier, _gamePackageName, id))
                 )).Returns(priceFetchMock);
             }
         }
@@ -264,23 +259,6 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             Assert.AreEqual($"{_testIAPids[1]}-variant", product.ApprienVariantIAPId);
         }
 
-        // NOTE: failure will default to the original base iap id
-        [UnityTest]
-        public IEnumerator FetchingProductsWithBadTokenShouldReturnBaseIAPId()
-        {
-            _backend.Token.Returns("another-dummy-token");
-
-            var product = GetProduct(0);
-            var fetch = _apprienManager.FetchApprienPrice(product);
-
-            while (fetch.MoveNext())
-            {
-                yield return null;
-            }
-
-            Assert.AreEqual(_testIAPids[0], product.ApprienVariantIAPId);
-        }
-
         [UnityTest]
         public IEnumerator FetchingNonVariantProductShouldReturnBaseIAPId()
         {
@@ -309,8 +287,7 @@ namespace ApprienUnitySDK.ExampleProject.Tests
             });
 
             _backend.FetchApprienPrices(Arg.Is<IUnityWebRequest>(
-                r => r.GetRequestHeader("Authorization") == $"Bearer {_token}" &&
-                     r.url.Equals(string.Format(ApprienManager.REST_GET_ALL_PRICES_URL, _storeIdentifier, _gamePackageName))
+                r => r.url.Equals(string.Format(ApprienManager.REST_GET_ALL_PRICES_URL, _storeIdentifier, _gamePackageName))
             )).Returns(pricesFetchMock);
 
             var fetch = _apprienManager.FetchApprienPrices(products);

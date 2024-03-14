@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using Apprien;
 using UnityEngine;
@@ -18,9 +18,6 @@ namespace ApprienUnitySDK.ExampleProject
         }
 
         private ApprienManager _apprienManager;
-
-        [SerializeField]
-        private ApprienConnection ApprienConnection;
 
         [SerializeField]
         private Text[] productTitleLabels;
@@ -50,8 +47,6 @@ namespace ApprienUnitySDK.ExampleProject
 
         void Awake()
         {
-            ApprienConnection = ScriptableObject.CreateInstance<ApprienConnection>();
-
             SwitchToTab(0); //InitializeProducts();
         }
 
@@ -75,12 +70,11 @@ namespace ApprienUnitySDK.ExampleProject
 #endif
 
             // Package name. Usually Application.identifier
-            var packageName = Application.identifier;
+            var GamePackageName = Application.identifier;
 
             _apprienManager = new ApprienManager(
                 Application.identifier,
-                integrationType,
-                ApprienConnection.Token
+                integrationType
             );
 
             // Add standard IAP ids, so that there is always a fallback if Apprien variants cannot be fetched
@@ -208,11 +202,6 @@ namespace ApprienUnitySDK.ExampleProject
                 // Update the Apprien IAP ids to text
                 dynamicPriceIdLabels[i].text = apprienProduct.ApprienVariantIAPId;
             }
-
-            // Tell Apprien that the products were shown
-            // TODO it would be a better idea to get prices whenever products are shown. 
-            // the counter increases on backend also on GET prices
-            StartCoroutine(_apprienManager.ProductsShown(_apprienProducts));
         }
 
         private void ResetTexts()

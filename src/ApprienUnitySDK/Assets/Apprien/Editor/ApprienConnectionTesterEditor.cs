@@ -8,11 +8,9 @@ using UnityEngine.Purchasing;
 
 namespace Apprien
 {
-    [CustomEditor(typeof(ApprienConnection))]
-    public class ApprienConnectionTester : Editor
+    [CustomEditor(typeof(ApprienConnectionTester))]
+    public class ApprienConnectionTesterEditor : Editor
     {
-        private SerializedProperty _apprienConnection;
-
         private IEnumerator _initializeFetch;
         private IEnumerator _pricesFetch;
 
@@ -21,7 +19,6 @@ namespace Apprien
         private bool _fetchingStatus;
         private bool _connectionCheckPressed;
         private bool _connectionOK;
-        private bool _tokenOK;
         private bool _onlyActiveProducts;
         private bool _fetchingProducts;
         private bool _anyProducts;
@@ -30,8 +27,6 @@ namespace Apprien
 
         void OnEnable()
         {
-            _apprienConnection = serializedObject.FindProperty("Token");
-
             // Add the update hook
             EditorApplication.update += Update;
         }
@@ -45,8 +40,7 @@ namespace Apprien
         {
             _apprienManager = new ApprienManager(
                 Application.identifier,
-                ApprienIntegrationType.GooglePlayStore,
-                "" // The token will be set via the Editor UI button press
+                ApprienIntegrationType.GooglePlayStore
             );
             _fetchedProducts = new List<ApprienProduct>();
 
@@ -116,14 +110,7 @@ namespace Apprien
 
         public override void OnInspectorGUI()
         {
-            // Display the Inspector properties defined in the ApprienConnection ScriptableObject, i.e. the token
             DrawDefaultInspector();
-
-            if (_apprienConnection.stringValue.Length == 0)
-            {
-                EditorGUILayout.HelpBox("Provide the authentication token into the field above before testing the connection. You should see a list of all products loaded into Apprien for the game.", MessageType.Info);
-                return;
-            }
 
             if (_apprienManager == null)
             {
@@ -140,16 +127,11 @@ namespace Apprien
                 _connectionCheckPressed = false;
                 _fetchingStatus = true;
 
-                // Refresh the token to the manager before testing connection
-                var token = _apprienConnection.stringValue;
-                _apprienManager.SetToken(token);
-
-                _initializeFetch = TestConnection(token, (available, valid) =>
+                _initializeFetch = TestConnection((available) =>
                 {
                     _fetchingStatus = false;
                     _connectionCheckPressed = true;
                     _connectionOK = available;
-                    _tokenOK = valid;
                 });
             }
 
@@ -165,13 +147,9 @@ namespace Apprien
                 EditorGUILayout.LabelField(_connectionOK ?
                     "  Apprien API connection is OK." :
                     "  Apprien API connection failed.");
-
-                EditorGUILayout.LabelField(_tokenOK ?
-                    "  Apprien Token is OK" :
-                    "  Apprien Token is invalid.");
             }
 
-            EditorGUI.BeginDisabledGroup(_connectionOK == false || _tokenOK == false);
+            EditorGUI.BeginDisabledGroup(_connectionOK == false);
             EditorGUILayout.HelpBox("After testing the connection, click below to fetch all Apprien generated IAP variants for products defined in the default IAP Catalog. Make sure the correct package name is set in Player settings, i.e. your com.company.product identifier.", MessageType.Info);
 
             // Enable after active/inactive products are supported in Apprien
@@ -211,26 +189,25 @@ namespace Apprien
         }
 
         /// <summary>
-        /// Perform an availability check for the Apprien service and test the validity of the token.
+        /// Perform an availability check for the Apprien service
         /// </summary>
-        /// <param name="callback">The first parameter is true if Apprien is reachable. The second parameter is true if the provided token is valid</param>
+        /// <param name="callback">The parameter is true if Apprien is reachable</param>
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
-        public IEnumerator TestConnection(string token, Action<bool, bool> callback)
+        public IEnumerator TestConnection(Action<bool> callback)
         {
-            // Check service status and validate the token
+            // Check service status
             var statusCheck = _apprienManager.CheckServiceStatus();
-            var tokenCheck = _apprienManager.CheckTokenValidity(token);
 
-            while (statusCheck.MoveNext() || tokenCheck.MoveNext())
+            while (statusCheck.MoveNext())
             {
                 yield return null;
             }
 
-            // The two request IEnumerators will resolve to a boolean value in the end
+            // The request IEnumerator will resolve to a boolean value in the end
             // Inform the calling component that Apprien is online
             if (callback != null)
             {
-                callback((bool)statusCheck.Current, (bool)tokenCheck.Current);
+                callback((bool)statusCheck.Current);
             }
         }
     }
