@@ -8,6 +8,9 @@ then
     exit 1
 fi
 
+ls -la /root/project-local/licenses
+ls -la /root/project-local/licenses/*
+
 xvfb-run \
 /opt/unity/Editor/Unity \
 -batchmode \
