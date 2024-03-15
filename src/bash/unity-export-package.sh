@@ -9,7 +9,7 @@ xvfb-run \
 -batchmode \
 -nographics \
 -logFile /dev/stdout \
--manualLicenseFile /root/project-local/licenses/$1/Unity_lic.ulf
+-manualLicenseFile /root/licenses/$1/Unity_lic.ulf
 
 
 xvfb-run \

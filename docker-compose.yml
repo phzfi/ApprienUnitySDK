@@ -13,7 +13,7 @@ services:
       - LICENSE_PASSWORD=$PASSWORD
     volumes:
       - .:/root/project
-      - ../licenses/2019-4-40f1:/root/.local/share/unity3d/Unity
+      - ../licenses:/root/licenses
     command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package.sh 2019-4-40f1"
 
   unity2020:
@@ -23,7 +23,7 @@ services:
       - LICENSE_PASSWORD=$PASSWORD
     volumes:
       - .:/root/project
-      - ../licenses/2020-3-35f1:/root/.local/share/unity3d/Unity
+      - ../licenses:/root/licenses
     command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package.sh 2020-3-35f1"
 
   unity2021:
@@ -33,7 +33,7 @@ services:
       - LICENSE_PASSWORD=$PASSWORD
     volumes:
       - .:/root/project
-      - ../licenses/2021-3-5f1:/root/.local/share/unity3d/Unity
+      - ../licenses:/root/licenses
     command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package.sh 2021-3-5f1"
 
   unity2022:
@@ -43,6 +43,6 @@ services:
       - LICENSE_PASSWORD=$PASSWORD
     volumes:
       - .:/root/project
-      - ../licenses/2022-3-12f1:/root/.local/share/unity3d/Unity
+      - ../licenses:/root/licenses
     command: bash -c "cp -R /root/project /root/project-local && /root/project-local/src/bash/unity-export-package.sh 2022-3-12f1"
 
