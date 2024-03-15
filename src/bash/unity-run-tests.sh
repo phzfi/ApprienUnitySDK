@@ -8,8 +8,9 @@ then
     exit 1
 fi
 
-ls -la /root/project-local/licenses
-ls -la /root/project-local/licenses/*
+ls -la /root/licenses
+ls -la /root/licenses/*
+cat /root/licenses/$1/Unity_lic.ulf
 
 xvfb-run \
 /opt/unity/Editor/Unity \
