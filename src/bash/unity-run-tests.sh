@@ -4,7 +4,7 @@ set -x # No -ex - we wish to display test results even if tests fail
 ./root/project-local/src/bash/unity-set-manifest.sh $1
 if test $? -gt 0
 then
-    echo "Unable to set correct manifest.json file for the Unity project - version mismatch?"
+    echo "Tests: Version $1 Unable to set correct manifest.json file for the Unity project - version mismatch?"
     exit 1
 fi
 
@@ -18,6 +18,13 @@ xvfb-run \
 -logFile /dev/stdout \
 -manualLicenseFile /root/licenses/$1/Unity_lic.ulf
 
+licensingCode=$?
+
+if test $licensingCode -gt 0
+then
+    echo "Tests: Licensing of Unity $1 failed with code $licensingCode"
+    exit $licensingCode
+fi
 
 xvfb-run \
 /opt/unity/Editor/Unity \
@@ -34,6 +41,7 @@ cat /root/project-local/testResults.xml
 
 if test $unityTestsExitCode -gt 0
 then
+    echo "Tests: Unity tests of Unity $1 failed with code $licensingCode"
     exit $unityTestsExitCode
 fi
 
