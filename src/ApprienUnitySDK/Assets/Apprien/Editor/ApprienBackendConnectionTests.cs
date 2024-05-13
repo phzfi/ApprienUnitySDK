@@ -26,19 +26,17 @@ namespace ApprienUnitySDK.ExampleProject.Tests
         private IDownloadHandler _downloadHandler;
 
         private string _gamePackageName;
-        private string _token;
         private string _apprienIdentifier;
 
         [SetUp]
         public void SetUp()
         {
             _gamePackageName = "dummy.package.name";
-            _token = "dummy-token";
             _apprienIdentifier = "FF"; // One byte as a hex string
 
             _timeProviderMock = Substitute.For<ITimeProvider>();
             _downloadHandler = Substitute.For<IDownloadHandler>();
-            _backend = new ApprienBackendConnection(_gamePackageName, ApprienIntegrationType.GooglePlayStore, _token, _apprienIdentifier, _timeProviderMock);
+            _backend = new ApprienBackendConnection(_gamePackageName, ApprienIntegrationType.GooglePlayStore, _apprienIdentifier, _timeProviderMock);
         }
 
         [TearDown]

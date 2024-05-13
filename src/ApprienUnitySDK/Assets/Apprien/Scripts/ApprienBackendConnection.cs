@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Purchasing;
@@ -12,12 +13,8 @@ namespace Apprien
         IEnumerator<ApprienFetchPricesResponse> FetchApprienPrices(IUnityWebRequest request);
         IEnumerator<ApprienFetchPriceResponse> FetchApprienPrice(IUnityWebRequest request);
         IEnumerator<ApprienPostReceiptResponse> PostReceipt(IUnityWebRequest request);
-        IEnumerator ProductsShown(IUnityWebRequest request);
         IEnumerator<bool?> CheckServiceStatus(IUnityWebRequest request);
-        IEnumerator<bool?> CheckTokenValidity(IUnityWebRequest request);
-        void SetToken(string token);
         string GamePackageName { get; }
-        string Token { get; }
         string StoreIdentifier { get; }
         string ApprienIdentifier { get; }
         float RequestTimeout { get; set; }
@@ -30,12 +27,6 @@ namespace Apprien
         /// </summary>
         private string _gamePackageName;
         public string GamePackageName => _gamePackageName;
-
-        /// <summary>
-        /// OAuth2 token received from Apprien Dashboard.
-        /// </summary>
-        private string _token = "TODO acquire token from Apprien Dashboard/support";
-        public string Token => _token;
 
         /// <summary>
         /// Define the store ApprienManager should integrate against, e.g. GooglePlayStore
@@ -65,28 +56,20 @@ namespace Apprien
         public ApprienBackendConnection(
             string gamePackageName,
             ApprienIntegrationType integrationType,
-            string token,
             string apprienIdentifier
-        ) : this(gamePackageName, integrationType, token, apprienIdentifier, new TimeProvider()) { }
+        ) : this(gamePackageName, integrationType, apprienIdentifier, new TimeProvider()) { }
 
         public ApprienBackendConnection(
             string gamePackageName,
             ApprienIntegrationType integrationType,
-            string token,
             string apprienIdentifier,
             ITimeProvider timeProvider
         )
         {
             _gamePackageName = gamePackageName;
             _integrationType = integrationType;
-            _token = token;
             _apprienIdentifier = apprienIdentifier;
             _timeProvider = timeProvider;
-        }
-
-        public void SetToken(string token)
-        {
-            _token = token;
         }
 
         /// <summary>
@@ -301,26 +284,6 @@ namespace Apprien
         }
 
         /// <summary>
-        /// Tell Apprien that these products were shown. NOTE: This is needed for Apprien to work correctly.
-        /// </summary>
-        /// <param name="apprienProducts"></param>
-        /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine.</returns>
-        public IEnumerator ProductsShown(IUnityWebRequest request)
-        {
-            yield return SendWebRequest(request);
-
-            if (IsHttpError(request))
-            {
-                var responseBody = request.downloadHandler?.text;
-                SendError(request.responseCode, $"Error occured while posting products shown. HTTP error {request.responseCode}, body: {responseBody}");
-            }
-            else if (IsNetworkError(request))
-            {
-                SendError(request.responseCode, "Error occured while posting products shown. Network error");
-            }
-        }
-
-        /// <summary>
         /// Check whether Apprien API service is online.
         /// </summary>
         /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
@@ -359,45 +322,6 @@ namespace Apprien
             // The service is online
             yield return true;
             yield break;
-        }
-
-        /// <summary>
-        /// Validates the supplied access token with the Apprien API
-        /// </summary>
-        /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
-        public IEnumerator<bool?> CheckTokenValidity(IUnityWebRequest request)
-        {
-            var requestSendTimestamp = _timeProvider.GetTimeNow();
-            SendWebRequest(request);
-
-            while (!request.isDone)
-            {
-                // Timeout the request and return false
-                if ((_timeProvider.GetTimeNow() - requestSendTimestamp).TotalSeconds > _requestTimeout)
-                {
-                    yield return false;
-                    yield break;
-                }
-
-                // Specify that the request is still in progress
-                yield return null;
-            }
-            // If there was any error in the request, the token is invalid
-            if (IsHttpError(request))
-            {
-                //Debug.LogError("Token check: HTTP Error " + request.responseCode);
-                yield return false;
-                yield break;
-            }
-            else if (IsNetworkError(request))
-            {
-                //Debug.LogError("Token check: Network Error " + request.responseCode);
-                yield return false;
-                yield break;
-            }
-
-            // The token is valid
-            yield return true;
         }
 
         /// <summary>

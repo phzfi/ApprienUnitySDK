@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -51,22 +51,11 @@ namespace Apprien
         public static string REST_POST_ERROR_URL = "https://game.apprien.com/error?message={0}&responseCode={1}&storeGame={2}&store={3}";
 
         /// <summary>
-        /// Apprien REST API endpoint for POSTing a notice to Apprien that product was shown.
-        /// </summary>
-        public static string REST_POST_PRODUCTS_SHOWN_URL = "https://game.apprien.com/api/v1/stores/{0}/shown/products";
-
-        /// <summary>
         /// Apprien REST API endpoint for testing the availability of the service
         /// </summary>
         public static string REST_GET_APPRIEN_STATUS = "https://game.apprien.com/status";
 
-        /// <summary>
-        /// Apprien REST API endpoint for testing the validity of the given token
-        /// </summary>
-        public static string REST_GET_VALIDATE_TOKEN_URL = "https://game.apprien.com/api/v1/stores/{0}/games/{1}/auth";
-
         private string _gamePackageName => _backend?.GamePackageName;
-        private string _token => _backend?.Token;
         private string _storeIdentifier => _backend?.StoreIdentifier;
         private string _apprienIdentifier => _backend?.ApprienIdentifier;
 
@@ -77,16 +66,13 @@ namespace Apprien
         /// </summary>
         /// <param name="gamePackageName">The package name of the game. Usually Application.identifier</param>
         /// <param name="integrationType">Store integration, e.g. GooglePlayStore, AppleAppStore.</param>
-        /// <param name="token">Token, retrieved from the Apprien Dashboard.</param>
         public ApprienManager(
             string gamePackageName,
-            ApprienIntegrationType integrationType,
-            string token
+            ApprienIntegrationType integrationType
         ) : this(
             new ApprienBackendConnection(
                 gamePackageName,
                 integrationType,
-                token,
                 ApprienUtility.ApprienIdentifier)
             )
         { }
@@ -94,15 +80,6 @@ namespace Apprien
         public ApprienManager(IApprienBackendConnection backend)
         {
             _backend = backend;
-        }
-
-        /// <summary>
-        /// Replaces the token given in the constructor. Only useful for editor tooling.
-        /// </summary>
-        /// <param name="token"></param>
-        public void SetToken(string token)
-        {
-            _backend.SetToken(token);
         }
 
         /// <summary>
@@ -131,7 +108,6 @@ namespace Apprien
             var url = string.Format(REST_GET_ALL_PRICES_URL, _storeIdentifier, _gamePackageName);
 
             var unityWebRequest = UnityWebRequest.Get(url);
-            unityWebRequest.SetRequestHeader("Authorization", "Bearer " + _token);
             unityWebRequest.SetRequestHeader("Session-Id", _apprienIdentifier);
             var request = new UnityWebRequestWrapper(unityWebRequest);
 
@@ -193,7 +169,6 @@ namespace Apprien
             var url = string.Format(REST_GET_PRICE_URL, _storeIdentifier, _gamePackageName, product.BaseIAPId);
 
             var unityWebRequest = UnityWebRequest.Get(url);
-            unityWebRequest.SetRequestHeader("Authorization", "Bearer " + _token);
             unityWebRequest.SetRequestHeader("Session-Id", _apprienIdentifier);
             var request = new UnityWebRequestWrapper(unityWebRequest);
 
@@ -230,33 +205,9 @@ namespace Apprien
 
             var url = String.Format(REST_POST_RECEIPT_URL, _storeIdentifier, _gamePackageName);
             var unityWebRequest = UnityWebRequest.Post(url, formData);
-            unityWebRequest.SetRequestHeader("Authorization", "Bearer " + _token);
 
             var request = new UnityWebRequestWrapper(unityWebRequest);
             return _backend.PostReceipt(request);
-        }
-
-        /// <summary>
-        /// Tell Apprien that these products were shown. This is needed for the pricing analysis to work more accurately.
-        /// </summary>
-        /// <param name="apprienProducts"></param>
-        /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine.</returns>
-        /// <deprecated>Use GetPrices instead</deprecated>
-        public IEnumerator ProductsShown(ApprienProduct[] apprienProducts)
-        {
-            var formData = new List<IMultipartFormSection>();
-
-            for (var i = 0; i < apprienProducts.Length; i++)
-            {
-                formData.Add(new MultipartFormDataSection("iap_ids[" + i + "]", apprienProducts[i].ApprienVariantIAPId));
-            }
-
-            var url = String.Format(REST_POST_PRODUCTS_SHOWN_URL, _storeIdentifier);
-            var unityWebRequest = UnityWebRequest.Post(url, formData);
-            unityWebRequest.SetRequestHeader("Authorization", "Bearer " + _token);
-
-            var request = new UnityWebRequestWrapper(unityWebRequest);
-            return _backend.ProductsShown(request);
         }
 
         /// <summary>
@@ -268,20 +219,6 @@ namespace Apprien
             var unityWebRequest = UnityWebRequest.Get(REST_GET_APPRIEN_STATUS);
             var request = new UnityWebRequestWrapper(unityWebRequest);
             return _backend.CheckServiceStatus(request);
-        }
-
-        /// <summary>
-        /// Validates the supplied access token with the Apprien API
-        /// </summary>
-        /// <returns>Returns an IEnumerator that can be forwarded manually or passed to StartCoroutine</returns>
-        public IEnumerator<bool?> CheckTokenValidity(string token)
-        {
-            var url = string.Format(REST_GET_VALIDATE_TOKEN_URL, ApprienUtility.GetIntegrationUri(ApprienIntegrationType.GooglePlayStore), Application.identifier);
-            var unityWebRequest = UnityWebRequest.Get(url);
-            unityWebRequest.SetRequestHeader("Authorization", "Bearer " + token);
-
-            var request = new UnityWebRequestWrapper(unityWebRequest);
-            return _backend.CheckTokenValidity(request);
         }
     }
 }

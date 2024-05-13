@@ -10,8 +10,14 @@ fi
 
 xvfb-run \
 /opt/unity/Editor/Unity \
--username "$LICENSE_EMAIL" \
--password "$LICENSE_PASSWORD" \
+-batchmode \
+-nographics \
+-logFile /dev/stdout \
+-manualLicenseFile /root/project-local/licenses/$1/Unity_lic.ulf
+
+
+xvfb-run \
+/opt/unity/Editor/Unity \
 -batchmode \
 -nographics \
 -logFile /dev/stdout \
